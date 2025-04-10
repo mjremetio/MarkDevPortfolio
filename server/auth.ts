@@ -22,7 +22,9 @@ export const setupAuth = (app: any) => {
     cookie: { 
       secure: process.env.NODE_ENV === 'production',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
+    },
+    // Using memory store for sessions (already the default)
+    // In production, you would use a persistent store
   }));
 
   // Login route

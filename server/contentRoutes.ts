@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Content sections data store
 const CONTENT_SECTIONS = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
