@@ -8,7 +8,7 @@ const HeroSection = () => {
   return (
     <section 
       id="home" 
-      className="min-h-screen flex items-center pt-16 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300"
+      className="min-h-screen flex items-center pt-16 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-800 transition-colors duration-300"
     >
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
@@ -67,15 +67,32 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <div className="relative">
-              <div className="w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 p-1">
-                <div className="bg-white dark:bg-gray-900 rounded-full w-full h-full flex items-center justify-center overflow-hidden">
+              <motion.div 
+                className="w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 p-1"
+                animate={{ 
+                  boxShadow: [
+                    "0 0 10px rgba(79, 70, 229, 0.4)",
+                    "0 0 20px rgba(79, 70, 229, 0.6)",
+                    "0 0 10px rgba(79, 70, 229, 0.4)"
+                  ],
+                }}
+                transition={{ 
+                  repeat: Infinity, 
+                  duration: 3
+                }}
+              >
+                <motion.div 
+                  className="bg-white dark:bg-gray-900 rounded-full w-full h-full flex items-center justify-center overflow-hidden"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <img 
                     src="/images/profile.svg" 
                     alt="Mark Remetio" 
                     className="w-full h-full object-cover"
                   />
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
               <motion.div 
                 className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg border-4 border-gray-100 dark:border-gray-900"
                 initial={{ y: 20, opacity: 0 }}

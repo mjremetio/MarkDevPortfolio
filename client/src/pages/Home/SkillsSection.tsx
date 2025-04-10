@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SkillItemProps {
   name: string;
@@ -10,6 +10,7 @@ interface SkillItemProps {
 
 const SkillItem = ({ name, percentage, delay, colorClass }: SkillItemProps) => {
   const progressRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
   
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -36,15 +37,33 @@ const SkillItem = ({ name, percentage, delay, colorClass }: SkillItemProps) => {
   }, [percentage, delay]);
 
   return (
-    <div>
+    <div className="cursor-pointer" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{name}</span>
-        <span className={`text-sm font-medium ${colorClass}`}>{percentage}%</span>
+        <motion.span 
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          initial={{ x: 0 }}
+          animate={{ x: isHovered ? 2 : 0 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          style={{ fontWeight: isHovered ? 600 : 500 }}
+        >
+          {name}
+        </motion.span>
+        <motion.span 
+          className={`text-sm font-medium ${colorClass}`}
+          initial={{ scale: 1 }}
+          animate={{ scale: isHovered ? 1.1 : 1 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          {percentage}%
+        </motion.span>
       </div>
-      <div className="progress-bar bg-gray-200 dark:bg-gray-700 h-2 rounded-lg overflow-hidden">
+      <div 
+        className={`progress-bar bg-gray-200 dark:bg-gray-700 ${isHovered ? 'h-3' : 'h-2'} rounded-lg overflow-hidden transition-all duration-300`}
+      >
         <div 
           ref={progressRef}
           className={`progress-bar-fill ${colorClass.replace('text', 'bg')} h-full w-0 transition-all duration-1000 ease-out`}
+          style={{ boxShadow: isHovered ? "0 0 5px rgba(79, 70, 229, 0.5)" : "none" }}
         ></div>
       </div>
     </div>
@@ -59,11 +78,24 @@ const TechIcon = ({ icon, name, delay }: { icon: string, name: string, delay: nu
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: delay * 0.1 }}
+      whileHover={{ y: -5 }}
     >
-      <div className="w-16 h-16 flex items-center justify-center bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md">
+      <motion.div 
+        className="w-16 h-16 flex items-center justify-center bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md"
+        whileHover={{ 
+          scale: 1.1, 
+          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" 
+        }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
         <i className={`${icon} text-3xl`}></i>
-      </div>
-      <span className="mt-2 text-sm text-gray-600 dark:text-gray-400">{name}</span>
+      </motion.div>
+      <motion.span 
+        className="mt-2 text-sm text-gray-600 dark:text-gray-400"
+        whileHover={{ fontWeight: 600 }}
+      >
+        {name}
+      </motion.span>
     </motion.div>
   );
 };
