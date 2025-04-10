@@ -5,9 +5,11 @@ import { downloadResume } from "@/utils/downloadResume";
 import { ChevronDown, Code, Paintbrush } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getHeroContent } from "@/utils/contentLoader";
+import { useTheme } from "@/hooks/useTheme";
 
 const HeroSection = () => {
   const [content, setContent] = useState(getHeroContent());
+  const { theme } = useTheme();
   
   useEffect(() => {
     // Attempt to fetch updated content from API
@@ -40,7 +42,7 @@ const HeroSection = () => {
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-sans leading-tight">
               <span className="text-gray-900 dark:text-white">{content.greeting} </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-secondary-300">{content.name}</span>
+              <span className="text-primary-600 dark:text-primary-400">{content.name}</span>
             </h1>
             <h2 className="text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-300">{content.title}</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-lg">
@@ -91,7 +93,7 @@ const HeroSection = () => {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <img 
-                    src="/images/profile.svg" 
+                    src={theme === 'dark' ? "/images/profile-dark.svg" : "/images/profile-light.svg"} 
                     alt="Mark Remetio" 
                     className="w-full h-full object-cover"
                   />
