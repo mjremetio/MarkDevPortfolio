@@ -88,14 +88,14 @@ const HeroSection = () => {
                 }}
               >
                 <motion.div 
-                  className="bg-white dark:bg-gray-900 rounded-full w-full h-full flex items-center justify-center overflow-hidden"
+                  className="bg-white dark:bg-gray-900 rounded-full w-full h-full flex items-center justify-center overflow-hidden border-4 border-gray-100 dark:border-gray-700 shadow-lg"
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <img 
                     src="/images/profile-photo.png" 
                     alt="Mark Remetio" 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                   />
                 </motion.div>
               </motion.div>

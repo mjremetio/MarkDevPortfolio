@@ -52,13 +52,13 @@ const AboutSection = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="relative">
-              <div className="rounded-lg overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-[1.02]">
+              <div className="rounded-lg overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-[1.02] border-2 border-gray-100 dark:border-gray-700">
                 <img 
                   src="/images/profile-photo.png" 
                   alt="Mark Remetio" 
                   className="w-full h-64 object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-500/20 to-transparent"></div>
               </div>
               <div className="absolute bottom-6 left-6 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
                 <p className="text-gray-800 dark:text-gray-200 font-medium">
