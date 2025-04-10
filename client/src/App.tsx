@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import InteractiveBackground from "@/components/InteractiveBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
               <>
                 <Header />
                 <ScrollProgressBar />
+                <InteractiveBackground />
                 <main className="flex-1">
                   <Home />
                 </main>

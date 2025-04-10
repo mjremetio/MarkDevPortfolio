@@ -30,7 +30,7 @@ const HeroSection = () => {
   return (
     <section 
       id="home" 
-      className="min-h-screen flex items-center pt-28 md:pt-32 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-800 transition-colors duration-300"
+      className="min-h-screen flex items-center pt-28 md:pt-32 bg-white/80 dark:bg-gray-900/60 backdrop-blur-sm transition-colors duration-300"
     >
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">

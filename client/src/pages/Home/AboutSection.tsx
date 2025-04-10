@@ -30,7 +30,7 @@ const AboutSection = () => {
   };
 
   return (
-    <section id="about" className="py-16 md:py-24 bg-white dark:bg-gray-800 transition-colors duration-300">
+    <section id="about" className="py-16 md:py-24 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm transition-colors duration-300">
       <div className="container mx-auto px-4 md:px-6">
         <motion.div 
           className="text-center mb-12"
