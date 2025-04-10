@@ -21,6 +21,29 @@ const aboutContent = {
   ],
   profilePicture: "/profile-image.svg",
   imageAlt: "Mark Remetio profile picture",
+  experience: "5+ Years",
+  features: [
+    {
+      title: "Front-End Development",
+      description: "Creating responsive, interactive user interfaces with modern frameworks",
+      icon: "laptop-code"
+    },
+    {
+      title: "Back-End Systems",
+      description: "Building secure, scalable API endpoints and database architectures",
+      icon: "server"
+    },
+    {
+      title: "UI/UX Design",
+      description: "Designing intuitive, aesthetically pleasing user experiences",
+      icon: "paint-brush"
+    },
+    {
+      title: "Cloud Infrastructure",
+      description: "Managing AWS services and server environments",
+      icon: "cloud"
+    }
+  ],
   statItems: [
     { label: "Years Experience", value: "5+" },
     { label: "Projects Completed", value: "50+" },

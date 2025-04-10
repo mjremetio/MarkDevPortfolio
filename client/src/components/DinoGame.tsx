@@ -246,11 +246,12 @@ const DinoGame: React.FC = () => {
             
             <div 
               ref={canvasRef}
-              className="relative h-60 border-b border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800"
+              className="relative h-60 overflow-hidden bg-white dark:bg-gray-900"
               onClick={gameActive ? jump : startGame}
             >
-              {/* Ground */}
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gray-300 dark:bg-gray-700"></div>
+              {/* Ground with horizon line */}
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gray-700 dark:bg-gray-300"></div>
+              <div className="absolute bottom-10 left-0 right-0 border-t border-dashed border-gray-300 dark:border-gray-600 opacity-50"></div>
               
               {/* Score display */}
               <div className="absolute top-4 right-4 text-gray-800 dark:text-gray-200 font-mono">
@@ -259,16 +260,14 @@ const DinoGame: React.FC = () => {
               
               {/* Dinosaur */}
               <div 
-                className="absolute bottom-0 left-[50px] w-[30px] h-[40px]"
+                className="absolute bottom-0 left-[50px] w-[44px] h-[47px]"
                 style={{ transform: `translateY(-${jumpHeight * 100}px)` }}
               >
-                <div className={`w-full h-full ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  <svg viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path d="M32.5,2.5h-25c-2.8,0-5,2.2-5,5v35c0,2.8,2.2,5,5,5h25c2.8,0,5-2.2,5-5v-35C37.5,4.7,35.3,2.5,32.5,2.5z M15,37.5
-                      c0,1.1-0.9,2-2,2s-2-0.9-2-2v-5c0-1.1,0.9-2,2-2s2,0.9,2,2V37.5z M29,37.5c0,1.1-0.9,2-2,2s-2-0.9-2-2v-5c0-1.1,0.9-2,2-2
-                      s2,0.9,2,2V37.5z M34,20c0,1.1-0.9,2-2,2H8c-1.1,0-2-0.9-2-2v-6c0-1.1,0.9-2,2-2h24c1.1,0,2,0.9,2,2V20z"/>
-                    <circle cx="27.5" cy="15" r="2.5"/>
-                    <circle cx="12.5" cy="15" r="2.5"/>
+                <div className={`w-full h-full ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+                  <svg viewBox="0 0 40 43" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                    <path d="M29.1,18.6V15H25v-3.4h-3.8V7.9h-3.8V4.5H13.6v3.4H9.9v3.4H6.1v3.4H2.4v3.4h3.8v3.4h3.8v-3.4h3.8V15h3.8v14.6h3.8v3.4
+                    h3.8v-3.4h3.8V26h3.8v-3.4h-3.8v-4H29.1z M13.6,10.1h-2.5V7.9h2.5V10.1z M36.6,27.8H34V31h-3.8v-3.4h-3.8v-3.4h3.8v3.4h2.6v-5.6
+                    h3.8L36.6,27.8L36.6,27.8z"/>
                   </svg>
                 </div>
               </div>
@@ -284,10 +283,19 @@ const DinoGame: React.FC = () => {
                     height: `${cactus.height}px`,
                   }}
                 >
-                  <div className={`w-full h-full ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
-                    <svg viewBox="0 0 50 60" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M25,5 L25,60 L35,60 L35,25 L40,25 L40,60 L45,60 L45,20 C45,12 38,5 30,5 L25,5 Z M15,15 L15,60 L25,60 L25,15 L15,15 Z M5,30 L5,60 L15,60 L15,35 C15,32 12,30 9,30 L5,30 Z" />
-                    </svg>
+                  <div className={`w-full h-full ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+                    {/* Small cactus */}
+                    {cactus.height < 40 && (
+                      <svg viewBox="0 0 25 50" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.4,2v16.9H0v3.8h9.4v25h6.3V22.6h9.4v-3.8h-9.4V2H9.4z"/>
+                      </svg>
+                    )}
+                    {/* Large cactus */}
+                    {cactus.height >= 40 && (
+                      <svg viewBox="0 0 50 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16.6,2.6v20h-7.8v3.6h7.8v72.3h5.5V61.9h8.5v10.9h5.5V57.6h-14V26.1h8.6V16.9h-8.6V2.6H16.6z M5.5,26.1v72.3h5.4V26.1H5.5z"/>
+                      </svg>
+                    )}
                   </div>
                 </div>
               ))}
