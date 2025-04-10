@@ -1,6 +1,25 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { getAboutContent } from "@/utils/contentLoader";
 
 const AboutSection = () => {
+  const [content, setContent] = useState(getAboutContent());
+  
+  useEffect(() => {
+    // Attempt to fetch updated content from API
+    fetch('/api/content/about')
+      .then(response => {
+        if (response.ok) return response.json();
+        throw new Error('Failed to fetch about content');
+      })
+      .then(data => {
+        setContent(data);
+      })
+      .catch(error => {
+        console.log('Using default about content:', error);
+        // On error, use the local content (already set as default)
+      });
+  }, []);
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -43,7 +62,7 @@ const AboutSection = () => {
               </div>
               <div className="absolute bottom-6 left-6 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
                 <p className="text-gray-800 dark:text-gray-200 font-medium">
-                  <span className="text-primary-600 dark:text-primary-400 font-bold">5+ Years</span> Experience
+                  <span className="text-primary-600 dark:text-primary-400 font-bold">{content.experience}</span> Experience
                 </p>
               </div>
             </div>
@@ -57,79 +76,33 @@ const AboutSection = () => {
             transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-              Versatile Full-Stack Web Developer & Designer
+              {content.title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-              Detail-oriented Web Developer with nearly 5 years of hands-on experience specializing in both Front-End and Back-End development, including UI/UX design and server management. Proven track record in deploying live applications and driving their market presence, demonstrating a keen understanding of the complete development lifecycle.
-            </p>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-              I'm passionate about creating clean, efficient code and intuitive user experiences. My expertise spans from crafting visually appealing interfaces to implementing robust back-end systems and managing server infrastructure.
-            </p>
+            {content.description?.map((paragraph, index) => (
+              <p key={index} className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              <motion.div 
-                className="flex items-start"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
-                  <i className="fas fa-laptop-code text-primary-600 dark:text-primary-400"></i>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">Front-End Development</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Creating responsive, interactive user interfaces with modern frameworks</p>
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                className="flex items-start"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-              >
-                <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
-                  <i className="fas fa-server text-primary-600 dark:text-primary-400"></i>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">Back-End Systems</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Building secure, scalable API endpoints and database architectures</p>
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                className="flex items-start"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-              >
-                <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
-                  <i className="fas fa-paint-brush text-primary-600 dark:text-primary-400"></i>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">UI/UX Design</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Designing intuitive, aesthetically pleasing user experiences</p>
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                className="flex items-start"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-              >
-                <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
-                  <i className="fas fa-cloud text-primary-600 dark:text-primary-400"></i>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">Cloud Infrastructure</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Managing AWS services and server environments</p>
-                </div>
-              </motion.div>
+              {content.features?.map((feature, index) => (
+                <motion.div 
+                  key={index}
+                  className="flex items-start"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.1 * (index + 1) }}
+                >
+                  <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
+                    <i className={`fas fa-${feature.icon} text-primary-600 dark:text-primary-400`}></i>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 dark:text-white">{feature.title}</h4>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>

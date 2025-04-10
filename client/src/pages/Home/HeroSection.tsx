@@ -3,8 +3,27 @@ import { motion } from "framer-motion";
 import { smoothScrollTo } from "@/utils/smoothScroll";
 import { downloadResume } from "@/utils/downloadResume";
 import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getHeroContent } from "@/utils/contentLoader";
 
 const HeroSection = () => {
+  const [content, setContent] = useState(getHeroContent());
+  
+  useEffect(() => {
+    // Attempt to fetch updated content from API
+    fetch('/api/content/hero')
+      .then(response => {
+        if (response.ok) return response.json();
+        throw new Error('Failed to fetch hero content');
+      })
+      .then(data => {
+        setContent(data);
+      })
+      .catch(error => {
+        console.log('Using default hero content:', error);
+        // On error, use the local content (already set as default)
+      });
+  }, []);
   return (
     <section 
       id="home" 
@@ -19,45 +38,56 @@ const HeroSection = () => {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-sans leading-tight">
-              <span className="text-gray-900 dark:text-white">Hi, I'm </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">Mark Remetio</span>
+              <span className="text-gray-900 dark:text-white">{content.greeting} </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">{content.name}</span>
             </h1>
-            <h2 className="text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-300">Web Designer & Developer</h2>
+            <h2 className="text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-300">{content.title}</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-lg">
-              Versatile and detail-oriented Web Developer with 5 years of hands-on experience specializing in both Front-End and Back-End development.
+              {content.shortDescription}
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
-              <Button 
-                className="px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-300 shadow-md hover:shadow-lg"
-                onClick={() => smoothScrollTo('#contact')}
-              >
-                Get in Touch
-              </Button>
-              <Button 
-                variant="outline"
-                className="px-6 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white font-medium rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300 shadow-md hover:shadow-lg"
-                onClick={() => smoothScrollTo('#projects')}
-              >
-                View Projects
-              </Button>
-              <Button 
-                variant="outline"
-                className="px-6 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white font-medium rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
-                onClick={downloadResume}
-              >
-                <i className="fas fa-download mr-2"></i> Resume
-              </Button>
+              {content.ctaButtons?.map((button, index) => (
+                <Button 
+                  key={index}
+                  variant={button.primary ? "default" : "outline"}
+                  className={`${button.primary ? 
+                    "bg-primary-600 text-white hover:bg-primary-700" : 
+                    "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"} 
+                    px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center`}
+                  onClick={() => button.downloadAction ? downloadResume() : smoothScrollTo(button.link)}
+                >
+                  {button.icon && <i className={`fas fa-${button.icon} mr-2`}></i>} {button.text}
+                </Button>
+              ))}
             </div>
             <div className="flex items-center gap-4 pt-4">
-              <a href="https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-xl transition-colors duration-200">
-                <i className="fab fa-linkedin"></i>
-              </a>
-              <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-xl transition-colors duration-200">
-                <i className="fab fa-github"></i>
-              </a>
-              <a href="mailto:mj.remetio001@gmail.com" className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-xl transition-colors duration-200">
-                <i className="fas fa-envelope"></i>
-              </a>
+              {/* Stats section */}
+              <div className="flex flex-wrap gap-5 pt-6">
+                {content.stats?.map((stat, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className="text-primary-600 dark:text-primary-400 mr-2">
+                      <i className={`fas fa-${stat.icon} text-lg`}></i>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Badges section */}
+            <div className="flex flex-wrap gap-2 pt-4">
+              {content.badges?.map((badge, index) => (
+                <span 
+                  key={index}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                    ${badge.bgColor} ${badge.textColor} ${badge.darkBgColor} ${badge.darkTextColor}`}
+                >
+                  {badge.text}
+                </span>
+              ))}
             </div>
           </motion.div>
           <motion.div 

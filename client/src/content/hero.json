@@ -1,40 +1,47 @@
 {
-  "title": "Hi, I'm Mark Remetio",
-  "subtitle": "Web Designer & Developer",
-  "description": "Versatile and detail-oriented Web Developer with 5 years of hands-on experience specializing in both Front-End and Back-End development.",
+  "greeting": "Hello, I'm",
+  "name": "Mark Remetio",
+  "title": "Full-Stack Web Developer",
+  "shortDescription": "I build beautiful, functional websites and web applications with modern technologies.",
   "ctaButtons": [
     {
-      "text": "Get in Touch",
-      "href": "#contact",
-      "variant": "primary"
-    },
-    {
       "text": "View Projects",
-      "href": "#projects",
-      "variant": "outline"
+      "link": "#projects",
+      "primary": true,
+      "icon": "eye"
     },
     {
-      "text": "Resume",
-      "href": "#download",
-      "variant": "outline",
-      "icon": "download"
+      "text": "Download Resume",
+      "link": "#",
+      "primary": false,
+      "icon": "file-text",
+      "downloadAction": true
     }
   ],
-  "socialLinks": [
+  "stats": [
     {
-      "platform": "LinkedIn",
-      "url": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
-      "icon": "linkedin"
+      "value": "5+",
+      "label": "Years Experience",
+      "icon": "calendar"
     },
     {
-      "platform": "GitHub",
-      "url": "https://github.com/",
-      "icon": "github"
+      "value": "50+",
+      "label": "Projects Completed",
+      "icon": "check-circle"
     },
     {
-      "platform": "Email",
-      "url": "mailto:mj.remetio001@gmail.com",
-      "icon": "envelope"
+      "value": "30+",
+      "label": "Happy Clients",
+      "icon": "users"
+    }
+  ],
+  "badges": [
+    {
+      "text": "Available for Work",
+      "bgColor": "bg-green-100",
+      "textColor": "text-green-800",
+      "darkBgColor": "dark:bg-green-900/30",
+      "darkTextColor": "dark:text-green-300"
     }
   ]
 }

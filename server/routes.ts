@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import fs from "fs";
 import path from "path";
+import { getContent, updateContent, listContentSections } from './contentRoutes';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Contact form submission endpoint
@@ -46,6 +47,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Error downloading resume' });
     }
   });
+
+  // Content management routes
+  app.get('/api/content', listContentSections);
+  app.get('/api/content/:section', getContent);
+  app.post('/api/content/:section', updateContent);
 
   const httpServer = createServer(app);
 
