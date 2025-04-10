@@ -68,7 +68,7 @@ const SkillItem = ({ name, percentage, delay, colorClass }: SkillItemProps) => {
           {name}
         </motion.span>
         <motion.span 
-          className={`text-sm font-medium ${colorClass}`}
+          className="text-sm font-medium text-indigo-600 dark:text-indigo-400"
           initial={{ scale: 1 }}
           animate={{ scale: isHovered ? 1.1 : 1 }}
           transition={{ type: "spring", stiffness: 300 }}
@@ -81,7 +81,7 @@ const SkillItem = ({ name, percentage, delay, colorClass }: SkillItemProps) => {
       >
         <div 
           ref={progressRef}
-          className={`progress-bar-fill ${colorClass.replace('text', 'bg')} h-full w-0 transition-all duration-1000 ease-out`}
+          className={`progress-bar-fill bg-indigo-600 h-full w-0 transition-all duration-1000 ease-out`}
           style={{ boxShadow: isHovered ? "0 0 5px rgba(79, 70, 229, 0.5)" : "none" }}
         ></div>
       </div>

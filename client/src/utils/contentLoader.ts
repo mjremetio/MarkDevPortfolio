@@ -36,40 +36,44 @@ const skillsContent = {
     {
       title: "Frontend Development",
       icon: "FaReact",
-      iconBg: "bg-blue-500",
+      iconBg: "bg-indigo-600",
       iconColor: "text-white",
-      titleColor: "text-blue-500",
+      titleColor: "text-indigo-600",
       skills: [
-        { name: "React.js", percentage: 95, colorClass: "bg-blue-500" },
-        { name: "JavaScript (ES6+)", percentage: 90, colorClass: "bg-yellow-500" },
-        { name: "HTML5 & CSS3", percentage: 95, colorClass: "bg-orange-500" },
-        { name: "TypeScript", percentage: 85, colorClass: "bg-blue-400" }
+        { name: "HTML5/CSS3", percentage: 95, colorClass: "text-indigo-600" },
+        { name: "JavaScript", percentage: 90, colorClass: "text-indigo-600" },
+        { name: "React/Vue/Angular", percentage: 85, colorClass: "text-indigo-600" },
+        { name: "CSS Preprocessors (SASS/LESS)", percentage: 90, colorClass: "text-indigo-600" },
+        { name: "UI/UX Design", percentage: 80, colorClass: "text-indigo-600" },
+        { name: "API Development", percentage: 90, colorClass: "text-indigo-600" }
       ]
     },
     {
       title: "Backend Development",
       icon: "FaNodeJs",
-      iconBg: "bg-green-600",
+      iconBg: "bg-indigo-600",
       iconColor: "text-white",
-      titleColor: "text-green-600",
+      titleColor: "text-indigo-600",
       skills: [
-        { name: "Node.js", percentage: 90, colorClass: "bg-green-600" },
-        { name: "Express.js", percentage: 88, colorClass: "bg-gray-600" },
-        { name: "REST APIs", percentage: 92, colorClass: "bg-purple-500" },
-        { name: "SQL & NoSQL Databases", percentage: 85, colorClass: "bg-blue-600" }
+        { name: "PHP (Laravel, WordPress)", percentage: 90, colorClass: "text-indigo-600" },
+        { name: "Node.js", percentage: 85, colorClass: "text-indigo-600" },
+        { name: "MySQL/PostgreSQL", percentage: 85, colorClass: "text-indigo-600" },
+        { name: "MongoDB", percentage: 80, colorClass: "text-indigo-600" },
+        { name: "API Development", percentage: 90, colorClass: "text-indigo-600" }
       ]
     },
     {
       title: "DevOps & Tools",
       icon: "FaTools",
-      iconBg: "bg-red-500",
+      iconBg: "bg-indigo-600",
       iconColor: "text-white",
-      titleColor: "text-red-500",
+      titleColor: "text-indigo-600",
       skills: [
-        { name: "Git & Version Control", percentage: 90, colorClass: "bg-red-500" },
-        { name: "AWS Services", percentage: 80, colorClass: "bg-yellow-600" },
-        { name: "Docker", percentage: 75, colorClass: "bg-blue-500" },
-        { name: "CI/CD Pipelines", percentage: 78, colorClass: "bg-green-500" }
+        { name: "AWS (EC2, EBS, SES)", percentage: 85, colorClass: "text-indigo-600" },
+        { name: "Git/GitHub/BitBucket", percentage: 90, colorClass: "text-indigo-600" },
+        { name: "Linux (SSH, Terminal)", percentage: 85, colorClass: "text-indigo-600" },
+        { name: "Project Management", percentage: 80, colorClass: "text-indigo-600" },
+        { name: "CRM Systems", percentage: 85, colorClass: "text-indigo-600" }
       ]
     }
   ],
