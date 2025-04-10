@@ -56,7 +56,7 @@ const AboutSection = () => {
                 <img 
                   src="/images/profile-photo.png" 
                   alt="Mark Remetio" 
-                  className="w-full h-64 object-cover object-center"
+                  className="w-full h-64 object-contain bg-gray-50 dark:bg-gray-800"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-500/20 to-transparent"></div>
               </div>

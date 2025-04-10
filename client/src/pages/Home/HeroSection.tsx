@@ -95,7 +95,7 @@ const HeroSection = () => {
                   <img 
                     src="/images/profile-photo.png" 
                     alt="Mark Remetio" 
-                    className="w-full h-full object-cover object-center"
+                    className="w-full h-full object-contain"
                   />
                 </motion.div>
               </motion.div>
