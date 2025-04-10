@@ -1,10 +1,24 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useTheme } from '@/hooks/useTheme';
+import { motion } from 'framer-motion';
 
 const InteractiveBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const [score, setScore] = useState(0);
+  const [gameActive, setGameActive] = useState(false);
+  const [clickPosition, setClickPosition] = useState<{ x: number, y: number } | null>(null);
+  const [showGift, setShowGift] = useState(false);
+  const [giftPosition, setGiftPosition] = useState({ x: 0, y: 0 });
+  const [gameMessage, setGameMessage] = useState('');
+  
+  // Generate a random position for the gift
+  const generateGiftPosition = () => {
+    const x = Math.random() * 80 + 10; // 10-90% of viewport width
+    const y = Math.random() * 80 + 10; // 10-90% of viewport height
+    return { x, y };
+  };
   
   useEffect(() => {
     if (!containerRef.current) return;
@@ -180,12 +194,170 @@ const InteractiveBackground = () => {
     };
   }, [theme]);
   
+  // Start the mini-game
+  const startGame = () => {
+    setGameActive(true);
+    setScore(0);
+    setGameMessage('Click on the floating stars to collect them!');
+    
+    // Generate first gift
+    const newPosition = generateGiftPosition();
+    setGiftPosition(newPosition);
+    setShowGift(true);
+  };
+  
+  // Handle click on the canvas - used for the game
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    if (!gameActive) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    setClickPosition({ x, y });
+    
+    // Check if user clicked close to the gift
+    if (showGift) {
+      const distance = Math.sqrt(
+        Math.pow(x - giftPosition.x, 2) + 
+        Math.pow(y - giftPosition.y, 2)
+      );
+      
+      if (distance < 10) { // If clicked within 10% of viewport distance
+        // Collect the gift
+        setScore(prev => prev + 1);
+        setShowGift(false);
+        setGameMessage(`+1 Star! Score: ${score + 1}`);
+        
+        // Generate a new gift after a short delay
+        setTimeout(() => {
+          const newPosition = generateGiftPosition();
+          setGiftPosition(newPosition);
+          setShowGift(true);
+        }, 1000);
+      }
+    }
+  };
+  
+  // End the game
+  const endGame = () => {
+    setGameActive(false);
+    setShowGift(false);
+    setGameMessage(`Game Over! Final Score: ${score}`);
+  };
+
   return (
-    <div 
-      ref={containerRef} 
-      className="fixed inset-0 -z-10 pointer-events-none"
-      aria-hidden="true"
-    />
+    <>
+      <div 
+        ref={containerRef} 
+        className={`fixed inset-0 -z-10 ${gameActive ? 'cursor-pointer' : ''}`}
+        onClick={gameActive ? handleCanvasClick : undefined}
+        aria-hidden={!gameActive}
+      />
+      
+      {/* Game UI */}
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+        {!gameActive ? (
+          <motion.button
+            className="bg-primary-600 dark:bg-primary-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={startGame}
+          >
+            Play Star Collection
+          </motion.button>
+        ) : (
+          <motion.button
+            className="bg-red-600 dark:bg-red-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={endGame}
+          >
+            End Game
+          </motion.button>
+        )}
+        
+        {gameActive && (
+          <motion.div
+            className="px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-lg"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: 'spring' }}
+          >
+            <span className="text-gray-900 dark:text-white font-medium">Score: {score}</span>
+          </motion.div>
+        )}
+      </div>
+      
+      {/* Game message */}
+      {gameMessage && (
+        <motion.div
+          className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-full shadow-lg z-50"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -20, opacity: 0 }}
+          transition={{ type: 'spring' }}
+        >
+          <span className="text-gray-900 dark:text-white">{gameMessage}</span>
+        </motion.div>
+      )}
+      
+      {/* Collectible star */}
+      {showGift && (
+        <motion.div
+          className="fixed z-40 w-8 h-8 pointer-events-none"
+          style={{ 
+            left: `${giftPosition.x}%`, 
+            top: `${giftPosition.y}%`,
+            transform: 'translate(-50%, -50%)'
+          }}
+          initial={{ scale: 0 }}
+          animate={{ 
+            scale: [0.5, 1, 0.5],
+            rotate: [0, 180, 360]
+          }}
+          transition={{ 
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+              fill="url(#starGradient)"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <defs>
+              <linearGradient id="starGradient" x1="2" y1="2" x2="22" y2="21.02" gradientUnits="userSpaceOnUse">
+                <stop stopColor={theme === 'dark' ? '#6366f1' : '#4f46e5'} />
+                <stop offset="1" stopColor={theme === 'dark' ? '#ec4899' : '#db2777'} />
+              </linearGradient>
+            </defs>
+          </svg>
+        </motion.div>
+      )}
+      
+      {/* Click effect */}
+      {clickPosition && (
+        <motion.div
+          className="fixed pointer-events-none z-40 w-12 h-12 -ml-6 -mt-6"
+          style={{ 
+            left: `${clickPosition.x}%`, 
+            top: `${clickPosition.y}%` 
+          }}
+          initial={{ scale: 0, opacity: 1 }}
+          animate={{ scale: 2, opacity: 0 }}
+          onAnimationComplete={() => setClickPosition(null)}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="w-full h-full rounded-full border-2 border-primary-400 dark:border-primary-500"></div>
+        </motion.div>
+      )}
+    </>
   );
 };
 
