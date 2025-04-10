@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { getAboutContent } from "@/utils/contentLoader";
-import { Code, Layers, GitBranch, Server, Laptop, PaintBrush, Cloud } from "lucide-react";
+import { Code, Layers, GitBranch, Server, Laptop, Paintbrush, Cloud } from "lucide-react";
 
 interface AboutContent {
   title: string;
@@ -115,6 +115,9 @@ const AboutSection = () => {
                     {feature.icon === 'layer-group' && <Layers className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
                     {feature.icon === 'code-branch' && <GitBranch className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
                     {feature.icon === 'server' && <Server className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
+                    {feature.icon === 'laptop-code' && <Laptop className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
+                    {feature.icon === 'paint-brush' && <Paintbrush className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
+                    {feature.icon === 'cloud' && <Cloud className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-white">{feature.title}</h4>
