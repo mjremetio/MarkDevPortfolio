@@ -68,10 +68,10 @@ const Header = () => {
               variant="ghost" 
               size="icon" 
               onClick={toggleTheme} 
-              className="rounded-full bg-gray-200 dark:bg-gray-800 focus:outline-none"
+              className="rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none"
               aria-label="Toggle dark mode"
             >
-              {theme === 'light' ? <Moon className="h-5 w-5 text-blue-300" /> : <Sun className="h-5 w-5 text-yellow-500" />}
+              {theme === 'light' ? <Moon className="h-5 w-5 text-blue-600" /> : <Sun className="h-5 w-5 text-yellow-400" />}
             </Button>
           </nav>
           
@@ -81,10 +81,10 @@ const Header = () => {
               variant="ghost" 
               size="icon" 
               onClick={toggleTheme} 
-              className="rounded-full bg-gray-200 dark:bg-gray-800 focus:outline-none mr-2"
+              className="rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none mr-2"
               aria-label="Toggle dark mode"
             >
-              {theme === 'light' ? <Moon className="h-5 w-5 text-blue-300" /> : <Sun className="h-5 w-5 text-yellow-500" />}
+              {theme === 'light' ? <Moon className="h-5 w-5 text-blue-600" /> : <Sun className="h-5 w-5 text-yellow-400" />}
             </Button>
             <Button 
               variant="ghost" 

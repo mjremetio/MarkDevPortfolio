@@ -106,8 +106,8 @@ const HeroSection = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="bg-gradient-to-br from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-secondary-500 text-white p-2 rounded-full">
-                  <Code className="h-5 w-5 text-white" />
+                <div className="bg-primary-600 dark:bg-primary-500 p-2 rounded-full">
+                  <Code className="h-5 w-5 text-white" strokeWidth={2.5} />
                 </div>
               </motion.div>
               
@@ -117,8 +117,8 @@ const HeroSection = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="bg-gradient-to-br from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-secondary-500 text-white p-2 rounded-full">
-                  <Paintbrush className="h-5 w-5 text-white" />
+                <div className="bg-primary-600 dark:bg-primary-500 p-2 rounded-full">
+                  <Paintbrush className="h-5 w-5 text-white" strokeWidth={2.5} />
                 </div>
               </motion.div>
             </div>
@@ -138,9 +138,9 @@ const HeroSection = () => {
           <a 
             href="#about" 
             onClick={(e) => { e.preventDefault(); smoothScrollTo('#about'); }}
-            className="text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400"
+            className="text-gray-500 dark:text-white hover:text-primary-500 dark:hover:text-primary-400"
           >
-            <ChevronDown className="h-8 w-8" />
+            <ChevronDown className="h-8 w-8" strokeWidth={2} />
           </a>
         </motion.div>
       </div>
