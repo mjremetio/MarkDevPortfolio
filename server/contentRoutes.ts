@@ -1,61 +1,78 @@
 import { Request, Response } from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'fs';
+import path from 'path';
 
-// Get current file's directory in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Content sections data store
+const CONTENT_SECTIONS = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
+const CONTENT_DIR = path.join(__dirname, '../client/src/content');
 
-const contentPath = path.join(__dirname, '../client/src/content');
+// Ensure content directory exists
+if (!fs.existsSync(CONTENT_DIR)) {
+  fs.mkdirSync(CONTENT_DIR, { recursive: true });
+}
 
-export const getContent = (req: Request, res: Response) => {
-  const { section } = req.params;
-  
-  try {
-    const filePath = path.join(contentPath, `${section}.json`);
-    
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: `Content section '${section}' not found` });
-    }
-    
-    const content = fs.readFileSync(filePath, 'utf-8');
-    return res.json(JSON.parse(content));
-  } catch (error) {
-    console.error(`Error getting content for section '${section}':`, error);
-    return res.status(500).json({ error: 'Failed to retrieve content' });
-  }
-};
-
-export const updateContent = (req: Request, res: Response) => {
-  const { section } = req.params;
-  const content = req.body;
-  
-  try {
-    const filePath = path.join(contentPath, `${section}.json`);
-    
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: `Content section '${section}' not found` });
-    }
-    
-    fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf-8');
-    return res.json({ success: true, message: `Content for '${section}' updated successfully` });
-  } catch (error) {
-    console.error(`Error updating content for section '${section}':`, error);
-    return res.status(500).json({ error: 'Failed to update content' });
-  }
-};
-
+// Get all content sections
 export const listContentSections = (_req: Request, res: Response) => {
   try {
-    const files = fs.readdirSync(contentPath);
-    const sections = files
-      .filter(file => file.endsWith('.json'))
-      .map(file => file.replace('.json', ''));
-      
-    return res.json({ sections });
+    res.json({ sections: CONTENT_SECTIONS });
   } catch (error) {
     console.error('Error listing content sections:', error);
-    return res.status(500).json({ error: 'Failed to list content sections' });
+    res.status(500).json({ success: false, message: 'Failed to list content sections' });
+  }
+};
+
+// Get content for a specific section
+export const getContent = (req: Request, res: Response) => {
+  try {
+    const { section } = req.params;
+    
+    // Validate section name
+    if (!CONTENT_SECTIONS.includes(section)) {
+      return res.status(404).json({ success: false, message: 'Section not found' });
+    }
+    
+    const contentFilePath = path.join(CONTENT_DIR, `${section}.json`);
+    
+    // Check if file exists
+    if (!fs.existsSync(contentFilePath)) {
+      return res.status(404).json({ success: false, message: 'Content file not found' });
+    }
+    
+    // Read file content
+    const fileContent = fs.readFileSync(contentFilePath, 'utf-8');
+    const contentData = JSON.parse(fileContent);
+    
+    res.json(contentData);
+  } catch (error) {
+    console.error('Error fetching content:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch content' });
+  }
+};
+
+// Update content for a specific section
+export const updateContent = (req: Request, res: Response) => {
+  try {
+    const { section } = req.params;
+    const contentData = req.body;
+    
+    // Validate section name
+    if (!CONTENT_SECTIONS.includes(section)) {
+      return res.status(404).json({ success: false, message: 'Section not found' });
+    }
+    
+    // Ensure content directory exists
+    if (!fs.existsSync(CONTENT_DIR)) {
+      fs.mkdirSync(CONTENT_DIR, { recursive: true });
+    }
+    
+    const contentFilePath = path.join(CONTENT_DIR, `${section}.json`);
+    
+    // Write content to file
+    fs.writeFileSync(contentFilePath, JSON.stringify(contentData, null, 2));
+    
+    res.json({ success: true, message: `${section} content updated successfully` });
+  } catch (error) {
+    console.error('Error updating content:', error);
+    res.status(500).json({ success: false, message: 'Failed to update content' });
   }
 };

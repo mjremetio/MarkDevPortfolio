@@ -15,11 +15,26 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <div className="flex min-h-screen flex-col antialiased">
-          <Header />
-          <main className="flex-1">
-            <Home />
-          </main>
-          <Footer />
+          <Switch>
+            <Route path="/maglogin">
+              <AdminLogin />
+            </Route>
+            <Route path="/admin">
+              <AdminDashboard />
+            </Route>
+            <Route path="/">
+              <>
+                <Header />
+                <main className="flex-1">
+                  <Home />
+                </main>
+                <Footer />
+              </>
+            </Route>
+            <Route>
+              <NotFound />
+            </Route>
+          </Switch>
         </div>
         <Toaster />
       </ThemeProvider>
