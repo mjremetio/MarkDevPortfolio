@@ -4,18 +4,21 @@ import { Toaster } from "@/components/ui/toaster";
 import Home from "@/pages/Home";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col antialiased">
-        <Header />
-        <main className="flex-1">
-          <Home />
-        </main>
-        <Footer />
-      </div>
-      <Toaster />
+      <ThemeProvider>
+        <div className="flex min-h-screen flex-col antialiased">
+          <Header />
+          <main className="flex-1">
+            <Home />
+          </main>
+          <Footer />
+        </div>
+        <Toaster />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
