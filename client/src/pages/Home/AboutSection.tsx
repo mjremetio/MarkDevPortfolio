@@ -1,25 +1,9 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { getAboutContent } from "@/utils/contentLoader";
-import { Code, Layers, GitBranch, Server, Laptop, Paintbrush, Cloud } from "lucide-react";
-
-interface AboutContent {
-  title: string;
-  subtitle?: string;
-  description: string[];
-  profilePicture?: string;
-  imageAlt?: string;
-  statItems?: { label: string; value: string; }[];
-  experience: string;
-  features: Array<{
-    title: string;
-    description: string;
-    icon: string;
-  }>;
-}
 
 const AboutSection = () => {
-  const [content, setContent] = useState<AboutContent>(getAboutContent() as AboutContent);
+  const [content, setContent] = useState(getAboutContent());
   
   useEffect(() => {
     // Attempt to fetch updated content from API
@@ -110,14 +94,8 @@ const AboutSection = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.1 * (index + 1) }}
                 >
-                  <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4 flex items-center justify-center">
-                    {feature.icon === 'code' && <Code className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
-                    {feature.icon === 'layer-group' && <Layers className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
-                    {feature.icon === 'code-branch' && <GitBranch className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
-                    {feature.icon === 'server' && <Server className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
-                    {feature.icon === 'laptop-code' && <Laptop className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
-                    {feature.icon === 'paint-brush' && <Paintbrush className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
-                    {feature.icon === 'cloud' && <Cloud className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
+                  <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
+                    <i className={`fas fa-${feature.icon} text-primary-600 dark:text-primary-400`}></i>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-white">{feature.title}</h4>

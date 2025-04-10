@@ -10,7 +10,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import InteractiveBackground from "@/components/InteractiveBackground";
-import DinoGame from "@/components/DinoGame";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 function App() {
@@ -30,7 +29,6 @@ function App() {
                 <Header />
                 <ScrollProgressBar />
                 <InteractiveBackground />
-                <DinoGame />
                 <main className="flex-1">
                   <Home />
                 </main>
