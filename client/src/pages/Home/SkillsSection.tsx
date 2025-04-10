@@ -1,11 +1,30 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { getSkillsContent } from "@/utils/contentLoader";
 
 interface SkillItemProps {
   name: string;
   percentage: number;
   delay: number;
   colorClass: string;
+}
+
+interface SkillCategory {
+  title: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  titleColor: string;
+  skills: Array<{
+    name: string;
+    percentage: number;
+    colorClass: string;
+  }>;
+}
+
+interface Technology {
+  name: string;
+  icon: string;
 }
 
 const SkillItem = ({ name, percentage, delay, colorClass }: SkillItemProps) => {
@@ -101,6 +120,24 @@ const TechIcon = ({ icon, name, delay }: { icon: string, name: string, delay: nu
 };
 
 const SkillsSection = () => {
+  const [content, setContent] = useState(getSkillsContent());
+  
+  useEffect(() => {
+    // Attempt to fetch updated content from API
+    fetch('/api/content/skills')
+      .then(response => {
+        if (response.ok) return response.json();
+        throw new Error('Failed to fetch skills content');
+      })
+      .then(data => {
+        setContent(data);
+      })
+      .catch(error => {
+        console.log('Using default skills content:', error);
+        // On error, use the local content (already set as default)
+      });
+  }, []);
+  
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -109,66 +146,6 @@ const SkillsSection = () => {
       transition: { duration: 0.6 }
     }
   };
-
-  const skillCategories = [
-    {
-      title: "Frontend Development",
-      icon: "fas fa-code",
-      iconBg: "bg-primary-100 dark:bg-primary-900/30",
-      iconColor: "text-primary-600 dark:text-primary-400",
-      titleColor: "text-gray-800 dark:text-white",
-      skills: [
-        { name: "HTML5/CSS3", percentage: 95, colorClass: "text-primary-600 dark:text-primary-400" },
-        { name: "JavaScript", percentage: 90, colorClass: "text-primary-600 dark:text-primary-400" },
-        { name: "React/Vue/Angular", percentage: 85, colorClass: "text-primary-600 dark:text-primary-400" },
-        { name: "CSS Preprocessors (SASS/LESS)", percentage: 90, colorClass: "text-primary-600 dark:text-primary-400" },
-        { name: "UI/UX Design", percentage: 80, colorClass: "text-primary-600 dark:text-primary-400" }
-      ]
-    },
-    {
-      title: "Backend Development",
-      icon: "fas fa-database",
-      iconBg: "bg-secondary-100 dark:bg-secondary-900/30",
-      iconColor: "text-secondary-600 dark:text-secondary-400",
-      titleColor: "text-gray-800 dark:text-white",
-      skills: [
-        { name: "PHP (Laravel, WordPress)", percentage: 90, colorClass: "text-secondary-600 dark:text-secondary-400" },
-        { name: "Node.js", percentage: 85, colorClass: "text-secondary-600 dark:text-secondary-400" },
-        { name: "MySQL/PostgreSQL", percentage: 85, colorClass: "text-secondary-600 dark:text-secondary-400" },
-        { name: "MongoDB", percentage: 80, colorClass: "text-secondary-600 dark:text-secondary-400" },
-        { name: "API Development", percentage: 90, colorClass: "text-secondary-600 dark:text-secondary-400" }
-      ]
-    },
-    {
-      title: "DevOps & Tools",
-      icon: "fas fa-cloud",
-      iconBg: "bg-blue-100 dark:bg-blue-900/30",
-      iconColor: "text-blue-600 dark:text-blue-400",
-      titleColor: "text-gray-800 dark:text-white",
-      skills: [
-        { name: "AWS (EC2, EBS, SES)", percentage: 85, colorClass: "text-blue-600 dark:text-blue-400" },
-        { name: "Git/GitHub/BitBucket", percentage: 90, colorClass: "text-blue-600 dark:text-blue-400" },
-        { name: "Linux (SSH, Terminal)", percentage: 85, colorClass: "text-blue-600 dark:text-blue-400" },
-        { name: "Project Management", percentage: 80, colorClass: "text-blue-600 dark:text-blue-400" },
-        { name: "CRM Systems", percentage: 85, colorClass: "text-blue-600 dark:text-blue-400" }
-      ]
-    }
-  ];
-
-  const techIcons = [
-    { icon: "fab fa-html5 text-orange-500", name: "HTML5", delay: 0 },
-    { icon: "fab fa-css3-alt text-blue-500", name: "CSS3", delay: 1 },
-    { icon: "fab fa-js text-yellow-400", name: "JavaScript", delay: 2 },
-    { icon: "fab fa-react text-blue-400", name: "React", delay: 3 },
-    { icon: "fab fa-vuejs text-green-500", name: "Vue.js", delay: 4 },
-    { icon: "fab fa-angular text-red-600", name: "Angular", delay: 5 },
-    { icon: "fab fa-node-js text-green-600", name: "Node.js", delay: 6 },
-    { icon: "fab fa-php text-purple-600", name: "PHP", delay: 7 },
-    { icon: "fab fa-laravel text-red-500", name: "Laravel", delay: 8 },
-    { icon: "fab fa-wordpress text-blue-800", name: "WordPress", delay: 9 },
-    { icon: "fab fa-aws text-orange-400", name: "AWS", delay: 10 },
-    { icon: "fab fa-git-alt text-red-500", name: "Git", delay: 11 }
-  ];
 
   return (
     <section id="skills" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -180,15 +157,15 @@ const SkillsSection = () => {
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeIn}
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-sans text-gray-900 dark:text-white">Technical Skills</h2>
+          <h2 className="text-3xl md:text-4xl font-bold font-sans text-gray-900 dark:text-white">{content.title}</h2>
           <div className="mt-3 w-16 h-1 bg-gradient-to-r from-primary-600 to-secondary-500 mx-auto rounded-full"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            A comprehensive set of skills accumulated over 5+ years of professional experience
+            {content.subtitle}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {skillCategories.map((category, categoryIndex) => (
+          {content.categories?.map((category, categoryIndex) => (
             <motion.div 
               key={category.title}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
@@ -206,7 +183,7 @@ const SkillsSection = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  {category.skills.map((skill, skillIndex) => (
+                  {category.skills?.map((skill, skillIndex) => (
                     <SkillItem 
                       key={skill.name}
                       name={skill.name}
@@ -249,22 +226,22 @@ const SkillsSection = () => {
             
             <div className="tech-slider pr-8">
               {/* First set of tech icons */}
-              {techIcons.map((tech) => (
+              {content.technologies?.map((tech, index) => (
                 <TechIcon 
                   key={`first-${tech.name}`}
                   icon={tech.icon}
                   name={tech.name}
-                  delay={tech.delay}
+                  delay={index}
                 />
               ))}
               
               {/* Duplicate set for infinite effect */}
-              {techIcons.map((tech) => (
+              {content.technologies?.map((tech, index) => (
                 <TechIcon 
                   key={`second-${tech.name}`}
                   icon={tech.icon}
                   name={tech.name}
-                  delay={tech.delay}
+                  delay={index}
                 />
               ))}
             </div>
