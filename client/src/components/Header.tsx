@@ -34,10 +34,10 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-      isScrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-sm' : 'bg-transparent'
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-sm' : 'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm'
     }`}>
-      <div className="container mx-auto px-4 md:px-6 py-4">
+      <div className="container mx-auto px-4 md:px-6 py-5">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <a 

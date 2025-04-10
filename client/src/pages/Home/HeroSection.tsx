@@ -27,9 +27,9 @@ const HeroSection = () => {
   return (
     <section 
       id="home" 
-      className="min-h-screen flex items-center pt-16 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-800 transition-colors duration-300"
+      className="min-h-screen flex items-center pt-24 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-800 transition-colors duration-300"
     >
-      <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
+      <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
           <motion.div 
             className="w-full md:w-1/2 space-y-6"
@@ -43,52 +43,25 @@ const HeroSection = () => {
             </h1>
             <h2 className="text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-300">{content.title}</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-lg">
-              {content.shortDescription}
+              {content.description}
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
-              {content.ctaButtons?.map((button, index) => (
-                <Button 
-                  key={index}
-                  variant={button.primary ? "default" : "outline"}
-                  className={`${button.primary ? 
-                    "bg-primary-600 text-white hover:bg-primary-700" : 
-                    "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"} 
-                    px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center`}
-                  onClick={() => button.downloadAction ? downloadResume() : smoothScrollTo(button.link)}
-                >
-                  {button.icon && <i className={`fas fa-${button.icon} mr-2`}></i>} {button.text}
-                </Button>
-              ))}
+              <Button 
+                variant="default"
+                className="bg-primary-600 text-white hover:bg-primary-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
+                onClick={() => smoothScrollTo('#projects')}
+              >
+                {content.ctaButton}
+              </Button>
+              <Button 
+                variant="outline"
+                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
+                onClick={() => downloadResume()}
+              >
+                {content.resumeButton}
+              </Button>
             </div>
-            <div className="flex items-center gap-4 pt-4">
-              {/* Stats section */}
-              <div className="flex flex-wrap gap-5 pt-6">
-                {content.stats?.map((stat, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className="text-primary-600 dark:text-primary-400 mr-2">
-                      <i className={`fas fa-${stat.icon} text-lg`}></i>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Badges section */}
-            <div className="flex flex-wrap gap-2 pt-4">
-              {content.badges?.map((badge, index) => (
-                <span 
-                  key={index}
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
-                    ${badge.bgColor} ${badge.textColor} ${badge.darkBgColor} ${badge.darkTextColor}`}
-                >
-                  {badge.text}
-                </span>
-              ))}
-            </div>
+            {/* We'll just include stat items from HeroSection if needed in the future */}
           </motion.div>
           <motion.div 
             className="w-full md:w-1/2 flex justify-center"
