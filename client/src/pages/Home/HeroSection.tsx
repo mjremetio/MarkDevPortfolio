@@ -24,10 +24,11 @@ const HeroSection = () => {
         // On error, use the local content (already set as default)
       });
   }, []);
+
   return (
     <section 
       id="home" 
-      className="min-h-screen flex items-center pt-24 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-800 transition-colors duration-300"
+      className="min-h-screen flex items-center pt-28 md:pt-32 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-800 transition-colors duration-300"
     >
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
@@ -61,8 +62,8 @@ const HeroSection = () => {
                 {content.resumeButton}
               </Button>
             </div>
-            {/* We'll just include stat items from HeroSection if needed in the future */}
           </motion.div>
+          
           <motion.div 
             className="w-full md:w-1/2 flex justify-center"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -96,6 +97,7 @@ const HeroSection = () => {
                   />
                 </motion.div>
               </motion.div>
+              
               <motion.div 
                 className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg border-4 border-gray-100 dark:border-gray-900"
                 initial={{ y: 20, opacity: 0 }}
@@ -106,6 +108,7 @@ const HeroSection = () => {
                   <i className="fas fa-code text-2xl"></i>
                 </div>
               </motion.div>
+              
               <motion.div 
                 className="absolute -top-4 -left-4 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg border-4 border-gray-100 dark:border-gray-900"
                 initial={{ y: -20, opacity: 0 }}
@@ -119,6 +122,7 @@ const HeroSection = () => {
             </div>
           </motion.div>
         </div>
+        
         <motion.div 
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 hidden md:block"
           animate={{ 
