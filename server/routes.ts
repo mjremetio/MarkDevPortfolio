@@ -4,8 +4,11 @@ import { storage } from "./storage";
 import fs from "fs";
 import path from "path";
 import { getContent, updateContent, listContentSections } from './contentRoutes';
+import { setupAuth, requireAuth } from './auth';
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
   // Contact form submission endpoint
   app.post('/api/contact', async (req: Request, res: Response) => {
     try {
@@ -51,7 +54,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Content management routes
   app.get('/api/content', listContentSections);
   app.get('/api/content/:section', getContent);
-  app.post('/api/content/:section', updateContent);
+  app.post('/api/content/:section', requireAuth, updateContent);
 
   const httpServer = createServer(app);
 
