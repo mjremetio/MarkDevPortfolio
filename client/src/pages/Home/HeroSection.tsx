@@ -93,7 +93,7 @@ const HeroSection = () => {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <img 
-                    src={theme === 'dark' ? "/images/profile-dark.svg" : "/images/profile-light.svg"} 
+                    src="/images/profile-photo.png" 
                     alt="Mark Remetio" 
                     className="w-full h-full object-cover"
                   />

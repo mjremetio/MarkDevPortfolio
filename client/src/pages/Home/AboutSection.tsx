@@ -54,9 +54,9 @@ const AboutSection = () => {
             <div className="relative">
               <div className="rounded-lg overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-[1.02]">
                 <img 
-                  src="/images/profile.svg" 
+                  src="/images/profile-photo.png" 
                   alt="Mark Remetio" 
-                  className="w-full h-64 object-cover"
+                  className="w-full h-64 object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
               </div>
