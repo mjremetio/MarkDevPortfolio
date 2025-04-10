@@ -1,0 +1,30 @@
+{
+  "title": "Versatile Full-Stack Web Developer & Designer",
+  "description": [
+    "Detail-oriented Web Developer with nearly 5 years of hands-on experience specializing in both Front-End and Back-End development, including UI/UX design and server management. Proven track record in deploying live applications and driving their market presence, demonstrating a keen understanding of the complete development lifecycle.",
+    "I'm passionate about creating clean, efficient code and intuitive user experiences. My expertise spans from crafting visually appealing interfaces to implementing robust back-end systems and managing server infrastructure."
+  ],
+  "experience": "5+ Years",
+  "features": [
+    {
+      "title": "Front-End Development",
+      "description": "Creating responsive, interactive user interfaces with modern frameworks",
+      "icon": "laptop-code"
+    },
+    {
+      "title": "Back-End Systems",
+      "description": "Building secure, scalable API endpoints and database architectures",
+      "icon": "server"
+    },
+    {
+      "title": "UI/UX Design",
+      "description": "Designing intuitive, aesthetically pleasing user experiences",
+      "icon": "paint-brush"
+    },
+    {
+      "title": "Cloud Infrastructure",
+      "description": "Managing AWS services and server environments",
+      "icon": "cloud"
+    }
+  ]
+}

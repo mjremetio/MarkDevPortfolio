@@ -1,0 +1,114 @@
+{
+  "title": "Get In Touch",
+  "subtitle": "Have a project in mind or want to discuss opportunities? Send me a message and I'll get back to you soon.",
+  "contactInfo": [
+    {
+      "type": "Email",
+      "value": "mj.remetio001@gmail.com",
+      "link": "mailto:mj.remetio001@gmail.com",
+      "icon": "envelope"
+    },
+    {
+      "type": "LinkedIn",
+      "value": "linkedin.com/in/mark-joseph-remetio",
+      "link": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+      "icon": "linkedin"
+    },
+    {
+      "type": "Location",
+      "value": "Philippines",
+      "icon": "globe"
+    }
+  ],
+  "socialLinks": [
+    {
+      "platform": "LinkedIn",
+      "link": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+      "icon": "linkedin-in",
+      "bgColor": "bg-[#0077B5]",
+      "hoverColor": "hover:bg-[#005885]"
+    },
+    {
+      "platform": "GitHub",
+      "link": "#",
+      "icon": "github",
+      "bgColor": "bg-[#333]",
+      "hoverColor": "hover:bg-[#222]"
+    },
+    {
+      "platform": "Twitter",
+      "link": "#",
+      "icon": "twitter",
+      "bgColor": "bg-[#1DA1F2]",
+      "hoverColor": "hover:bg-[#0c85d0]"
+    },
+    {
+      "platform": "Dribbble",
+      "link": "#",
+      "icon": "dribbble",
+      "bgColor": "bg-[#ea4c89]",
+      "hoverColor": "hover:bg-[#d62e72]"
+    }
+  ],
+  "availableFor": [
+    {
+      "type": "Freelance Projects",
+      "bgClass": "bg-green-100",
+      "textClass": "text-green-800",
+      "darkBgClass": "dark:bg-green-900/30",
+      "darkTextClass": "dark:text-green-300"
+    },
+    {
+      "type": "Full-time Position",
+      "bgClass": "bg-blue-100",
+      "textClass": "text-blue-800",
+      "darkBgClass": "dark:bg-blue-900/30",
+      "darkTextClass": "dark:text-blue-300"
+    },
+    {
+      "type": "Consulting",
+      "bgClass": "bg-purple-100",
+      "textClass": "text-purple-800",
+      "darkBgClass": "dark:bg-purple-900/30",
+      "darkTextClass": "dark:text-purple-300"
+    },
+    {
+      "type": "Remote Work",
+      "bgClass": "bg-yellow-100",
+      "textClass": "text-yellow-800",
+      "darkBgClass": "dark:bg-yellow-900/30",
+      "darkTextClass": "dark:text-yellow-300"
+    }
+  ],
+  "formFields": [
+    {
+      "name": "name",
+      "label": "Your Name",
+      "type": "text",
+      "placeholder": "Enter your name",
+      "required": true
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "email",
+      "placeholder": "Enter your email",
+      "required": true
+    },
+    {
+      "name": "subject",
+      "label": "Subject",
+      "type": "text",
+      "placeholder": "Enter message subject",
+      "required": true
+    },
+    {
+      "name": "message",
+      "label": "Message",
+      "type": "textarea",
+      "placeholder": "Enter your message here...",
+      "required": true,
+      "rows": 5
+    }
+  ]
+}

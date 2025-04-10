@@ -1,0 +1,50 @@
+{
+  "title": "Professional Experience",
+  "subtitle": "My journey as a developer over the past 5+ years",
+  "timeline": [
+    {
+      "title": "Lead Full-Stack Developer",
+      "company": "TechCorp Solutions",
+      "period": "2021 - Present",
+      "responsibilities": [
+        "Lead a team of 4 developers in creating robust web applications",
+        "Architect and implement modern frontend solutions using React and Vue",
+        "Design and optimize backend systems with Node.js and PHP",
+        "Mentor junior developers and review code for quality assurance"
+      ]
+    },
+    {
+      "title": "Full-Stack Web Developer",
+      "company": "Digital Innovations Inc.",
+      "period": "2019 - 2021",
+      "responsibilities": [
+        "Developed custom CMS solutions for 10+ corporate clients",
+        "Created responsive designs and interactive UIs across multiple platforms",
+        "Implemented server-side logic and database designs in PHP and MySQL",
+        "Maintained and improved legacy applications for performance and security"
+      ]
+    },
+    {
+      "title": "Junior Web Developer",
+      "company": "WebTech Studios",
+      "period": "2017 - 2019",
+      "responsibilities": [
+        "Built and maintained client websites using WordPress and custom PHP",
+        "Collaborated with design team to implement responsive layouts",
+        "Assisted senior developers with backend integration tasks",
+        "Created and maintained documentation for site maintenance and updates"
+      ]
+    },
+    {
+      "title": "Web Development Intern",
+      "company": "CreativeMinds Agency",
+      "period": "2016 - 2017",
+      "responsibilities": [
+        "Assisted in frontend development tasks using HTML, CSS, and JavaScript",
+        "Participated in UI/UX design discussions and implementation",
+        "Learned and implemented modern development workflows with Git",
+        "Gained experience with content management systems and themes"
+      ]
+    }
+  ]
+}

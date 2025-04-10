@@ -1,0 +1,54 @@
+{
+  "title": "Featured Projects",
+  "subtitle": "Showcasing some of my best work across various technologies and platforms",
+  "projects": [
+    {
+      "title": "E-Commerce CMS Platform",
+      "description": "Custom e-commerce solution with integrated CRM and payment processing for a retail client.",
+      "imagePlaceholder": "E-Commerce CMS",
+      "technologies": ["Laravel", "Vue.js", "MySQL", "AWS"],
+      "githubLink": "https://github.com/",
+      "liveLink": "#"
+    },
+    {
+      "title": "Learning Management System",
+      "description": "Enhanced Moodle-based LMS with custom plugins for university distance learning programs.",
+      "imagePlaceholder": "LMS Platform",
+      "technologies": ["PHP", "Moodle", "JavaScript", "MySQL"],
+      "githubLink": "https://github.com/",
+      "liveLink": "#"
+    },
+    {
+      "title": "Marketing Analytics Dashboard",
+      "description": "Real-time marketing performance dashboard with Salesforce and Google Analytics integration.",
+      "imagePlaceholder": "Marketing Dashboard",
+      "technologies": ["React", "Node.js", "Salesforce API", "D3.js"],
+      "githubLink": "https://github.com/",
+      "liveLink": "#"
+    },
+    {
+      "title": "Clearance Management System",
+      "description": "Automated clearance processing system for educational institutions with approval workflows.",
+      "imagePlaceholder": "Clearance System",
+      "technologies": ["PHP", "jQuery", "MySQL", "Bootstrap"],
+      "githubLink": "https://github.com/",
+      "liveLink": "#"
+    },
+    {
+      "title": "Marketing Workflow Automation",
+      "description": "Custom workflow automation for marketing and CRM processes using Zapier and custom API integrations.",
+      "imagePlaceholder": "Workflow Automation",
+      "technologies": ["Node.js", "Zapier", "Salesforce", "REST APIs"],
+      "githubLink": "https://github.com/",
+      "liveLink": "#"
+    },
+    {
+      "title": "Personal Portfolio Website",
+      "description": "Responsive personal portfolio site with modern design patterns and animations.",
+      "imagePlaceholder": "Portfolio Website",
+      "technologies": ["React", "Tailwind CSS", "GSAP", "GitHub Pages"],
+      "githubLink": "https://github.com/",
+      "liveLink": "#"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "title": "Hi, I'm Mark Remetio",
+  "subtitle": "Web Designer & Developer",
+  "description": "Versatile and detail-oriented Web Developer with 5 years of hands-on experience specializing in both Front-End and Back-End development.",
+  "ctaButtons": [
+    {
+      "text": "Get in Touch",
+      "href": "#contact",
+      "variant": "primary"
+    },
+    {
+      "text": "View Projects",
+      "href": "#projects",
+      "variant": "outline"
+    },
+    {
+      "text": "Resume",
+      "href": "#download",
+      "variant": "outline",
+      "icon": "download"
+    }
+  ],
+  "socialLinks": [
+    {
+      "platform": "LinkedIn",
+      "url": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+      "icon": "linkedin"
+    },
+    {
+      "platform": "GitHub",
+      "url": "https://github.com/",
+      "icon": "github"
+    },
+    {
+      "platform": "Email",
+      "url": "mailto:mj.remetio001@gmail.com",
+      "icon": "envelope"
+    }
+  ]
+}
