@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { smoothScrollTo } from "@/utils/smoothScroll";
 import { downloadResume } from "@/utils/downloadResume";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Code, Paintbrush } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getHeroContent } from "@/utils/contentLoader";
 
@@ -40,7 +40,7 @@ const HeroSection = () => {
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-sans leading-tight">
               <span className="text-gray-900 dark:text-white">{content.greeting} </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">{content.name}</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-secondary-300">{content.name}</span>
             </h1>
             <h2 className="text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-300">{content.title}</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-lg">
@@ -72,12 +72,12 @@ const HeroSection = () => {
           >
             <div className="relative">
               <motion.div 
-                className="w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 p-1"
+                className="w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full bg-gradient-to-br from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-primary-600 p-1"
                 animate={{ 
                   boxShadow: [
-                    "0 0 10px rgba(79, 70, 229, 0.4)",
-                    "0 0 20px rgba(79, 70, 229, 0.6)",
-                    "0 0 10px rgba(79, 70, 229, 0.4)"
+                    "0 0 10px rgba(99, 102, 241, 0.4)",
+                    "0 0 20px rgba(99, 102, 241, 0.6)",
+                    "0 0 10px rgba(99, 102, 241, 0.4)"
                   ],
                 }}
                 transition={{ 
@@ -104,8 +104,8 @@ const HeroSection = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white p-2 rounded-full">
-                  <i className="fas fa-code text-2xl"></i>
+                <div className="bg-gradient-to-br from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-secondary-500 text-white p-2 rounded-full">
+                  <Code className="h-5 w-5 text-white" />
                 </div>
               </motion.div>
               
@@ -115,8 +115,8 @@ const HeroSection = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white p-2 rounded-full">
-                  <i className="fas fa-paint-brush text-2xl"></i>
+                <div className="bg-gradient-to-br from-primary-500 to-secondary-400 dark:from-primary-400 dark:to-secondary-500 text-white p-2 rounded-full">
+                  <Paintbrush className="h-5 w-5 text-white" />
                 </div>
               </motion.div>
             </div>
