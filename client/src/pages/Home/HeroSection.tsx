@@ -69,9 +69,11 @@ const HeroSection = () => {
             <div className="relative">
               <div className="w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 p-1">
                 <div className="bg-white dark:bg-gray-900 rounded-full w-full h-full flex items-center justify-center overflow-hidden">
-                  <svg className="w-full h-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
+                  <img 
+                    src="/images/profile.svg" 
+                    alt="Mark Remetio" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
               <motion.div 

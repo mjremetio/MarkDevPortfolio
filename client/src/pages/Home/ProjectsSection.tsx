@@ -28,11 +28,11 @@ const ProjectCard = ({
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .project-card:hover .project-overlay {
           opacity: 1;
         }
-      `}</style>
+      `}} />
       
       <div className="relative h-56 overflow-hidden">
         <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">

@@ -34,10 +34,12 @@ const AboutSection = () => {
           >
             <div className="relative">
               <div className="rounded-lg overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-[1.02]">
-                <svg className="w-full h-64 text-gray-200 dark:text-gray-700" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70"></div>
+                <img 
+                  src="/images/profile.svg" 
+                  alt="Mark Remetio" 
+                  className="w-full h-64 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
               </div>
               <div className="absolute bottom-6 left-6 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
                 <p className="text-gray-800 dark:text-gray-200 font-medium">

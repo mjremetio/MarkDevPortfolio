@@ -17,7 +17,7 @@ const TimelineItem = ({ title, company, period, responsibilities, index }: Timel
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .timeline-item:not(:last-child)::after {
           content: '';
           position: absolute;
@@ -27,7 +27,7 @@ const TimelineItem = ({ title, company, period, responsibilities, index }: Timel
           width: 2px;
           background-color: rgb(99 102 241);
         }
-      `}</style>
+      `}} />
       
       <div className="absolute left-0 top-0 bg-primary-600 dark:bg-primary-500 w-5 h-5 rounded-full z-10 shadow-md"></div>
       

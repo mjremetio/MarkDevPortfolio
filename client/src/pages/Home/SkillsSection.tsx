@@ -198,15 +198,44 @@ const SkillsSection = () => {
         >
           <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-white mb-8">Technologies I Work With</h3>
           
-          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
-            {techIcons.map((tech) => (
-              <TechIcon 
-                key={tech.name}
-                icon={tech.icon}
-                name={tech.name}
-                delay={tech.delay}
-              />
-            ))}
+          <div className="relative overflow-hidden py-6">
+            <style dangerouslySetInnerHTML={{__html: `
+              @keyframes slideLeft {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+              }
+              .tech-slider {
+                animation: slideLeft 30s linear infinite;
+                width: max-content;
+                display: flex;
+                gap: 2.5rem;
+              }
+              .tech-slider:hover {
+                animation-play-state: paused;
+              }
+            `}} />
+            
+            <div className="tech-slider pr-8">
+              {/* First set of tech icons */}
+              {techIcons.map((tech) => (
+                <TechIcon 
+                  key={`first-${tech.name}`}
+                  icon={tech.icon}
+                  name={tech.name}
+                  delay={tech.delay}
+                />
+              ))}
+              
+              {/* Duplicate set for infinite effect */}
+              {techIcons.map((tech) => (
+                <TechIcon 
+                  key={`second-${tech.name}`}
+                  icon={tech.icon}
+                  name={tech.name}
+                  delay={tech.delay}
+                />
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>

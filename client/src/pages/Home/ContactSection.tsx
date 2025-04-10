@@ -202,15 +202,7 @@ const ContactSection = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
-                    <i className="fas fa-phone text-primary-600 dark:text-primary-400"></i>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800 dark:text-white">Phone</h4>
-                    <a href="tel:+639368601808" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">+639368601808</a>
-                  </div>
-                </div>
+                {/* Phone number removed as requested */}
                 
                 <div className="flex items-start">
                   <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
