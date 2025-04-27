@@ -21,7 +21,8 @@ import {
   Star,
   Layers,
   User,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Mail
 } from "lucide-react";
 import { 
   Accordion,
@@ -141,6 +142,25 @@ interface GalleryContent {
   subtitle: string;
   description: string;
   images: string[];
+}
+
+interface ContactContent {
+  title: string;
+  subtitle: string;
+  description: string;
+  email: string;
+  socialLinks: Array<{
+    name: string;
+    url: string;
+    icon: string;
+  }>;
+  formLabels: {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    button: string;
+  };
 }
 
 const AdminDashboard = () => {
@@ -1565,6 +1585,186 @@ const AdminDashboard = () => {
     );
   };
 
+  // Contact section form
+  const renderContactForm = () => {
+    const data = contentData as ContactContent;
+    
+    if (!data) {
+      return <p>Loading contact data...</p>;
+    }
+    
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Section Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input 
+                id="title" 
+                value={data.title} 
+                onChange={(e) => updateContentField(['title'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="subtitle">Subtitle</Label>
+              <Input 
+                id="subtitle" 
+                value={data.subtitle} 
+                onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              value={data.description} 
+              onChange={(e) => updateContentField(['description'], e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Email Address</Label>
+            <Input 
+              id="email" 
+              type="email"
+              value={data.email} 
+              onChange={(e) => updateContentField(['email'], e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold">Social Links</h3>
+            <Button 
+              size="sm" 
+              onClick={() => addArrayItem(['socialLinks'], {
+                name: "New Platform",
+                url: "https://example.com",
+                icon: "FaLink"
+              })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Social Link
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {data.socialLinks && data.socialLinks.map((link, linkIndex) => (
+              <Card key={linkIndex}>
+                <CardHeader className="py-4 px-5">
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="text-base">{link.name}</CardTitle>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => removeArrayItem(['socialLinks'], linkIndex)}
+                    >
+                      <Trash className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="py-3 px-5 space-y-4">
+                  <div>
+                    <Label htmlFor={`social-${linkIndex}-name`}>Platform Name</Label>
+                    <Input 
+                      id={`social-${linkIndex}-name`} 
+                      value={link.name}
+                      onChange={(e) => {
+                        const newSocialLinks = [...data.socialLinks];
+                        newSocialLinks[linkIndex].name = e.target.value;
+                        updateContentField(['socialLinks'], newSocialLinks);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`social-${linkIndex}-url`}>URL</Label>
+                    <Input 
+                      id={`social-${linkIndex}-url`} 
+                      value={link.url}
+                      onChange={(e) => {
+                        const newSocialLinks = [...data.socialLinks];
+                        newSocialLinks[linkIndex].url = e.target.value;
+                        updateContentField(['socialLinks'], newSocialLinks);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`social-${linkIndex}-icon`}>Icon (from React Icons)</Label>
+                    <Input 
+                      id={`social-${linkIndex}-icon`} 
+                      value={link.icon}
+                      placeholder="e.g. FaGithub, FaLinkedin, FaTwitter"
+                      onChange={(e) => {
+                        const newSocialLinks = [...data.socialLinks];
+                        newSocialLinks[linkIndex].icon = e.target.value;
+                        updateContentField(['socialLinks'], newSocialLinks);
+                      }}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Enter React Icons component name (FaGithub, FaLinkedin, etc.)
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Form Labels</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="form-name-label">Name Field Label</Label>
+              <Input 
+                id="form-name-label" 
+                value={data.formLabels.name} 
+                onChange={(e) => updateContentField(['formLabels', 'name'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="form-email-label">Email Field Label</Label>
+              <Input 
+                id="form-email-label" 
+                value={data.formLabels.email} 
+                onChange={(e) => updateContentField(['formLabels', 'email'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="form-subject-label">Subject Field Label</Label>
+              <Input 
+                id="form-subject-label" 
+                value={data.formLabels.subject} 
+                onChange={(e) => updateContentField(['formLabels', 'subject'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="form-message-label">Message Field Label</Label>
+              <Input 
+                id="form-message-label" 
+                value={data.formLabels.message} 
+                onChange={(e) => updateContentField(['formLabels', 'message'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="form-button-label">Submit Button Label</Label>
+              <Input 
+                id="form-button-label" 
+                value={data.formLabels.button} 
+                onChange={(e) => updateContentField(['formLabels', 'button'], e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Render the appropriate form based on section
   const renderSectionForm = () => {
     switch (currentSection) {
@@ -1580,6 +1780,8 @@ const AdminDashboard = () => {
         return renderProjectsForm();
       case 'gallery':
         return renderGalleryForm();
+      case 'contact':
+        return renderContactForm();
       default:
         return (
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
@@ -1617,6 +1819,10 @@ const AdminDashboard = () => {
         return <Wrench className="w-4 h-4 mr-2" />;
       case 'projects':
         return <Layers className="w-4 h-4 mr-2" />;
+      case 'gallery':
+        return <ImageIcon className="w-4 h-4 mr-2" />;
+      case 'contact':
+        return <Mail className="w-4 h-4 mr-2" />;
       default:
         return null;
     }
