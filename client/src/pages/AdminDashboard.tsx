@@ -20,7 +20,8 @@ import {
   Wrench,
   Star,
   Layers,
-  User
+  User,
+  Image as ImageIcon
 } from "lucide-react";
 import { 
   Accordion,
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ImageUpload, MultipleImageUpload } from "@/components/ImageUpload";
 
 // Define some interfaces for strongly-typed content
 interface HeroContent {
@@ -40,6 +42,7 @@ interface HeroContent {
   ctaButton: string;
   ctaButtonLink: string;
   resumeButton: string;
+  profilePicture?: string;
 }
 
 interface AboutContent {
@@ -92,6 +95,29 @@ interface SkillsContent {
   description: string;
   categories: SkillCategory[];
   technologies: Technology[];
+}
+
+interface ProjectItem {
+  title: string;
+  description: string;
+  imagePlaceholder: string;
+  technologies: string[];
+  githubLink?: string;
+  liveLink?: string;
+}
+
+interface ProjectsContent {
+  title: string;
+  subtitle: string;
+  description: string;
+  projects: ProjectItem[];
+}
+
+interface GalleryContent {
+  title: string;
+  subtitle: string;
+  description: string;
+  images: string[];
 }
 
 const AdminDashboard = () => {
@@ -974,15 +1000,12 @@ const AdminDashboard = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="profilePicture">Profile Picture Path</Label>
-            <Input 
-              id="profilePicture" 
-              value={data.profilePicture} 
-              onChange={(e) => updateContentField(['profilePicture'], e.target.value)}
-            />
-          </div>
+        <div className="space-y-4">
+          <ImageUpload 
+            label="Profile Picture"
+            currentImagePath={data.profilePicture} 
+            onImageUploaded={(path) => updateContentField(['profilePicture'], path)}
+          />
           <div>
             <Label htmlFor="imageAlt">Image Alt Text</Label>
             <Input 
@@ -1071,6 +1094,278 @@ const AdminDashboard = () => {
     );
   };
 
+  // Projects form
+  const renderProjectsForm = () => {
+    const data = contentData as ProjectsContent;
+    
+    if (!data || !data.projects) {
+      return <p>Loading projects data...</p>;
+    }
+    
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Section Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input 
+                id="title" 
+                value={data.title} 
+                onChange={(e) => updateContentField(['title'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="subtitle">Subtitle</Label>
+              <Input 
+                id="subtitle" 
+                value={data.subtitle} 
+                onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              value={data.description} 
+              onChange={(e) => updateContentField(['description'], e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold">Projects</h3>
+            <Button 
+              size="sm" 
+              onClick={() => addArrayItem(['projects'], {
+                title: "New Project",
+                description: "Project description goes here",
+                imagePlaceholder: "",
+                technologies: ["Tech 1", "Tech 2"],
+                githubLink: "",
+                liveLink: ""
+              })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Project
+            </Button>
+          </div>
+          
+          <Accordion type="multiple" className="w-full">
+            {data.projects.map((project, projectIndex) => (
+              <AccordionItem key={projectIndex} value={`project-${projectIndex}`}>
+                <div className="flex items-center">
+                  <AccordionTrigger className="flex-1">
+                    <div className="flex items-center">
+                      <Layers className="w-4 h-4 mr-2" />
+                      <span>{project.title}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    className="mr-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeArrayItem(['projects'], projectIndex);
+                    }}
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
+                </div>
+                <AccordionContent>
+                  <div className="space-y-4 p-4">
+                    <div>
+                      <Label htmlFor={`project-${projectIndex}-title`}>Project Title</Label>
+                      <Input 
+                        id={`project-${projectIndex}-title`} 
+                        value={project.title} 
+                        onChange={(e) => updateContentField(['projects', projectIndex.toString(), 'title'], e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`project-${projectIndex}-description`}>Description</Label>
+                      <Textarea 
+                        id={`project-${projectIndex}-description`} 
+                        value={project.description} 
+                        onChange={(e) => updateContentField(['projects', projectIndex.toString(), 'description'], e.target.value)}
+                      />
+                    </div>
+                    
+                    <ImageUpload 
+                      label="Project Image"
+                      currentImagePath={project.imagePlaceholder} 
+                      onImageUploaded={(path) => updateContentField(['projects', projectIndex.toString(), 'imagePlaceholder'], path)}
+                    />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor={`project-${projectIndex}-github`}>GitHub Link</Label>
+                        <Input 
+                          id={`project-${projectIndex}-github`} 
+                          value={project.githubLink || ''} 
+                          onChange={(e) => updateContentField(['projects', projectIndex.toString(), 'githubLink'], e.target.value)}
+                          placeholder="https://github.com/username/repo"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`project-${projectIndex}-live`}>Live Demo Link</Label>
+                        <Input 
+                          id={`project-${projectIndex}-live`} 
+                          value={project.liveLink || ''} 
+                          onChange={(e) => updateContentField(['projects', projectIndex.toString(), 'liveLink'], e.target.value)}
+                          placeholder="https://example.com"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label>Technologies</Label>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            const newTechs = [...project.technologies, "New Technology"];
+                            updateContentField(['projects', projectIndex.toString(), 'technologies'], newTechs);
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Technology
+                        </Button>
+                      </div>
+                      <div className="space-y-2">
+                        {project.technologies.map((tech, techIndex) => (
+                          <div key={techIndex} className="flex gap-2">
+                            <Input 
+                              value={tech} 
+                              onChange={(e) => {
+                                const newTechs = [...project.technologies];
+                                newTechs[techIndex] = e.target.value;
+                                updateContentField(['projects', projectIndex.toString(), 'technologies'], newTechs);
+                              }}
+                            />
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="shrink-0"
+                              onClick={() => {
+                                const newTechs = [...project.technologies];
+                                newTechs.splice(techIndex, 1);
+                                updateContentField(['projects', projectIndex.toString(), 'technologies'], newTechs);
+                              }}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </div>
+    );
+  };
+  
+  // Gallery form
+  const renderGalleryForm = () => {
+    const data = contentData as GalleryContent;
+    
+    if (!data || !data.images) {
+      return <p>Loading gallery data...</p>;
+    }
+    
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Section Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input 
+                id="title" 
+                value={data.title} 
+                onChange={(e) => updateContentField(['title'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="subtitle">Subtitle</Label>
+              <Input 
+                id="subtitle" 
+                value={data.subtitle} 
+                onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              value={data.description} 
+              onChange={(e) => updateContentField(['description'], e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Gallery Images</h3>
+          
+          <MultipleImageUpload 
+            label="Upload Multiple Images"
+            onImagesUploaded={(paths) => {
+              const newImages = [...data.images, ...paths];
+              updateContentField(['images'], newImages);
+            }}
+          />
+          
+          <div className="mt-6">
+            <h4 className="text-lg font-medium mb-3">Current Images</h4>
+            {data.images.length === 0 ? (
+              <p className="text-sm text-slate-500">No images in the gallery yet. Upload some images above.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {data.images.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <div className="relative aspect-square rounded-md overflow-hidden bg-slate-100 dark:bg-slate-800">
+                      <img 
+                        src={image} 
+                        alt={`Gallery image ${index + 1}`} 
+                        className="object-cover w-full h-full" 
+                      />
+                    </div>
+                    <Button 
+                      variant="destructive" 
+                      size="icon"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => {
+                        const newImages = [...data.images];
+                        newImages.splice(index, 1);
+                        updateContentField(['images'], newImages);
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <div className="text-xs text-slate-500 mt-1 truncate">{image.split('/').pop()}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Render the appropriate form based on section
   const renderSectionForm = () => {
     switch (currentSection) {
@@ -1082,6 +1377,10 @@ const AdminDashboard = () => {
         return renderExperienceForm();
       case 'skills':
         return renderSkillsForm();
+      case 'projects':
+        return renderProjectsForm();
+      case 'gallery':
+        return renderGalleryForm();
       default:
         return (
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
