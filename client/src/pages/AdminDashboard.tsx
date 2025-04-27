@@ -7,7 +7,92 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, LogOut } from "lucide-react";
+import { 
+  Loader2, 
+  Save, 
+  LogOut, 
+  Plus, 
+  Trash, 
+  Code,
+  Edit,
+  X,
+  Briefcase,
+  Wrench,
+  Star,
+  Layers,
+  User
+} from "lucide-react";
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+
+// Define some interfaces for strongly-typed content
+interface HeroContent {
+  greeting: string;
+  name: string;
+  title: string;
+  description: string;
+  ctaButton: string;
+  ctaButtonLink: string;
+  resumeButton: string;
+}
+
+interface AboutContent {
+  title: string;
+  subtitle: string;
+  description: string[];
+  profilePicture: string;
+  imageAlt: string;
+  statItems: Array<{
+    label: string;
+    value: string;
+  }>;
+}
+
+interface ExperienceContent {
+  title: string;
+  subtitle: string;
+  description: string;
+  experiences: Array<{
+    title: string;
+    company: string;
+    period: string;
+    responsibilities: string[];
+  }>;
+}
+
+interface SkillItem {
+  name: string;
+  percentage: number;
+  colorClass: string;
+}
+
+interface SkillCategory {
+  title: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  titleColor: string;
+  skills: SkillItem[];
+}
+
+interface Technology {
+  name: string;
+  icon: string;
+}
+
+interface SkillsContent {
+  title: string;
+  subtitle: string;
+  description: string;
+  categories: SkillCategory[];
+  technologies: Technology[];
+}
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +102,7 @@ const AdminDashboard = () => {
   const [contentData, setContentData] = useState<any>(null);
   const [editedContent, setEditedContent] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
+  const [editMode, setEditMode] = useState<"form" | "json">("form");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -94,8 +180,8 @@ const AdminDashboard = () => {
     fetchContent(section);
   };
 
-  // Handle content update
-  const handleContentUpdate = async () => {
+  // Handle content update (JSON mode)
+  const handleJsonContentUpdate = async () => {
     setIsSaving(true);
     try {
       // Parse the content to validate JSON
@@ -146,6 +232,47 @@ const AdminDashboard = () => {
     }
   };
 
+  // Handle form content update
+  const handleFormContentUpdate = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(`/api/content/${currentSection}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contentData),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        toast({
+          title: "Success",
+          description: `${currentSection} content updated successfully`,
+        });
+        
+        // Update the JSON editor content too
+        setEditedContent(JSON.stringify(contentData, null, 2));
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || `Failed to update ${currentSection} content`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error updating content:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update content",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // Handle logout
   const handleLogout = async () => {
     try {
@@ -153,6 +280,816 @@ const AdminDashboard = () => {
       setLocation('/maglogin');
     } catch (error) {
       console.error('Error logging out:', error);
+    }
+  };
+
+  // Update a specific field in the content data
+  const updateContentField = (path: string[], value: any) => {
+    setContentData((prevData: any) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      let current = newData;
+      
+      // Navigate to the parent object
+      for (let i = 0; i < path.length - 1; i++) {
+        if (Array.isArray(current)) {
+          current = current[parseInt(path[i])];
+        } else {
+          current = current[path[i]];
+        }
+      }
+      
+      // Set the value
+      const lastKey = path[path.length - 1];
+      if (Array.isArray(current)) {
+        current[parseInt(lastKey)] = value;
+      } else {
+        current[lastKey] = value;
+      }
+      
+      return newData;
+    });
+  };
+
+  // Add an item to an array in the content data
+  const addArrayItem = (path: string[], template: any) => {
+    setContentData((prevData: any) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      let current = newData;
+      
+      // Navigate to the array
+      for (let i = 0; i < path.length; i++) {
+        if (Array.isArray(current)) {
+          current = current[parseInt(path[i])];
+        } else {
+          current = current[path[i]];
+        }
+      }
+      
+      // Add the item
+      if (Array.isArray(current)) {
+        current.push(template);
+      }
+      
+      return newData;
+    });
+  };
+
+  // Remove an item from an array in the content data
+  const removeArrayItem = (path: string[], index: number) => {
+    setContentData((prevData: any) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      let current = newData;
+      
+      // Navigate to the array
+      for (let i = 0; i < path.length; i++) {
+        if (Array.isArray(current)) {
+          current = current[parseInt(path[i])];
+        } else {
+          current = current[path[i]];
+        }
+      }
+      
+      // Remove the item
+      if (Array.isArray(current)) {
+        current.splice(index, 1);
+      }
+      
+      return newData;
+    });
+  };
+
+  // Section-specific form components
+  const renderExperienceForm = () => {
+    const data = contentData as ExperienceContent;
+    
+    if (!data || !data.experiences) {
+      return <p>Loading experience data...</p>;
+    }
+    
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Section Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input 
+                id="title" 
+                value={data.title} 
+                onChange={(e) => updateContentField(['title'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="subtitle">Subtitle</Label>
+              <Input 
+                id="subtitle" 
+                value={data.subtitle} 
+                onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              value={data.description} 
+              onChange={(e) => updateContentField(['description'], e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold">Experience Items</h3>
+            <Button 
+              size="sm" 
+              onClick={() => addArrayItem(['experiences'], {
+                title: "New Position",
+                company: "Company Name",
+                period: "Start - End",
+                responsibilities: ["Add your responsibilities here"]
+              })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Experience
+            </Button>
+          </div>
+          
+          <Accordion type="multiple" className="w-full">
+            {data.experiences.map((exp, expIndex) => (
+              <AccordionItem key={expIndex} value={`exp-${expIndex}`}>
+                <div className="flex items-center">
+                  <AccordionTrigger className="flex-1">
+                    <div className="flex items-center">
+                      <Briefcase className="w-4 h-4 mr-2" />
+                      <span>{exp.title} at {exp.company}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    className="mr-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeArrayItem(['experiences'], expIndex);
+                    }}
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
+                </div>
+                <AccordionContent>
+                  <div className="space-y-4 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor={`exp-${expIndex}-title`}>Job Title</Label>
+                        <Input 
+                          id={`exp-${expIndex}-title`} 
+                          value={exp.title} 
+                          onChange={(e) => updateContentField(['experiences', expIndex.toString(), 'title'], e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`exp-${expIndex}-company`}>Company</Label>
+                        <Input 
+                          id={`exp-${expIndex}-company`} 
+                          value={exp.company} 
+                          onChange={(e) => updateContentField(['experiences', expIndex.toString(), 'company'], e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor={`exp-${expIndex}-period`}>Period</Label>
+                      <Input 
+                        id={`exp-${expIndex}-period`} 
+                        value={exp.period} 
+                        onChange={(e) => updateContentField(['experiences', expIndex.toString(), 'period'], e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label>Responsibilities</Label>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            const newResponsibilities = [...exp.responsibilities, "New responsibility"];
+                            updateContentField(['experiences', expIndex.toString(), 'responsibilities'], newResponsibilities);
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add
+                        </Button>
+                      </div>
+                      <div className="space-y-2">
+                        {exp.responsibilities.map((resp, respIndex) => (
+                          <div key={respIndex} className="flex gap-2">
+                            <Input 
+                              value={resp} 
+                              onChange={(e) => {
+                                const newResponsibilities = [...exp.responsibilities];
+                                newResponsibilities[respIndex] = e.target.value;
+                                updateContentField(['experiences', expIndex.toString(), 'responsibilities'], newResponsibilities);
+                              }}
+                            />
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="shrink-0"
+                              onClick={() => {
+                                const newResponsibilities = [...exp.responsibilities];
+                                newResponsibilities.splice(respIndex, 1);
+                                updateContentField(['experiences', expIndex.toString(), 'responsibilities'], newResponsibilities);
+                              }}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSkillsForm = () => {
+    const data = contentData as SkillsContent;
+    
+    if (!data || !data.categories || !data.technologies) {
+      return <p>Loading skills data...</p>;
+    }
+    
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Section Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input 
+                id="title" 
+                value={data.title} 
+                onChange={(e) => updateContentField(['title'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="subtitle">Subtitle</Label>
+              <Input 
+                id="subtitle" 
+                value={data.subtitle} 
+                onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              value={data.description} 
+              onChange={(e) => updateContentField(['description'], e.target.value)}
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold">Skill Categories</h3>
+            <Button 
+              size="sm" 
+              onClick={() => addArrayItem(['categories'], {
+                title: "New Category",
+                icon: "FaCode",
+                iconBg: "bg-indigo-600",
+                iconColor: "text-white",
+                titleColor: "text-indigo-600",
+                skills: [
+                  { name: "New Skill", percentage: 80, colorClass: "text-indigo-600" }
+                ]
+              })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Category
+            </Button>
+          </div>
+          
+          <Accordion type="multiple" className="w-full">
+            {data.categories.map((category, catIndex) => (
+              <AccordionItem key={catIndex} value={`cat-${catIndex}`}>
+                <div className="flex items-center">
+                  <AccordionTrigger className="flex-1">
+                    <div className="flex items-center">
+                      <div className={`${category.iconBg} p-1 rounded mr-2 flex items-center justify-center`}>
+                        <span className={`${category.iconColor} text-xs`}>Icon</span>
+                      </div>
+                      <span>{category.title}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    className="mr-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeArrayItem(['categories'], catIndex);
+                    }}
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
+                </div>
+                <AccordionContent>
+                  <div className="space-y-6 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor={`cat-${catIndex}-title`}>Category Title</Label>
+                        <Input 
+                          id={`cat-${catIndex}-title`} 
+                          value={category.title} 
+                          onChange={(e) => updateContentField(['categories', catIndex.toString(), 'title'], e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`cat-${catIndex}-icon`}>Icon Name</Label>
+                        <Input 
+                          id={`cat-${catIndex}-icon`} 
+                          value={category.icon} 
+                          onChange={(e) => updateContentField(['categories', catIndex.toString(), 'icon'], e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Use icon names from react-icons (e.g., FaReact, FaNodeJs, FaTools)
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor={`cat-${catIndex}-iconBg`}>Icon Background</Label>
+                        <Input 
+                          id={`cat-${catIndex}-iconBg`} 
+                          value={category.iconBg} 
+                          onChange={(e) => updateContentField(['categories', catIndex.toString(), 'iconBg'], e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Tailwind class (e.g., bg-indigo-600)
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor={`cat-${catIndex}-iconColor`}>Icon Color</Label>
+                        <Input 
+                          id={`cat-${catIndex}-iconColor`} 
+                          value={category.iconColor} 
+                          onChange={(e) => updateContentField(['categories', catIndex.toString(), 'iconColor'], e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Tailwind class (e.g., text-white)
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor={`cat-${catIndex}-titleColor`}>Title Color</Label>
+                        <Input 
+                          id={`cat-${catIndex}-titleColor`} 
+                          value={category.titleColor} 
+                          onChange={(e) => updateContentField(['categories', catIndex.toString(), 'titleColor'], e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Tailwind class (e.g., text-indigo-600)
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <div className="flex justify-between items-center mb-4">
+                        <Label>Skills</Label>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            const newSkills = [...category.skills, {
+                              name: "New Skill", 
+                              percentage: 80,
+                              colorClass: "text-indigo-600"
+                            }];
+                            updateContentField(['categories', catIndex.toString(), 'skills'], newSkills);
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Skill
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        {category.skills.map((skill, skillIndex) => (
+                          <div key={skillIndex} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md">
+                            <div className="flex justify-between items-center mb-2">
+                              <h4 className="font-medium">{skill.name}</h4>
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => {
+                                  const newSkills = [...category.skills];
+                                  newSkills.splice(skillIndex, 1);
+                                  updateContentField(['categories', catIndex.toString(), 'skills'], newSkills);
+                                }}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor={`skill-${catIndex}-${skillIndex}-name`}>Skill Name</Label>
+                                <Input 
+                                  id={`skill-${catIndex}-${skillIndex}-name`} 
+                                  value={skill.name} 
+                                  onChange={(e) => {
+                                    const newSkills = [...category.skills];
+                                    newSkills[skillIndex].name = e.target.value;
+                                    updateContentField(['categories', catIndex.toString(), 'skills'], newSkills);
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor={`skill-${catIndex}-${skillIndex}-percentage`}>Percentage (0-100)</Label>
+                                <Input 
+                                  id={`skill-${catIndex}-${skillIndex}-percentage`} 
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  value={skill.percentage} 
+                                  onChange={(e) => {
+                                    const newSkills = [...category.skills];
+                                    newSkills[skillIndex].percentage = parseInt(e.target.value);
+                                    updateContentField(['categories', catIndex.toString(), 'skills'], newSkills);
+                                  }}
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <Label htmlFor={`skill-${catIndex}-${skillIndex}-colorClass`}>Color Class</Label>
+                                <Input 
+                                  id={`skill-${catIndex}-${skillIndex}-colorClass`} 
+                                  value={skill.colorClass} 
+                                  onChange={(e) => {
+                                    const newSkills = [...category.skills];
+                                    newSkills[skillIndex].colorClass = e.target.value;
+                                    updateContentField(['categories', catIndex.toString(), 'skills'], newSkills);
+                                  }}
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Tailwind class (e.g., text-indigo-600)
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold">Technologies Carousel</h3>
+            <Button 
+              size="sm" 
+              onClick={() => addArrayItem(['technologies'], {
+                name: "New Technology",
+                icon: "SiReact"
+              })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Technology
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.technologies.map((tech, techIndex) => (
+              <div 
+                key={techIndex}
+                className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md flex items-center justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Wrench className="w-4 h-4" />
+                    <span className="font-medium">{tech.name}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">Icon: {tech.icon}</div>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => {
+                      const updatedTech = {...tech};
+                      const name = prompt("Enter technology name:", tech.name);
+                      if (name) updatedTech.name = name;
+                      const icon = prompt("Enter icon name (e.g., SiReact):", tech.icon);
+                      if (icon) updatedTech.icon = icon;
+                      
+                      const newTechnologies = [...data.technologies];
+                      newTechnologies[techIndex] = updatedTech;
+                      updateContentField(['technologies'], newTechnologies);
+                    }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                    onClick={() => {
+                      removeArrayItem(['technologies'], techIndex);
+                    }}
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderHeroForm = () => {
+    const data = contentData as HeroContent;
+    
+    if (!data) {
+      return <p>Loading hero section data...</p>;
+    }
+    
+    return (
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="greeting">Greeting</Label>
+          <Input 
+            id="greeting" 
+            value={data.greeting} 
+            onChange={(e) => updateContentField(['greeting'], e.target.value)}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input 
+              id="name" 
+              value={data.name} 
+              onChange={(e) => updateContentField(['name'], e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input 
+              id="title" 
+              value={data.title} 
+              onChange={(e) => updateContentField(['title'], e.target.value)}
+            />
+          </div>
+        </div>
+        <div>
+          <Label htmlFor="description">Description</Label>
+          <Textarea 
+            id="description" 
+            value={data.description} 
+            onChange={(e) => updateContentField(['description'], e.target.value)}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="ctaButton">CTA Button Text</Label>
+            <Input 
+              id="ctaButton" 
+              value={data.ctaButton} 
+              onChange={(e) => updateContentField(['ctaButton'], e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="ctaButtonLink">CTA Button Link</Label>
+            <Input 
+              id="ctaButtonLink" 
+              value={data.ctaButtonLink} 
+              onChange={(e) => updateContentField(['ctaButtonLink'], e.target.value)}
+            />
+          </div>
+        </div>
+        <div>
+          <Label htmlFor="resumeButton">Resume Button Text</Label>
+          <Input 
+            id="resumeButton" 
+            value={data.resumeButton} 
+            onChange={(e) => updateContentField(['resumeButton'], e.target.value)}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderAboutForm = () => {
+    const data = contentData as AboutContent;
+    
+    if (!data) {
+      return <p>Loading about section data...</p>;
+    }
+    
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input 
+              id="title" 
+              value={data.title} 
+              onChange={(e) => updateContentField(['title'], e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="subtitle">Subtitle</Label>
+            <Input 
+              id="subtitle" 
+              value={data.subtitle} 
+              onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <Label>Description Paragraphs</Label>
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => {
+                const newDescription = [...data.description, "New paragraph"];
+                updateContentField(['description'], newDescription);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Paragraph
+            </Button>
+          </div>
+          
+          <div className="space-y-3">
+            {data.description.map((paragraph, paragraphIndex) => (
+              <div key={paragraphIndex} className="flex gap-2">
+                <Textarea 
+                  value={paragraph} 
+                  onChange={(e) => {
+                    const newDescription = [...data.description];
+                    newDescription[paragraphIndex] = e.target.value;
+                    updateContentField(['description'], newDescription);
+                  }}
+                />
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="shrink-0"
+                  onClick={() => {
+                    const newDescription = [...data.description];
+                    newDescription.splice(paragraphIndex, 1);
+                    updateContentField(['description'], newDescription);
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="profilePicture">Profile Picture Path</Label>
+            <Input 
+              id="profilePicture" 
+              value={data.profilePicture} 
+              onChange={(e) => updateContentField(['profilePicture'], e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="imageAlt">Image Alt Text</Label>
+            <Input 
+              id="imageAlt" 
+              value={data.imageAlt} 
+              onChange={(e) => updateContentField(['imageAlt'], e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium">Statistics Items</h3>
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => {
+                const newStatItems = [...data.statItems, {
+                  label: "New Stat",
+                  value: "0+"
+                }];
+                updateContentField(['statItems'], newStatItems);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Stat
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.statItems.map((stat, statIndex) => (
+              <div 
+                key={statIndex}
+                className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <Badge variant="secondary">{stat.value}</Badge>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="h-6 w-6 p-0"
+                    onClick={() => {
+                      const newStatItems = [...data.statItems];
+                      newStatItems.splice(statIndex, 1);
+                      updateContentField(['statItems'], newStatItems);
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  <div>
+                    <Label htmlFor={`stat-${statIndex}-label`} className="text-xs">Label</Label>
+                    <Input 
+                      id={`stat-${statIndex}-label`} 
+                      value={stat.label} 
+                      className="h-8 text-sm"
+                      onChange={(e) => {
+                        const newStatItems = [...data.statItems];
+                        newStatItems[statIndex].label = e.target.value;
+                        updateContentField(['statItems'], newStatItems);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`stat-${statIndex}-value`} className="text-xs">Value</Label>
+                    <Input 
+                      id={`stat-${statIndex}-value`} 
+                      value={stat.value}
+                      className="h-8 text-sm"
+                      onChange={(e) => {
+                        const newStatItems = [...data.statItems];
+                        newStatItems[statIndex].value = e.target.value;
+                        updateContentField(['statItems'], newStatItems);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render the appropriate form based on section
+  const renderSectionForm = () => {
+    switch (currentSection) {
+      case 'hero':
+        return renderHeroForm();
+      case 'about':
+        return renderAboutForm();
+      case 'experience':
+        return renderExperienceForm();
+      case 'skills':
+        return renderSkillsForm();
+      default:
+        return (
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-yellow-800">
+              Form editor not available for this section. Use the JSON editor instead.
+            </p>
+          </div>
+        );
     }
   };
 
@@ -168,6 +1105,24 @@ const AdminDashboard = () => {
   if (!isAuthenticated) {
     return null; // Redirect handled in useEffect
   }
+
+  // Get section icon
+  const getSectionIcon = (section: string) => {
+    switch (section) {
+      case 'hero':
+        return <Star className="w-4 h-4 mr-2" />;
+      case 'about':
+        return <User className="w-4 h-4 mr-2" />;
+      case 'experience':
+        return <Briefcase className="w-4 h-4 mr-2" />;
+      case 'skills':
+        return <Wrench className="w-4 h-4 mr-2" />;
+      case 'projects':
+        return <Layers className="w-4 h-4 mr-2" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8">
@@ -201,6 +1156,7 @@ const AdminDashboard = () => {
                       className="w-full justify-start"
                       onClick={() => handleSectionChange(section)}
                     >
+                      {getSectionIcon(section)}
                       {section.charAt(0).toUpperCase() + section.slice(1)}
                     </Button>
                   ))}
@@ -213,41 +1169,89 @@ const AdminDashboard = () => {
           <div className="md:col-span-3">
             <Card>
               <CardHeader>
-                <CardTitle>
-                  Editing: {currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}
-                </CardTitle>
+                <div className="flex justify-between items-center">
+                  <CardTitle>
+                    Editing: {currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}
+                  </CardTitle>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant={editMode === "form" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setEditMode("form")}
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Form
+                    </Button>
+                    <Button 
+                      variant={editMode === "json" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setEditMode("json")}
+                    >
+                      <Code className="w-4 h-4 mr-2" />
+                      JSON
+                    </Button>
+                  </div>
+                </div>
                 <CardDescription>
-                  Edit the JSON content below. Be careful to maintain valid JSON format.
+                  {editMode === "form" ? 
+                    "Edit the content using the form below" : 
+                    "Edit the JSON content below. Be careful to maintain valid JSON format."
+                  }
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="editor">JSON Content</Label>
-                    <Textarea
-                      id="editor"
-                      className="font-mono h-[500px] p-4"
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                    />
-                  </div>
-                  <Button
-                    className="w-full"
-                    onClick={handleContentUpdate}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Changes
-                      </>
-                    )}
-                  </Button>
+                  {editMode === "form" ? (
+                    <div className="space-y-6">
+                      {renderSectionForm()}
+                      <Button
+                        className="w-full"
+                        onClick={handleFormContentUpdate}
+                        disabled={isSaving}
+                      >
+                        {isSaving ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            Save Changes
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="editor">JSON Content</Label>
+                        <Textarea
+                          id="editor"
+                          className="font-mono h-[500px] p-4"
+                          value={editedContent}
+                          onChange={(e) => setEditedContent(e.target.value)}
+                        />
+                      </div>
+                      <Button
+                        className="w-full"
+                        onClick={handleJsonContentUpdate}
+                        disabled={isSaving}
+                      >
+                        {isSaving ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            Save JSON Changes
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
