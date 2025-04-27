@@ -18,31 +18,34 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <div className="flex min-h-screen flex-col antialiased">
-          <Switch>
-            <Route path="/maglogin">
-              <AdminLogin />
-            </Route>
-            <Route path="/admin">
-              <AdminDashboard />
-            </Route>
-            <Route path="/">
-              <>
-                <Header />
-                <ScrollProgressBar />
-                <InteractiveBackground />
-                <main className="flex-1">
-                  <Home />
-                </main>
-                <Footer />
-              </>
-            </Route>
-            <Route>
-              <NotFound />
-            </Route>
-          </Switch>
-        </div>
-        <Toaster />
+        <AccessibilityProvider>
+          <div className="flex min-h-screen flex-col antialiased">
+            <Switch>
+              <Route path="/maglogin">
+                <AdminLogin />
+              </Route>
+              <Route path="/admin">
+                <AdminDashboard />
+              </Route>
+              <Route path="/">
+                <>
+                  <Header />
+                  <ScrollProgressBar />
+                  <InteractiveBackground />
+                  <main className="flex-1">
+                    <Home />
+                  </main>
+                  <Footer />
+                </>
+              </Route>
+              <Route>
+                <NotFound />
+              </Route>
+            </Switch>
+          </div>
+          <AccessibilityPanel />
+          <Toaster />
+        </AccessibilityProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

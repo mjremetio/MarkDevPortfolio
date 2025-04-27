@@ -3,6 +3,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { smoothScrollTo } from "@/utils/smoothScroll";
+import AccessibilityToggle from "@/components/AccessibilityToggle";
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
@@ -73,6 +74,7 @@ const Header = () => {
             >
               {theme === 'light' ? <Moon className="h-5 w-5 text-blue-600" /> : <Sun className="h-5 w-5 text-yellow-400" />}
             </Button>
+            <AccessibilityToggle />
           </nav>
           
           {/* Mobile Menu Button */}
@@ -86,6 +88,7 @@ const Header = () => {
             >
               {theme === 'light' ? <Moon className="h-5 w-5 text-blue-600" /> : <Sun className="h-5 w-5 text-yellow-400" />}
             </Button>
+            <AccessibilityToggle />
             <Button 
               variant="ghost" 
               size="icon" 
