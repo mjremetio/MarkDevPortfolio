@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Content sections data store
-const CONTENT_SECTIONS = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
+const CONTENT_SECTIONS = ['hero', 'about', 'skills', 'projects', 'experience', 'contact', 'gallery'];
 const CONTENT_DIR = path.join(__dirname, '../client/src/content');
 
 // Ensure content directory exists
