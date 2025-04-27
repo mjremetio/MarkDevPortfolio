@@ -93,9 +93,9 @@ const HeroSection = () => {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <img 
-                    src="/images/profile-photo.png" 
+                    src={content.profilePicture || "/images/profile-photo.png"} 
                     alt="Mark Remetio" 
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 </motion.div>
               </motion.div>

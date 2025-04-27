@@ -8,7 +8,8 @@ const heroContent = {
   description: "I build responsive, user-friendly web applications with modern technologies.",
   ctaButton: "View My Work",
   ctaButtonLink: "#projects",
-  resumeButton: "Download Resume"
+  resumeButton: "Download Resume",
+  profilePicture: ""
 };
 
 const aboutContent = {
