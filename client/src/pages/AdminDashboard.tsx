@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { ImageUpload, MultipleImageUpload } from "@/components/ImageUpload";
 
 // Define some interfaces for strongly-typed content
@@ -38,10 +39,26 @@ interface HeroContent {
   greeting: string;
   name: string;
   title: string;
-  description: string;
-  ctaButton: string;
-  ctaButtonLink: string;
-  resumeButton: string;
+  shortDescription: string;
+  ctaButtons: Array<{
+    text: string;
+    link: string;
+    primary: boolean;
+    icon: string;
+    downloadAction?: boolean;
+  }>;
+  stats: Array<{
+    value: string;
+    label: string;
+    icon: string;
+  }>;
+  badges: Array<{
+    text: string;
+    bgColor: string;
+    textColor: string;
+    darkBgColor: string;
+    darkTextColor: string;
+  }>;
   profilePicture?: string;
 }
 
@@ -863,66 +880,131 @@ const AdminDashboard = () => {
     }
     
     return (
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="greeting">Greeting</Label>
-          <Input 
-            id="greeting" 
-            value={data.greeting} 
-            onChange={(e) => updateContentField(['greeting'], e.target.value)}
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Basic Information</h3>
           <div>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="greeting">Greeting</Label>
             <Input 
-              id="name" 
-              value={data.name} 
-              onChange={(e) => updateContentField(['name'], e.target.value)}
+              id="greeting" 
+              value={data.greeting} 
+              onChange={(e) => updateContentField(['greeting'], e.target.value)}
             />
           </div>
-          <div>
-            <Label htmlFor="title">Title</Label>
-            <Input 
-              id="title" 
-              value={data.title} 
-              onChange={(e) => updateContentField(['title'], e.target.value)}
-            />
-          </div>
-        </div>
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea 
-            id="description" 
-            value={data.description} 
-            onChange={(e) => updateContentField(['description'], e.target.value)}
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="ctaButton">CTA Button Text</Label>
-            <Input 
-              id="ctaButton" 
-              value={data.ctaButton} 
-              onChange={(e) => updateContentField(['ctaButton'], e.target.value)}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input 
+                id="name" 
+                value={data.name} 
+                onChange={(e) => updateContentField(['name'], e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input 
+                id="title" 
+                value={data.title} 
+                onChange={(e) => updateContentField(['title'], e.target.value)}
+              />
+            </div>
           </div>
           <div>
-            <Label htmlFor="ctaButtonLink">CTA Button Link</Label>
-            <Input 
-              id="ctaButtonLink" 
-              value={data.ctaButtonLink} 
-              onChange={(e) => updateContentField(['ctaButtonLink'], e.target.value)}
+            <Label htmlFor="shortDescription">Description</Label>
+            <Textarea 
+              id="shortDescription" 
+              value={data.shortDescription} 
+              onChange={(e) => updateContentField(['shortDescription'], e.target.value)}
             />
           </div>
         </div>
-        <div>
-          <Label htmlFor="resumeButton">Resume Button Text</Label>
-          <Input 
-            id="resumeButton" 
-            value={data.resumeButton} 
-            onChange={(e) => updateContentField(['resumeButton'], e.target.value)}
-          />
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold">CTA Buttons</h3>
+            <Button 
+              size="sm" 
+              onClick={() => addArrayItem(['ctaButtons'], {
+                text: "New Button",
+                link: "#",
+                primary: false,
+                icon: "link"
+              })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Button
+            </Button>
+          </div>
+          
+          {data.ctaButtons && data.ctaButtons.length > 0 ? (
+            <div className="space-y-4">
+              {data.ctaButtons.map((button, index) => (
+                <div key={index} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-medium">Button {index + 1}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8 text-red-500 hover:text-red-700"
+                      onClick={() => removeArrayItem(['ctaButtons'], index)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Button Text</Label>
+                      <Input 
+                        value={button.text} 
+                        onChange={(e) => updateContentField(['ctaButtons', index.toString(), 'text'], e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label>Button Link</Label>
+                      <Input 
+                        value={button.link} 
+                        onChange={(e) => updateContentField(['ctaButtons', index.toString(), 'link'], e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <div>
+                      <Label>Icon</Label>
+                      <Input 
+                        value={button.icon} 
+                        onChange={(e) => updateContentField(['ctaButtons', index.toString(), 'icon'], e.target.value)}
+                      />
+                    </div>
+                    <div className="flex items-center pt-6">
+                      <Switch 
+                        id={`primary-switch-${index}`}
+                        checked={button.primary}
+                        onCheckedChange={(checked) => updateContentField(['ctaButtons', index.toString(), 'primary'], checked)}
+                      />
+                      <Label htmlFor={`primary-switch-${index}`} className="ml-2">Primary Button</Label>
+                    </div>
+                  </div>
+                  
+                  {index === 1 && (
+                    <div className="flex items-center mt-3">
+                      <Switch 
+                        id={`download-switch-${index}`}
+                        checked={button.downloadAction || false}
+                        onCheckedChange={(checked) => updateContentField(['ctaButtons', index.toString(), 'downloadAction'], checked)}
+                      />
+                      <Label htmlFor={`download-switch-${index}`} className="ml-2">Is Resume Download Button</Label>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">No CTA buttons added yet. Add one above.</p>
+          )}
         </div>
         
         <Separator />
