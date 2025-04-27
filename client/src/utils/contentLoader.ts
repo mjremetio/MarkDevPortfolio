@@ -5,10 +5,48 @@ const heroContent = {
   greeting: "Hello, I'm",
   name: "Mark Remetio",
   title: "Full-Stack Web Developer",
-  description: "I build responsive, user-friendly web applications with modern technologies.",
-  ctaButton: "View My Work",
-  ctaButtonLink: "#projects",
-  resumeButton: "Download Resume",
+  shortDescription: "I build beautiful, functional websites and web applications with modern technologies.",
+  ctaButtons: [
+    {
+      text: "View Projects",
+      link: "#projects",
+      primary: true,
+      icon: "eye"
+    },
+    {
+      text: "Download Resume",
+      link: "#",
+      primary: false,
+      icon: "file-text",
+      downloadAction: true
+    }
+  ],
+  stats: [
+    {
+      value: "5+",
+      label: "Years Experience",
+      icon: "calendar"
+    },
+    {
+      value: "50+",
+      label: "Projects Completed",
+      icon: "check-circle"
+    },
+    {
+      value: "30+",
+      label: "Happy Clients",
+      icon: "users"
+    }
+  ],
+  badges: [
+    {
+      text: "Available for Work",
+      bgColor: "bg-green-100",
+      textColor: "text-green-800",
+      darkBgColor: "dark:bg-green-900/30",
+      darkTextColor: "dark:text-green-300"
+    }
+  ],
   profilePicture: ""
 };
 

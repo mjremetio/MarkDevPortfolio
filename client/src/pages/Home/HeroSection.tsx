@@ -7,8 +7,36 @@ import { useEffect, useState } from "react";
 import { getHeroContent } from "@/utils/contentLoader";
 import { useTheme } from "@/hooks/useTheme";
 
+// Define interfaces to match the structure from AdminDashboard.tsx
+interface HeroContent {
+  greeting: string;
+  name: string;
+  title: string;
+  shortDescription: string;
+  ctaButtons: Array<{
+    text: string;
+    link: string;
+    primary: boolean;
+    icon: string;
+    downloadAction?: boolean;
+  }>;
+  stats: Array<{
+    value: string;
+    label: string;
+    icon: string;
+  }>;
+  badges: Array<{
+    text: string;
+    bgColor: string;
+    textColor: string;
+    darkBgColor: string;
+    darkTextColor: string;
+  }>;
+  profilePicture?: string;
+}
+
 const HeroSection = () => {
-  const [content, setContent] = useState(getHeroContent());
+  const [content, setContent] = useState<HeroContent>(getHeroContent() as HeroContent);
   const { theme } = useTheme();
   
   useEffect(() => {
@@ -46,24 +74,87 @@ const HeroSection = () => {
             </h1>
             <h2 className="text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-300">{content.title}</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-lg">
-              {content.description}
+              {content.shortDescription}
             </p>
+            
+            {/* Skill badges */}
+            {content.badges && content.badges.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {content.badges.map((badge, index) => (
+                  <span 
+                    key={index} 
+                    className={`inline-flex text-sm px-3 py-1 rounded-full font-medium ${badge.bgColor} ${badge.textColor} ${badge.darkBgColor} ${badge.darkTextColor}`}
+                  >
+                    {badge.text}
+                  </span>
+                ))}
+              </div>
+            )}
+            
             <div className="flex flex-wrap gap-4 pt-2">
-              <Button 
-                variant="default"
-                className="bg-primary-600 text-white hover:bg-primary-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
-                onClick={() => smoothScrollTo('#projects')}
-              >
-                {content.ctaButton}
-              </Button>
-              <Button 
-                variant="outline"
-                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
-                onClick={() => downloadResume()}
-              >
-                {content.resumeButton}
-              </Button>
+              {content.ctaButtons && content.ctaButtons.map((button, index) => {
+                // For resume download button
+                if (button.downloadAction) {
+                  return (
+                    <Button 
+                      key={index}
+                      variant={button.primary ? "default" : "outline"}
+                      className={button.primary 
+                        ? "bg-primary-600 text-white hover:bg-primary-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center" 
+                        : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
+                      }
+                      onClick={() => downloadResume()}
+                    >
+                      {button.text}
+                    </Button>
+                  );
+                }
+                
+                // For regular navigation buttons
+                return (
+                  <Button 
+                    key={index}
+                    variant={button.primary ? "default" : "outline"}
+                    className={button.primary 
+                      ? "bg-primary-600 text-white hover:bg-primary-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center" 
+                      : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 font-medium rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg flex items-center"
+                    }
+                    onClick={() => smoothScrollTo(button.link)}
+                  >
+                    {button.text}
+                  </Button>
+                );
+              })}
             </div>
+            
+            {/* Stats counters */}
+            {content.stats && content.stats.length > 0 && (
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {content.stats.map((stat, index) => (
+                  <motion.div 
+                    key={index}
+                    className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-100 dark:border-gray-700"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + (index * 0.1) }}
+                  >
+                    <div className="flex justify-center mb-2">
+                      <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                        {stat.icon === 'calendar' && <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                        {stat.icon === 'check-circle' && <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                        {stat.icon === 'users' && <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
+                      </div>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-primary-600 dark:text-primary-400">
+                      {stat.value}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 font-medium">
+                      {stat.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
           
           <motion.div 
