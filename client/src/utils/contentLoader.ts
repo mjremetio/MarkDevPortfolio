@@ -231,6 +231,18 @@ const contactContent = {
   }
 };
 
+const galleryContent = {
+  title: "Project Gallery",
+  subtitle: "Visual Showcase",
+  description: "A visual showcase of UI/UX designs and development work",
+  images: [
+    "/uploads/image_1744279279949.png",
+    "/uploads/image_1744275110120.png",
+    "/uploads/image_1744273642730.png",
+    "/uploads/image_1744272209932.png"
+  ]
+};
+
 // Helper functions for API calls
 export const getHeroContent = () => heroContent;
 export const getAboutContent = () => aboutContent;
@@ -238,6 +250,7 @@ export const getSkillsContent = () => skillsContent;
 export const getProjectsContent = () => projectsContent;
 export const getExperienceContent = () => experienceContent;
 export const getContactContent = () => contactContent;
+export const getGalleryContent = () => galleryContent;
 
 // Function to fetch content from the API
 export const getContent = async (section: string) => {
@@ -272,6 +285,8 @@ export const getContent = async (section: string) => {
         return experienceContent;
       case 'contact':
         return contactContent;
+      case 'gallery':
+        return galleryContent;
       default:
         return null;
     }
