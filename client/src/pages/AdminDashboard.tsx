@@ -64,13 +64,19 @@ interface HeroContent {
 
 interface AboutContent {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   description: string[];
-  profilePicture: string;
-  imageAlt: string;
-  statItems: Array<{
+  profilePicture?: string;
+  imageAlt?: string;
+  statItems?: Array<{
     label: string;
     value: string;
+  }>;
+  experience?: string;
+  features?: Array<{
+    title: string;
+    description: string;
+    icon: string;
   }>;
 }
 
@@ -1042,11 +1048,12 @@ const AdminDashboard = () => {
             />
           </div>
           <div>
-            <Label htmlFor="subtitle">Subtitle</Label>
+            <Label htmlFor="experience">Experience</Label>
             <Input 
-              id="subtitle" 
-              value={data.subtitle} 
-              onChange={(e) => updateContentField(['subtitle'], e.target.value)}
+              id="experience" 
+              value={data.experience || ''} 
+              onChange={(e) => updateContentField(['experience'], e.target.value)}
+              placeholder="e.g. 5+ Years"
             />
           </div>
         </div>
@@ -1058,7 +1065,7 @@ const AdminDashboard = () => {
               size="sm" 
               variant="outline"
               onClick={() => {
-                const newDescription = [...data.description, "New paragraph"];
+                const newDescription = [...(data.description || []), "New paragraph"];
                 updateContentField(['description'], newDescription);
               }}
             >
@@ -1068,7 +1075,7 @@ const AdminDashboard = () => {
           </div>
           
           <div className="space-y-3">
-            {data.description.map((paragraph, paragraphIndex) => (
+            {data.description && data.description.map((paragraph, paragraphIndex) => (
               <div key={paragraphIndex} className="flex gap-2">
                 <Textarea 
                   value={paragraph} 
@@ -1095,96 +1102,193 @@ const AdminDashboard = () => {
           </div>
         </div>
         
-        <div className="space-y-4">
-          <ImageUpload 
-            label="Profile Picture"
-            currentImagePath={data.profilePicture} 
-            onImageUploaded={(path) => updateContentField(['profilePicture'], path)}
-          />
-          <div>
-            <Label htmlFor="imageAlt">Image Alt Text</Label>
-            <Input 
-              id="imageAlt" 
-              value={data.imageAlt} 
-              onChange={(e) => updateContentField(['imageAlt'], e.target.value)}
+        {data.profilePicture !== undefined && (
+          <div className="space-y-4">
+            <ImageUpload 
+              label="Profile Picture"
+              currentImagePath={data.profilePicture} 
+              onImageUploaded={(path) => updateContentField(['profilePicture'], path)}
             />
+            {data.imageAlt !== undefined && (
+              <div>
+                <Label htmlFor="imageAlt">Image Alt Text</Label>
+                <Input 
+                  id="imageAlt" 
+                  value={data.imageAlt} 
+                  onChange={(e) => updateContentField(['imageAlt'], e.target.value)}
+                />
+              </div>
+            )}
           </div>
-        </div>
+        )}
         
         <Separator />
         
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Statistics Items</h3>
+            <h3 className="text-lg font-medium">Features</h3>
             <Button 
               size="sm" 
               variant="outline"
               onClick={() => {
-                const newStatItems = [...data.statItems, {
-                  label: "New Stat",
-                  value: "0+"
+                const newFeatures = [...(data.features || []), {
+                  title: "New Feature",
+                  description: "Feature description",
+                  icon: "code"
                 }];
-                updateContentField(['statItems'], newStatItems);
+                updateContentField(['features'], newFeatures);
               }}
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Stat
+              Add Feature
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.statItems.map((stat, statIndex) => (
-              <div 
-                key={statIndex}
-                className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <Badge variant="secondary">{stat.value}</Badge>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="h-6 w-6 p-0"
-                    onClick={() => {
-                      const newStatItems = [...data.statItems];
-                      newStatItems.splice(statIndex, 1);
-                      updateContentField(['statItems'], newStatItems);
-                    }}
-                  >
-                    <X className="w-3 h-3" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 gap-2">
-                  <div>
-                    <Label htmlFor={`stat-${statIndex}-label`} className="text-xs">Label</Label>
-                    <Input 
-                      id={`stat-${statIndex}-label`} 
-                      value={stat.label} 
-                      className="h-8 text-sm"
-                      onChange={(e) => {
-                        const newStatItems = [...data.statItems];
-                        newStatItems[statIndex].label = e.target.value;
-                        updateContentField(['statItems'], newStatItems);
+          {data.features && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.features.map((feature, featureIndex) => (
+                <div 
+                  key={featureIndex}
+                  className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-medium">{feature.title}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                      onClick={() => {
+                        const newFeatures = [...data.features!];
+                        newFeatures.splice(featureIndex, 1);
+                        updateContentField(['features'], newFeatures);
                       }}
-                    />
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
                   </div>
-                  <div>
-                    <Label htmlFor={`stat-${statIndex}-value`} className="text-xs">Value</Label>
-                    <Input 
-                      id={`stat-${statIndex}-value`} 
-                      value={stat.value}
-                      className="h-8 text-sm"
-                      onChange={(e) => {
-                        const newStatItems = [...data.statItems];
-                        newStatItems[statIndex].value = e.target.value;
-                        updateContentField(['statItems'], newStatItems);
-                      }}
-                    />
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor={`feature-${featureIndex}-title`}>Title</Label>
+                      <Input 
+                        id={`feature-${featureIndex}-title`} 
+                        value={feature.title} 
+                        onChange={(e) => {
+                          const newFeatures = [...data.features!];
+                          newFeatures[featureIndex].title = e.target.value;
+                          updateContentField(['features'], newFeatures);
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`feature-${featureIndex}-description`}>Description</Label>
+                      <Textarea 
+                        id={`feature-${featureIndex}-description`} 
+                        value={feature.description} 
+                        onChange={(e) => {
+                          const newFeatures = [...data.features!];
+                          newFeatures[featureIndex].description = e.target.value;
+                          updateContentField(['features'], newFeatures);
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`feature-${featureIndex}-icon`}>Icon</Label>
+                      <Input 
+                        id={`feature-${featureIndex}-icon`} 
+                        value={feature.icon}
+                        placeholder="e.g. code, server, paint-brush, etc."
+                        onChange={(e) => {
+                          const newFeatures = [...data.features!];
+                          newFeatures[featureIndex].icon = e.target.value;
+                          updateContentField(['features'], newFeatures);
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
+        
+        {data.statItems && (
+          <>
+            <Separator />
+            
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium">Statistics Items</h3>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => {
+                    const newStatItems = [...(data.statItems || []), {
+                      label: "New Stat",
+                      value: "0+"
+                    }];
+                    updateContentField(['statItems'], newStatItems);
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Stat
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {data.statItems.map((stat, statIndex) => (
+                  <div 
+                    key={statIndex}
+                    className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <Badge variant="secondary">{stat.value}</Badge>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => {
+                          const newStatItems = [...data.statItems!];
+                          newStatItems.splice(statIndex, 1);
+                          updateContentField(['statItems'], newStatItems);
+                        }}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      <div>
+                        <Label htmlFor={`stat-${statIndex}-label`} className="text-xs">Label</Label>
+                        <Input 
+                          id={`stat-${statIndex}-label`} 
+                          value={stat.label} 
+                          className="h-8 text-sm"
+                          onChange={(e) => {
+                            const newStatItems = [...data.statItems!];
+                            newStatItems[statIndex].label = e.target.value;
+                            updateContentField(['statItems'], newStatItems);
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`stat-${statIndex}-value`} className="text-xs">Value</Label>
+                        <Input 
+                          id={`stat-${statIndex}-value`} 
+                          value={stat.value}
+                          className="h-8 text-sm"
+                          onChange={(e) => {
+                            const newStatItems = [...data.statItems!];
+                            newStatItems[statIndex].value = e.target.value;
+                            updateContentField(['statItems'], newStatItems);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     );
   };
