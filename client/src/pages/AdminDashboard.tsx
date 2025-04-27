@@ -924,6 +924,19 @@ const AdminDashboard = () => {
             onChange={(e) => updateContentField(['resumeButton'], e.target.value)}
           />
         </div>
+        
+        <Separator />
+        
+        <div>
+          <ImageUpload 
+            label="Profile Picture (Optional)"
+            currentImagePath={data.profilePicture} 
+            onImageUploaded={(path) => updateContentField(['profilePicture'], path)}
+          />
+          <p className="text-xs text-slate-500 mt-1">
+            Upload a profile picture that will be displayed in the hero section.
+          </p>
+        </div>
       </div>
     );
   };
