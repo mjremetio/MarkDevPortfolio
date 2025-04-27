@@ -1,13 +1,19 @@
 export const smoothScrollTo = (targetId: string) => {
-  const targetElement = document.getElementById(targetId);
+  // If targetId starts with #, remove it
+  const id = targetId.startsWith('#') ? targetId.substring(1) : targetId;
+  
+  const targetElement = document.getElementById(id);
   
   if (!targetElement) {
-    console.error(`Element with ID '${targetId}' not found`);
+    console.error(`Element with ID '${id}' not found`);
     return;
   }
   
+  // Offset for the fixed header (approximately 80px)
+  const headerOffset = 80;
+  
   // Get the target's position
-  const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+  const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerOffset;
   
   // Get current position
   const startPosition = window.pageYOffset;
