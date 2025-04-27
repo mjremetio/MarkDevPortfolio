@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import InteractiveBackground from "@/components/InteractiveBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
+import AccessibilityPanel from "@/components/AccessibilityPanel";
 
 function App() {
   return (

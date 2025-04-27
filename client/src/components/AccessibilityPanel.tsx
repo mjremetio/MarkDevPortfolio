@@ -42,7 +42,6 @@ import {
   MousePointer,
   ZoomIn,
   RefreshCw,
-  Spacing,
   AlignJustify
 } from 'lucide-react';
 
@@ -245,7 +244,7 @@ const AccessibilityPanel = () => {
               
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Spacing className="h-4 w-4" />
+                  <Text className="h-4 w-4" />
                   <Label htmlFor="letterSpacing">Letter Spacing: {settings.letterSpacing}px</Label>
                 </div>
                 <Slider
