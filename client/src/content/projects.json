@@ -3,18 +3,35 @@
   "subtitle": "Showcasing some of my best work across various technologies and platforms",
   "projects": [
     {
-      "title": "E-Commerce CMS Platform",
-      "description": "Custom e-commerce solution with integrated CRM and payment processing for a retail client.",
-      "imagePlaceholder": "E-Commerce CMS",
-      "technologies": ["Laravel", "Vue.js", "MySQL", "AWS"],
+      "title": "Clearance Management System",
+      "description": "A Clearance Management System designed to efficiently monitor student clearance statuses and manage remarks, ensuring a streamlined and organized process.",
+      "imagePlaceholder": "/uploads/image-1745740094680-914758790.jpg",
+      "technologies": [
+        "PHP",
+        "MySQL",
+        "Bootstrap",
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Admin LTE",
+        "JQuery"
+      ],
       "githubLink": "https://github.com/",
       "liveLink": "#"
     },
     {
-      "title": "Learning Management System",
-      "description": "Enhanced Moodle-based LMS with custom plugins for university distance learning programs.",
-      "imagePlaceholder": "LMS Platform",
-      "technologies": ["PHP", "Moodle", "JavaScript", "MySQL"],
+      "title": "Online Ordering and Inventory Management System",
+      "description": "A comprehensive capstone project for Claytonecille General Merchandising that showcases an eCommerce platform combined with an inventory management system. It features seamless PayPal payment integration for secure transactions, real-time stock tracking, and an intuitive interface for managing and selling a variety of products and merchandise. Designed to enhance user experience and streamline business operations.",
+      "imagePlaceholder": "/uploads/image-1745740248097-704011875.jpg",
+      "technologies": [
+        "PHP OOP",
+        "JavaScript",
+        "MySQL",
+        "Bootstrap",
+        "HTML",
+        "CSS",
+        "RDBMS"
+      ],
       "githubLink": "https://github.com/",
       "liveLink": "#"
     },
@@ -22,7 +39,12 @@
       "title": "Marketing Analytics Dashboard",
       "description": "Real-time marketing performance dashboard with Salesforce and Google Analytics integration.",
       "imagePlaceholder": "Marketing Dashboard",
-      "technologies": ["React", "Node.js", "Salesforce API", "D3.js"],
+      "technologies": [
+        "React",
+        "Node.js",
+        "Salesforce API",
+        "D3.js"
+      ],
       "githubLink": "https://github.com/",
       "liveLink": "#"
     },
@@ -30,7 +52,12 @@
       "title": "Clearance Management System",
       "description": "Automated clearance processing system for educational institutions with approval workflows.",
       "imagePlaceholder": "Clearance System",
-      "technologies": ["PHP", "jQuery", "MySQL", "Bootstrap"],
+      "technologies": [
+        "PHP",
+        "jQuery",
+        "MySQL",
+        "Bootstrap"
+      ],
       "githubLink": "https://github.com/",
       "liveLink": "#"
     },
@@ -38,7 +65,12 @@
       "title": "Marketing Workflow Automation",
       "description": "Custom workflow automation for marketing and CRM processes using Zapier and custom API integrations.",
       "imagePlaceholder": "Workflow Automation",
-      "technologies": ["Node.js", "Zapier", "Salesforce", "REST APIs"],
+      "technologies": [
+        "Node.js",
+        "Zapier",
+        "Salesforce",
+        "REST APIs"
+      ],
       "githubLink": "https://github.com/",
       "liveLink": "#"
     },
@@ -46,7 +78,12 @@
       "title": "Personal Portfolio Website",
       "description": "Responsive personal portfolio site with modern design patterns and animations.",
       "imagePlaceholder": "Portfolio Website",
-      "technologies": ["React", "Tailwind CSS", "GSAP", "GitHub Pages"],
+      "technologies": [
+        "React",
+        "Tailwind CSS",
+        "GSAP",
+        "GitHub Pages"
+      ],
       "githubLink": "https://github.com/",
       "liveLink": "#"
     }
