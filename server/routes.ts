@@ -18,9 +18,21 @@ const uploadStorage = multer.diskStorage({
     // Store uploads in the public directory so they can be accessed via the web
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     
+    console.log('Upload directory path:', uploadDir);
+    
     // Create the uploads directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
+      console.log('Creating upload directory as it does not exist');
       fs.mkdirSync(uploadDir, { recursive: true });
+    } else {
+      console.log('Upload directory exists');
+    }
+    
+    // Double check
+    if (fs.existsSync(uploadDir)) {
+      console.log('Upload directory confirmed to exist');
+    } else {
+      console.log('ERROR: Upload directory still does not exist after creation attempt');
     }
     
     cb(null, uploadDir);
@@ -29,7 +41,9 @@ const uploadStorage = multer.diskStorage({
     // Create a unique filename with original extension
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    const filename = file.fieldname + '-' + uniqueSuffix + ext;
+    console.log('Generated filename:', filename);
+    cb(null, filename);
   }
 });
 
@@ -106,15 +120,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // File upload routes
   app.post('/api/upload', requireAuth, upload.single('image'), (req: Request, res: Response) => {
     try {
+      console.log('Upload request received');
+      
       if (!req.file) {
+        console.log('No file found in request');
         return res.status(400).json({
           success: false,
           message: 'No file uploaded or invalid file type'
         });
       }
       
+      console.log('File uploaded:', req.file);
+      console.log('File destination:', req.file.destination);
+      console.log('File path:', req.file.path);
+      
+      // Verify the file exists at the saved path
+      if (fs.existsSync(req.file.path)) {
+        console.log('File confirmed to exist on disk at:', req.file.path);
+      } else {
+        console.log('WARNING: File does not exist at path:', req.file.path);
+      }
+      
       // Return the file path relative to the public directory
       const relativePath = '/uploads/' + req.file.filename;
+      console.log('Returning relative path:', relativePath);
       
       return res.status(200).json({
         success: true,
@@ -133,15 +162,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Multiple file upload route (for gallery)
   app.post('/api/upload/multiple', requireAuth, upload.array('images', 10), (req: Request, res: Response) => {
     try {
+      console.log('Multiple upload request received');
+      
       if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
+        console.log('No files found in request');
         return res.status(400).json({
           success: false,
           message: 'No files uploaded or invalid file types'
         });
       }
       
+      console.log('Files uploaded:', req.files);
+      
+      // Verify all files exist
+      const files = req.files as Express.Multer.File[];
+      files.forEach((file, index) => {
+        console.log(`File ${index} destination:`, file.destination);
+        console.log(`File ${index} path:`, file.path);
+        
+        if (fs.existsSync(file.path)) {
+          console.log(`File ${index} confirmed to exist on disk at:`, file.path);
+        } else {
+          console.log(`WARNING: File ${index} does not exist at path:`, file.path);
+        }
+      });
+      
       // Return the file paths relative to the public directory
-      const filePaths = (req.files as Express.Multer.File[]).map(file => '/uploads/' + file.filename);
+      const filePaths = files.map(file => '/uploads/' + file.filename);
+      console.log('Returning relative paths:', filePaths);
       
       return res.status(200).json({
         success: true,
