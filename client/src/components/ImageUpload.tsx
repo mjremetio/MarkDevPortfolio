@@ -148,8 +148,13 @@ export function ImageUpload({ onImageUploaded, currentImagePath, label = 'Image'
                 />
               ) : currentImagePath ? (
                 <img 
-                  src={currentImagePath} 
+                  src={currentImagePath.startsWith('http') ? currentImagePath : currentImagePath} 
                   alt="Current image" 
+                  onError={(e) => {
+                    console.error('Error loading image:', currentImagePath);
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTguMzggMTMuODdsLTMtMi4xMmMtLjQzLS4zLS45OS0uMy0xLjQxIDBsLTMgMi4xMmMtLjQzLjMtLjU4Ljg3LS4zIDEuMzQuMy40Ny45Mi42MiAxLjQxLjNsLjg5LS42M3Y1LjI1YzAgLjQxLjM0Ljc1Ljc1Ljc1cy43NS0uMzQuNzUtLjc1di01LjI1bC44OS42M2MuMTYuMTIuMzUuMTcuNTMuMTcuMjkgMCAuNTgtLjE0Ljc1LS40Ny4yOC0uNDcuMTMtMS4wNC0uMy0xLjM0ek0xMSAxNEg3YzAtNC45NyA0LjAzLTkgOS05IDQuNzMgMCA4LjYgMy42NSA4Ljk1IDguMy4wNC41Mi40OCAxLjAyIDEgMS4wMi41NiAwIDEuMDMtLjQ3Ljk3LTEuMDJDMjYuNTIgNy4xOSAyMS40MSAyIDE2IDJjLTUuOTUgMC0xMSA0LjU1LTExLjk4IDEwLjI0QzQuMDcgMTIuNjcgMyAxMy43NSAzIDE1djVjMCAxLjEuOSAyIDIgMmg2YzEuMSAwIDItLjkgMi0ydi01YzAtLjcyLS40My0xLjIxLTEtMS40NVYxNHoiIGZpbGw9ImN1cnJlbnRDb2xvciIvPjwvc3ZnPg==';
+                    e.currentTarget.alt = 'Image not found';
+                  }}
                   className="max-h-full max-w-full object-contain" 
                 />
               ) : (

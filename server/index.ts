@@ -2,13 +2,37 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
+import fs from "fs";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Ensure the uploads directory exists
+const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  console.log('Creating uploads directory at:', uploadsDir);
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Create a test image to make sure uploads work
+const testImagePath = path.join(uploadsDir, 'test-image.svg');
+if (!fs.existsSync(testImagePath)) {
+  const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+    <rect width="200" height="200" fill="#f0f0f0" />
+    <text x="50%" y="50%" font-family="Arial" font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#333">Test Image</text>
+  </svg>`;
+  fs.writeFileSync(testImagePath, testSvg);
+  console.log('Created test image at:', testImagePath);
+}
+
 // Serve static files from the public directory
 app.use(express.static(path.join(process.cwd(), 'public')));
+console.log('Serving static files from:', path.join(process.cwd(), 'public'));
+
+// Add a specific route for serving uploads (as backup)
+app.use('/uploads', express.static(uploadsDir));
+console.log('Serving uploads from:', uploadsDir);
 
 app.use((req, res, next) => {
   const start = Date.now();

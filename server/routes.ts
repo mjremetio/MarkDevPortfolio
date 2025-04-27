@@ -117,6 +117,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/content/:section', getContent);
   app.post('/api/content/:section', requireAuth, updateContent);
   
+  // Endpoint to check if an uploaded file exists
+  app.get('/api/uploads/:filename', (req: Request, res: Response) => {
+    try {
+      const filename = req.params.filename;
+      const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
+      
+      console.log('Checking if file exists at:', filePath);
+      
+      if (fs.existsSync(filePath)) {
+        // Return the URL to the file
+        return res.status(200).json({
+          exists: true,
+          url: `/uploads/${filename}`
+        });
+      } else {
+        return res.status(404).json({
+          exists: false,
+          message: 'File not found'
+        });
+      }
+    } catch (error) {
+      console.error('Error checking file:', error);
+      return res.status(500).json({
+        exists: false,
+        message: 'Error checking file'
+      });
+    }
+  });
+  
+  // Debug endpoint to list uploaded files
+  app.get('/api/debug/uploads', requireAuth, (req: Request, res: Response) => {
+    try {
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      
+      if (!fs.existsSync(uploadsDir)) {
+        return res.status(404).json({
+          message: 'Uploads directory not found',
+          path: uploadsDir
+        });
+      }
+      
+      const files = fs.readdirSync(uploadsDir);
+      const fileData = files.map(file => {
+        const fullPath = path.join(uploadsDir, file);
+        const stats = fs.statSync(fullPath);
+        return {
+          name: file,
+          path: `/uploads/${file}`,
+          size: stats.size,
+          created: stats.birthtime
+        };
+      });
+      
+      return res.status(200).json({
+        directory: uploadsDir,
+        count: files.length,
+        files: fileData
+      });
+    } catch (error) {
+      console.error('Error listing uploads:', error);
+      return res.status(500).json({
+        message: 'Error listing uploaded files'
+      });
+    }
+  });
+  
   // File upload routes
   app.post('/api/upload', requireAuth, upload.single('image'), (req: Request, res: Response) => {
     try {
