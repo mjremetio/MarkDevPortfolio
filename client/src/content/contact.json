@@ -1,6 +1,8 @@
 {
   "title": "Get In Touch",
   "subtitle": "Have a project in mind or want to discuss opportunities? Send me a message and I'll get back to you soon.",
+  "description": "Have a project in mind or want to discuss opportunities? Send me a message and I'll get back to you soon.",
+  "email": "mj.remetio001@gmail.com",
   "contactInfo": [
     {
       "type": "Email",
@@ -22,32 +24,24 @@
   ],
   "socialLinks": [
     {
-      "platform": "LinkedIn",
-      "link": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
-      "icon": "linkedin-in",
-      "bgColor": "bg-[#0077B5]",
-      "hoverColor": "hover:bg-[#005885]"
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+      "icon": "FaLinkedin"
     },
     {
-      "platform": "GitHub",
-      "link": "#",
-      "icon": "github",
-      "bgColor": "bg-[#333]",
-      "hoverColor": "hover:bg-[#222]"
+      "name": "GitHub", 
+      "url": "#",
+      "icon": "FaGithub"
     },
     {
-      "platform": "Twitter",
-      "link": "#",
-      "icon": "twitter",
-      "bgColor": "bg-[#1DA1F2]",
-      "hoverColor": "hover:bg-[#0c85d0]"
+      "name": "Twitter",
+      "url": "#", 
+      "icon": "FaTwitter"
     },
     {
-      "platform": "Dribbble",
-      "link": "#",
-      "icon": "dribbble",
-      "bgColor": "bg-[#ea4c89]",
-      "hoverColor": "hover:bg-[#d62e72]"
+      "name": "Dribbble",
+      "url": "#",
+      "icon": "FaDribbble"
     }
   ],
   "availableFor": [
@@ -80,6 +74,13 @@
       "darkTextClass": "dark:text-yellow-300"
     }
   ],
+  "formLabels": {
+    "name": "Your Name",
+    "email": "Email Address", 
+    "subject": "Subject",
+    "message": "Message",
+    "button": "Send Message"
+  },
   "formFields": [
     {
       "name": "name",
