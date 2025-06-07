@@ -54,8 +54,8 @@ const AboutSection = () => {
             <div className="relative">
               <div className="rounded-lg overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-[1.02] border-2 border-gray-100 dark:border-gray-700">
                 <img 
-                  src="/images/profile-photo.png" 
-                  alt="Mark Remetio" 
+                  src={content.profilePicture || "/images/profile-photo.png"} 
+                  alt={content.imageAlt || "Mark Remetio"} 
                   className="w-full h-64 object-contain bg-gray-50 dark:bg-gray-800"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-500/20 to-transparent"></div>
