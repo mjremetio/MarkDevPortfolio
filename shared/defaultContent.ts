@@ -1,0 +1,442 @@
+import type { ContentSectionName } from "./schema";
+
+type SectionPayload = Record<string, unknown>;
+type DefaultContentMap = Record<ContentSectionName, SectionPayload>;
+
+export const defaultContent: DefaultContentMap = {
+  hero: {
+    greeting: "Hello, I'm",
+    name: "Mark Remetio",
+    title: "Full-Stack Web Developer",
+    shortDescription:
+      "I build beautiful, functional websites and web applications with modern technologies.",
+    ctaButtons: [
+      { text: "View Projects", link: "#projects", primary: true, icon: "eye" },
+      {
+        text: "Download Resume",
+        link: "#",
+        primary: false,
+        icon: "file-text",
+        downloadAction: true,
+      },
+    ],
+    stats: [
+      { value: "5+", label: "Years Experience", icon: "calendar" },
+      { value: "50+", label: "Projects Completed", icon: "check-circle" },
+      { value: "30+", label: "Happy Clients", icon: "users" },
+    ],
+    badges: [
+      {
+        text: "Available for Work",
+        bgColor: "bg-green-100",
+        textColor: "text-green-800",
+        darkBgColor: "dark:bg-green-900/30",
+        darkTextColor: "dark:text-green-300",
+      },
+    ],
+    profilePicture: "",
+  },
+  about: {
+    title: "Versatile Full-Stack Web Developer & Designer",
+    subtitle: "About Me",
+    description: [
+      "Detail-oriented Web Developer with nearly 5 years of hands-on experience specializing in both Front-End and Back-End development, including UI/UX design and server management. Proven track record in deploying live applications and driving their market presence, demonstrating a keen understanding of the complete development lifecycle.",
+      "I'm passionate about creating clean, efficient code and intuitive user experiences. My expertise spans from crafting visually appealing interfaces to implementing robust back-end systems and managing server infrastructure.",
+    ],
+    profilePicture: "/uploads/image-1749275722523-511992083.png",
+    imageAlt: "Mark Remetio profile picture",
+    experience: "6+ Years",
+    statItems: [
+      { label: "Years Experience", value: "6+" },
+      { label: "Projects Completed", value: "50+" },
+      { label: "Client Satisfaction", value: "100%" },
+    ],
+    features: [
+      {
+        title: "Front-End Development",
+        description:
+          "Creating responsive, interactive user interfaces with modern frameworks",
+        icon: "laptop-code",
+      },
+      {
+        title: "Back-End Systems",
+        description:
+          "Building secure, scalable API endpoints and database architectures",
+        icon: "server",
+      },
+      {
+        title: "UI/UX Design",
+        description:
+          "Designing intuitive, aesthetically pleasing user experiences",
+        icon: "paint-brush",
+      },
+      {
+        title: "Cloud Infrastructure",
+        description: "Managing AWS services and server environments",
+        icon: "cloud",
+      },
+    ],
+  },
+  skills: {
+    title: "Technical Skills",
+    subtitle: "A comprehensive set of skills accumulated over 5+ years",
+    description:
+      "I have a broad range of technical skills across multiple technologies and frameworks.",
+    categories: [
+      {
+        title: "Frontend Development",
+        icon: "fas fa-code",
+        iconBg: "bg-primary-100 dark:bg-primary-900/30",
+        iconColor: "text-primary-600 dark:text-primary-400",
+        titleColor: "text-gray-800 dark:text-white",
+        skills: [
+          {
+            name: "HTML5/CSS3",
+            percentage: 95,
+            colorClass: "text-primary-600 dark:text-primary-400",
+          },
+          {
+            name: "JavaScript",
+            percentage: 90,
+            colorClass: "text-primary-600 dark:text-primary-400",
+          },
+          {
+            name: "React/Vue/Angular",
+            percentage: 85,
+            colorClass: "text-primary-600 dark:text-primary-400",
+          },
+          {
+            name: "CSS Preprocessors (SASS/LESS)",
+            percentage: 90,
+            colorClass: "text-primary-600 dark:text-primary-400",
+          },
+          {
+            name: "UI/UX Design",
+            percentage: 80,
+            colorClass: "text-primary-600 dark:text-primary-400",
+          },
+        ],
+      },
+      {
+        title: "Backend Development",
+        icon: "fas fa-database",
+        iconBg: "bg-secondary-100 dark:bg-secondary-900/30",
+        iconColor: "text-secondary-600 dark:text-secondary-400",
+        titleColor: "text-gray-800 dark:text-white",
+        skills: [
+          {
+            name: "PHP (Laravel, WordPress)",
+            percentage: 90,
+            colorClass: "text-secondary-600 dark:text-secondary-400",
+          },
+          {
+            name: "Node.js",
+            percentage: 85,
+            colorClass: "text-secondary-600 dark:text-secondary-400",
+          },
+          {
+            name: "MySQL/PostgreSQL",
+            percentage: 85,
+            colorClass: "text-secondary-600 dark:text-secondary-400",
+          },
+          {
+            name: "MongoDB",
+            percentage: 80,
+            colorClass: "text-secondary-600 dark:text-secondary-400",
+          },
+          {
+            name: "API Development",
+            percentage: 90,
+            colorClass: "text-secondary-600 dark:text-secondary-400",
+          },
+        ],
+      },
+      {
+        title: "DevOps & Tools",
+        icon: "fas fa-cloud",
+        iconBg: "bg-blue-100 dark:bg-blue-900/30",
+        iconColor: "text-blue-600 dark:text-blue-400",
+        titleColor: "text-gray-800 dark:text-white",
+        skills: [
+          {
+            name: "AWS (EC2, EBS, SES)",
+            percentage: 85,
+            colorClass: "text-blue-600 dark:text-blue-400",
+          },
+          {
+            name: "Git/GitHub/BitBucket",
+            percentage: 90,
+            colorClass: "text-blue-600 dark:text-blue-400",
+          },
+          {
+            name: "Linux (SSH, Terminal)",
+            percentage: 85,
+            colorClass: "text-blue-600 dark:text-blue-400",
+          },
+          {
+            name: "Project Management",
+            percentage: 80,
+            colorClass: "text-blue-600 dark:text-blue-400",
+          },
+          {
+            name: "CRM Systems",
+            percentage: 85,
+            colorClass: "text-blue-600 dark:text-blue-400",
+          },
+        ],
+      },
+    ],
+    technologies: [
+      { name: "HTML5", icon: "fab fa-html5 text-orange-500" },
+      { name: "CSS", icon: "fab fa-css3-alt text-blue-500" },
+      { name: "JavaScript", icon: "fab fa-js text-yellow-400" },
+      { name: "React", icon: "fab fa-react text-blue-400" },
+      { name: "Vue.js", icon: "fab fa-vuejs text-green-500" },
+      { name: "Angular", icon: "fab fa-angular text-red-600" },
+      { name: "Node.js", icon: "fab fa-node-js text-green-600" },
+      { name: "PHP", icon: "fab fa-php text-purple-600" },
+      { name: "Laravel", icon: "fab fa-laravel text-red-500" },
+      { name: "WordPress", icon: "fab fa-wordpress text-blue-800" },
+      { name: "AWS", icon: "fab fa-aws text-orange-400" },
+      { name: "Git", icon: "fab fa-git-alt text-red-500" },
+      { name: "SASS / SCSS", icon: "fab fa-sass text-pink-500" },
+    ],
+  },
+  projects: {
+    title: "Featured Projects",
+    subtitle:
+      "Showcasing some of my best work across various technologies and platforms",
+    description:
+      "Here are some of the projects I've worked on recently.",
+    projects: [
+      {
+        title: "Clearance Management System",
+        description:
+          "A Clearance Management System designed to efficiently monitor student clearance statuses and manage remarks, ensuring a streamlined and organized process.",
+        imagePlaceholder: "/uploads/image-1745740094680-914758790.jpg",
+        technologies: [
+          "PHP",
+          "MySQL",
+          "Bootstrap",
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "Admin LTE",
+          "JQuery",
+        ],
+        githubLink: "https://github.com/",
+        liveLink: "#",
+      },
+      {
+        title: "Online Ordering and Inventory Management System",
+        description:
+          "A comprehensive capstone project for Claytonecille General Merchandising that showcases an eCommerce platform combined with an inventory management system.",
+        imagePlaceholder: "/uploads/image-1745740248097-704011875.jpg",
+        technologies: [
+          "PHP OOP",
+          "JavaScript",
+          "MySQL",
+          "Bootstrap",
+          "HTML",
+          "CSS",
+          "RDBMS",
+        ],
+        githubLink: "https://github.com/",
+        liveLink: "#",
+      },
+      {
+        title: "Marketing Analytics Dashboard",
+        description:
+          "Real-time marketing performance dashboard with Salesforce and Google Analytics integration.",
+        imagePlaceholder: "Marketing Dashboard",
+        technologies: ["React", "Node.js", "Salesforce API", "D3.js"],
+        githubLink: "https://github.com/",
+        liveLink: "#",
+      },
+      {
+        title: "Clearance Management System",
+        description:
+          "Automated clearance processing system for educational institutions with approval workflows.",
+        imagePlaceholder: "Clearance System",
+        technologies: ["PHP", "jQuery", "MySQL", "Bootstrap"],
+        githubLink: "https://github.com/",
+        liveLink: "#",
+      },
+      {
+        title: "Marketing Workflow Automation",
+        description:
+          "Custom workflow automation for marketing and CRM processes using Zapier and custom API integrations.",
+        imagePlaceholder: "Workflow Automation",
+        technologies: ["Node.js", "Zapier", "Salesforce", "REST APIs"],
+        githubLink: "https://github.com/",
+        liveLink: "#",
+      },
+      {
+        title: "Personal Portfolio Website",
+        description:
+          "Responsive personal portfolio site with modern design patterns and animations.",
+        imagePlaceholder: "Portfolio Website",
+        technologies: ["React", "Tailwind CSS", "GSAP", "GitHub Pages"],
+        githubLink: "https://github.com/",
+        liveLink: "#",
+      },
+    ],
+  },
+  experience: {
+    title: "Professional Experience",
+    subtitle: "My Journey",
+    description: "A timeline of my professional experience and career journey.",
+    experiences: [
+      {
+        title: "Senior Frontend Developer",
+        company: "Tech Innovations Inc.",
+        period: "Jan 2021 - Present",
+        responsibilities: [
+          "Lead developer for multiple client projects using React and TypeScript",
+          "Implemented state management solutions using Redux and Context API",
+          "Mentored junior developers and conducted code reviews",
+          "Introduced performance optimizations reducing load times by 40%",
+        ],
+      },
+      {
+        title: "Full-Stack Developer",
+        company: "WebSolutions Agency",
+        period: "Mar 2018 - Dec 2020",
+        responsibilities: [
+          "Developed full-stack applications using the MERN stack",
+          "Created RESTful APIs and implemented authentication systems",
+          "Collaborated with design teams to implement responsive UI components",
+          "Deployed and maintained applications on AWS",
+        ],
+      },
+      {
+        title: "Web Developer",
+        company: "Digital Creations",
+        period: "Jun 2016 - Feb 2018",
+        responsibilities: [
+          "Built and maintained client websites using JavaScript and PHP",
+          "Implemented responsive designs using HTML5, CSS3, and Bootstrap",
+          "Optimized website performance and SEO",
+          "Provided technical support and bug fixes for existing projects",
+        ],
+      },
+    ],
+  },
+  contact: {
+    title: "Get In Touch",
+    subtitle: "Contact Me",
+    description:
+      "Feel free to reach out to me for collaboration, opportunities, or just to say hello!",
+    email: "mj.remetio001@gmail.com",
+    contactInfo: [
+      {
+        type: "Email",
+        value: "mj.remetio001@gmail.com",
+        link: "mailto:mj.remetio001@gmail.com",
+        icon: "envelope",
+      },
+      {
+        type: "LinkedIn",
+        value: "linkedin.com/in/mark-joseph-remetio",
+        link: "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+        icon: "linkedin",
+      },
+      { type: "Location", value: "Philippines", icon: "globe" },
+    ],
+    socialLinks: [
+      {
+        name: "LinkedIn",
+        url: "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+        icon: "FaLinkedin",
+      },
+      { name: "GitHub", url: "https://github.com", icon: "FaGithub" },
+      { name: "Twitter", url: "https://twitter.com", icon: "FaTwitter" },
+      { name: "Dribbble", url: "https://dribbble.com", icon: "FaDribbble" },
+    ],
+    availableFor: [
+      {
+        type: "Freelance Projects",
+        bgClass: "bg-green-100",
+        textClass: "text-green-800",
+        darkBgClass: "dark:bg-green-900/30",
+        darkTextClass: "dark:text-green-300",
+      },
+      {
+        type: "Full-time Position",
+        bgClass: "bg-blue-100",
+        textClass: "text-blue-800",
+        darkBgClass: "dark:bg-blue-900/30",
+        darkTextClass: "dark:text-blue-300",
+      },
+      {
+        type: "Consulting",
+        bgClass: "bg-purple-100",
+        textClass: "text-purple-800",
+        darkBgClass: "dark:bg-purple-900/30",
+        darkTextClass: "dark:text-purple-300",
+      },
+      {
+        type: "Remote Work",
+        bgClass: "bg-yellow-100",
+        textClass: "text-yellow-800",
+        darkBgClass: "dark:bg-yellow-900/30",
+        darkTextClass: "dark:text-yellow-300",
+      },
+    ],
+    formLabels: {
+      name: "Your Name",
+      email: "Email Address",
+      subject: "Subject",
+      message: "Message",
+      button: "Send Message",
+    },
+    formFields: [
+      {
+        name: "name",
+        label: "Your Name",
+        type: "text",
+        placeholder: "Enter your name",
+        required: true,
+      },
+      {
+        name: "email",
+        label: "Email Address",
+        type: "email",
+        placeholder: "Enter your email",
+        required: true,
+      },
+      {
+        name: "subject",
+        label: "Subject",
+        type: "text",
+        placeholder: "Enter message subject",
+        required: true,
+      },
+      {
+        name: "message",
+        label: "Message",
+        type: "textarea",
+        placeholder: "Enter your message here...",
+        required: true,
+        rows: 5,
+      },
+    ],
+  },
+  gallery: {
+    title: "Photo Gallery",
+    subtitle: "Visual Journey",
+    description:
+      "A visual showcase of my projects, work environment, and professional journey",
+    images: [
+      "/uploads/image-1745740094680-914758790.jpg",
+      "/uploads/image-1745740248097-704011875.jpg",
+    ],
+  },
+};
+
+export const defaultSections = Object.keys(
+  defaultContent,
+) as ContentSectionName[];
+
+export const getDefaultContent = (section: ContentSectionName) =>
+  defaultContent[section];

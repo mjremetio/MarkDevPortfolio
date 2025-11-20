@@ -1,73 +1,137 @@
-import { Request, Response, NextFunction } from 'express';
-import session from 'express-session';
-import { createHash } from 'crypto';
+import {
+  type Express,
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
+import session from "express-session";
+import { createHash } from "crypto";
+import { eq } from "drizzle-orm";
+import { admins } from "@shared/schema";
+import { db } from "./db";
 
-// Hard-coded admin credentials (for simplicity) - in a real app, use a database
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD_HASH = createHash('sha256').update('password123').digest('hex');
+const DEFAULT_ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "admin";
+const DEFAULT_ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD ?? "password123";
+const DEFAULT_ADMIN_PASSWORD_HASH =
+  process.env.ADMIN_PASSWORD_HASH ??
+  createHash("sha256").update(DEFAULT_ADMIN_PASSWORD).digest("hex");
+const SESSION_SECRET =
+  process.env.SESSION_SECRET ?? "replace-this-session-secret";
 
-declare module 'express-session' {
+let seedPromise: Promise<void> | null = null;
+
+const ensureDefaultAdmin = () => {
+  if (!seedPromise) {
+    seedPromise = (async () => {
+      const [existing] = await db
+        .select({ id: admins.id })
+        .from(admins)
+        .where(eq(admins.username, DEFAULT_ADMIN_USERNAME));
+
+      if (!existing) {
+        await db
+          .insert(admins)
+          .values({
+            username: DEFAULT_ADMIN_USERNAME,
+            passwordHash: DEFAULT_ADMIN_PASSWORD_HASH,
+          })
+          .onConflictDoNothing();
+      }
+    })();
+  }
+
+  return seedPromise;
+};
+
+declare module "express-session" {
   interface SessionData {
     isAuthenticated?: boolean;
     username?: string;
   }
 }
 
-export const setupAuth = (app: any) => {
-  // Configure session middleware
-  app.use(session({
-    secret: 'your-secret-key', // Change this to a real secret key in production
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    },
-    // Using memory store for sessions (already the default)
-    // In production, you would use a persistent store
-  }));
+export const setupAuth = (app: Express) => {
+  app.use(
+    session({
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000,
+      },
+    }),
+  );
 
-  // Login route
-  app.post('/api/admin/login', (req: Request, res: Response) => {
-    const { username, password } = req.body;
-    
-    // Hash the input password
-    const passwordHash = createHash('sha256').update(password).digest('hex');
-    
-    // Check credentials
-    if (username === ADMIN_USERNAME && passwordHash === ADMIN_PASSWORD_HASH) {
-      req.session.isAuthenticated = true;
-      req.session.username = username;
-      return res.json({ success: true });
-    }
-    
-    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+  void ensureDefaultAdmin().catch((error) => {
+    console.error("Failed to seed default admin:", error);
   });
 
-  // Logout route
-  app.post('/api/admin/logout', (req: Request, res: Response) => {
+  app.post("/api/admin/login", async (req: Request, res: Response) => {
+    const { username, password } = req.body ?? {};
+
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Username and password are required" });
+    }
+
+    await ensureDefaultAdmin();
+
+    const [admin] = await db
+      .select()
+      .from(admins)
+      .where(eq(admins.username, username));
+
+    if (!admin) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    const passwordHash = createHash("sha256").update(password).digest("hex");
+    if (passwordHash !== admin.passwordHash) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    req.session.isAuthenticated = true;
+    req.session.username = username;
+    return res.json({ success: true });
+  });
+
+  app.post("/api/admin/logout", (req: Request, res: Response) => {
     req.session.destroy((err) => {
       if (err) {
-        return res.status(500).json({ success: false, message: 'Logout failed' });
+        return res
+          .status(500)
+          .json({ success: false, message: "Logout failed" });
       }
-      res.clearCookie('connect.sid');
+      res.clearCookie("connect.sid");
       return res.json({ success: true });
     });
   });
 
-  // Check authentication status
-  app.get('/api/admin/status', (req: Request, res: Response) => {
+  app.get("/api/admin/status", (req: Request, res: Response) => {
     if (req.session.isAuthenticated) {
-      return res.json({ isAuthenticated: true, username: req.session.username });
+      return res.json({
+        isAuthenticated: true,
+        username: req.session.username,
+      });
     }
     return res.json({ isAuthenticated: false });
   });
 };
 
-// Middleware to protect routes
-export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+export const requireAuth = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (!req.session.isAuthenticated) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ message: "Unauthorized" });
   }
   next();
 };

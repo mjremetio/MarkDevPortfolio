@@ -1,83 +1,102 @@
-import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { Request, Response } from "express";
+import { eq } from "drizzle-orm";
+import {
+  contentSections,
+  CONTENT_SECTION_NAMES,
+  type ContentSectionName,
+} from "@shared/schema";
+import { db } from "./db";
 
-// Get the directory name
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const isValidSection = (section: string): section is ContentSectionName =>
+  CONTENT_SECTION_NAMES.includes(section as ContentSectionName);
 
-// Content sections data store
-const CONTENT_SECTIONS = ['hero', 'about', 'skills', 'projects', 'experience', 'contact', 'gallery'];
-const CONTENT_DIR = path.join(__dirname, '../client/src/content');
-
-// Ensure content directory exists
-if (!fs.existsSync(CONTENT_DIR)) {
-  fs.mkdirSync(CONTENT_DIR, { recursive: true });
-}
-
-// Get all content sections
-export const listContentSections = (_req: Request, res: Response) => {
+export const listContentSections = async (_req: Request, res: Response) => {
   try {
-    res.json({ sections: CONTENT_SECTIONS });
+    const rows = await db
+      .select({ section: contentSections.section })
+      .from(contentSections);
+
+    const sections = Array.from(
+      new Set([
+        ...CONTENT_SECTION_NAMES,
+        ...rows.map((row) => row.section),
+      ]),
+    );
+
+    res.json({ sections });
   } catch (error) {
-    console.error('Error listing content sections:', error);
-    res.status(500).json({ success: false, message: 'Failed to list content sections' });
+    console.error("Error listing content sections:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to list content sections" });
   }
 };
 
-// Get content for a specific section
-export const getContent = (req: Request, res: Response) => {
+export const getContent = async (req: Request, res: Response) => {
   try {
     const { section } = req.params;
-    
-    // Validate section name
-    if (!CONTENT_SECTIONS.includes(section)) {
-      return res.status(404).json({ success: false, message: 'Section not found' });
+
+    if (!isValidSection(section)) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Section not found" });
     }
-    
-    const contentFilePath = path.join(CONTENT_DIR, `${section}.json`);
-    
-    // Check if file exists
-    if (!fs.existsSync(contentFilePath)) {
-      return res.status(404).json({ success: false, message: 'Content file not found' });
+
+    const [record] = await db
+      .select({ payload: contentSections.payload })
+      .from(contentSections)
+      .where(eq(contentSections.section, section));
+
+    if (!record) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Content not found" });
     }
-    
-    // Read file content
-    const fileContent = fs.readFileSync(contentFilePath, 'utf-8');
-    const contentData = JSON.parse(fileContent);
-    
-    res.json(contentData);
+
+    res.json(record.payload);
   } catch (error) {
-    console.error('Error fetching content:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch content' });
+    console.error("Error fetching content:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch content" });
   }
 };
 
-// Update content for a specific section
-export const updateContent = (req: Request, res: Response) => {
+export const updateContent = async (req: Request, res: Response) => {
   try {
     const { section } = req.params;
-    const contentData = req.body;
-    
-    // Validate section name
-    if (!CONTENT_SECTIONS.includes(section)) {
-      return res.status(404).json({ success: false, message: 'Section not found' });
+
+    if (!isValidSection(section)) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Section not found" });
     }
-    
-    // Ensure content directory exists
-    if (!fs.existsSync(CONTENT_DIR)) {
-      fs.mkdirSync(CONTENT_DIR, { recursive: true });
+
+    if (typeof req.body !== "object" || req.body === null) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payload. Expected a JSON object.",
+      });
     }
-    
-    const contentFilePath = path.join(CONTENT_DIR, `${section}.json`);
-    
-    // Write content to file
-    fs.writeFileSync(contentFilePath, JSON.stringify(contentData, null, 2));
-    
-    res.json({ success: true, message: `${section} content updated successfully` });
+
+    const payload = req.body as Record<string, unknown>;
+
+    await db
+      .insert(contentSections)
+      .values({ section, payload })
+      .onConflictDoUpdate({
+        target: contentSections.section,
+        set: { payload, updatedAt: new Date() },
+      });
+
+    res.json({
+      success: true,
+      message: `${section} content updated successfully`,
+    });
   } catch (error) {
-    console.error('Error updating content:', error);
-    res.status(500).json({ success: false, message: 'Failed to update content' });
+    console.error("Error updating content:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update content" });
   }
 };

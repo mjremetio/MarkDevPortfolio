@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { seedContentFromDefaults } from "./seedContent";
 import path from "path";
 import fs from "fs";
 
@@ -65,6 +66,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  await seedContentFromDefaults().catch((error) => {
+    console.error("Failed to seed content from JSON files:", error);
+  });
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -87,12 +92,48 @@ app.use((req, res, next) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  const desiredPort = Number(process.env.PORT) || 5000;
+  const canRetryOnRandomPort = !process.env.PORT && desiredPort === 5000;
+
+  const startServer = (port: number, allowRetry: boolean) => {
+    const listenOptions: Record<string, any> = {
+      port,
+      host: "0.0.0.0",
+    };
+
+    // reusePort is required on Replit but not supported on all local runtimes
+    const shouldReusePort =
+      process.env.REUSE_PORT === "true" ||
+      (process.env.REUSE_PORT !== "false" && process.env.REPL_ID);
+
+    if (shouldReusePort) {
+      listenOptions.reusePort = true;
+    }
+
+    const onError = (err: NodeJS.ErrnoException) => {
+      if (err.code === "EADDRINUSE" && allowRetry) {
+        log(`Port ${port} is in use locally. Retrying on a random open port…`);
+        server.off("error", onError);
+        startServer(0, false);
+        return;
+      }
+
+      server.off("error", onError);
+      throw err;
+    };
+
+    server.once("error", onError);
+
+    server.listen(listenOptions, () => {
+      server.off("error", onError);
+      const address = server.address();
+      const actualPort =
+        typeof address === "object" && address !== null
+          ? address.port
+          : address ?? port;
+      log(`serving on port ${actualPort}`);
+    });
+  };
+
+  startServer(desiredPort, canRetryOnRandomPort);
 })();

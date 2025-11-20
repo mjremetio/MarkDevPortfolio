@@ -1,256 +1,168 @@
 import { toast } from "@/hooks/use-toast";
+import { defaultContent } from "@shared/defaultContent";
 
-// Initial default content - will be replaced by API calls
-const heroContent = {
-  greeting: "Hello, I'm",
-  name: "Mark Remetio",
-  title: "Full-Stack Web Developer",
-  shortDescription: "I build beautiful, functional websites and web applications with modern technologies.",
-  ctaButtons: [
-    {
-      text: "View Projects",
-      link: "#projects",
-      primary: true,
-      icon: "eye"
-    },
-    {
-      text: "Download Resume",
-      link: "#",
-      primary: false,
-      icon: "file-text",
-      downloadAction: true
-    }
-  ],
-  stats: [
-    {
-      value: "5+",
-      label: "Years Experience",
-      icon: "calendar"
-    },
-    {
-      value: "50+",
-      label: "Projects Completed",
-      icon: "check-circle"
-    },
-    {
-      value: "30+",
-      label: "Happy Clients",
-      icon: "users"
-    }
-  ],
-  badges: [
-    {
-      text: "Available for Work",
-      bgColor: "bg-green-100",
-      textColor: "text-green-800",
-      darkBgColor: "dark:bg-green-900/30",
-      darkTextColor: "dark:text-green-300"
-    }
-  ],
-  profilePicture: ""
+type AboutFeature = {
+  title: string;
+  description: string;
+  icon: string;
 };
 
-const aboutContent = {
-  title: "Versatile Full-Stack Web Developer",
-  subtitle: "About Me",
-  description: [
-    "I am a passionate full-stack developer with over 5 years of experience building web applications that deliver exceptional user experiences.",
-    "My expertise spans front-end and back-end technologies, with a focus on React, Node.js, and modern JavaScript frameworks.",
-    "I'm committed to writing clean, maintainable code and staying up-to-date with the latest industry standards and best practices."
-  ],
-  profilePicture: "/profile-image.svg",
-  imageAlt: "Mark Remetio profile picture",
-  statItems: [
-    { label: "Years Experience", value: "5+" },
-    { label: "Projects Completed", value: "50+" },
-    { label: "Client Satisfaction", value: "100%" }
-  ]
+type StatItem = {
+  label: string;
+  value: string;
 };
 
-const skillsContent = {
-  title: "Technical Skills",
-  subtitle: "Areas of Expertise",
-  description: "I have a broad range of technical skills across multiple technologies and frameworks.",
-  categories: [
-    {
-      title: "Frontend Development",
-      icon: "FaReact",
-      iconBg: "bg-indigo-600",
-      iconColor: "text-white",
-      titleColor: "text-indigo-600",
-      skills: [
-        { name: "HTML5/CSS3", percentage: 95, colorClass: "text-indigo-600" },
-        { name: "JavaScript", percentage: 90, colorClass: "text-indigo-600" },
-        { name: "React/Vue/Angular", percentage: 85, colorClass: "text-indigo-600" },
-        { name: "CSS Preprocessors (SASS/LESS)", percentage: 90, colorClass: "text-indigo-600" },
-        { name: "UI/UX Design", percentage: 80, colorClass: "text-indigo-600" },
-        { name: "API Development", percentage: 90, colorClass: "text-indigo-600" }
-      ]
-    },
-    {
-      title: "Backend Development",
-      icon: "FaNodeJs",
-      iconBg: "bg-indigo-600",
-      iconColor: "text-white",
-      titleColor: "text-indigo-600",
-      skills: [
-        { name: "PHP (Laravel, WordPress)", percentage: 90, colorClass: "text-indigo-600" },
-        { name: "Node.js", percentage: 85, colorClass: "text-indigo-600" },
-        { name: "MySQL/PostgreSQL", percentage: 85, colorClass: "text-indigo-600" },
-        { name: "MongoDB", percentage: 80, colorClass: "text-indigo-600" },
-        { name: "API Development", percentage: 90, colorClass: "text-indigo-600" }
-      ]
-    },
-    {
-      title: "DevOps & Tools",
-      icon: "FaTools",
-      iconBg: "bg-indigo-600",
-      iconColor: "text-white",
-      titleColor: "text-indigo-600",
-      skills: [
-        { name: "AWS (EC2, EBS, SES)", percentage: 85, colorClass: "text-indigo-600" },
-        { name: "Git/GitHub/BitBucket", percentage: 90, colorClass: "text-indigo-600" },
-        { name: "Linux (SSH, Terminal)", percentage: 85, colorClass: "text-indigo-600" },
-        { name: "Project Management", percentage: 80, colorClass: "text-indigo-600" },
-        { name: "CRM Systems", percentage: 85, colorClass: "text-indigo-600" }
-      ]
-    }
-  ],
-  technologies: [
-    { name: "React", icon: "SiReact" },
-    { name: "TypeScript", icon: "SiTypescript" },
-    { name: "Node.js", icon: "SiNodedotjs" },
-    { name: "Express", icon: "SiExpress" },
-    { name: "MongoDB", icon: "SiMongodb" },
-    { name: "PostgreSQL", icon: "SiPostgresql" },
-    { name: "Redux", icon: "SiRedux" },
-    { name: "Next.js", icon: "SiNextdotjs" },
-    { name: "AWS", icon: "SiAmazonaws" },
-    { name: "Docker", icon: "SiDocker" },
-    { name: "Git", icon: "SiGit" }
-  ]
+type HeroCTA = {
+  text: string;
+  link: string;
+  primary: boolean;
+  icon: string;
+  downloadAction?: boolean;
 };
 
-const projectsContent = {
-  title: "Featured Projects",
-  subtitle: "My Recent Work",
-  description: "Here are some of the projects I've worked on recently.",
-  projects: [
-    {
-      title: "E-Commerce Platform",
-      description: "A full-featured online store with product catalog, cart, and payment processing.",
-      imagePlaceholder: "/project-1.svg",
-      technologies: ["React", "Node.js", "Express", "MongoDB", "Stripe API"],
-      githubLink: "https://github.com",
-      liveLink: "https://project.com"
-    },
-    {
-      title: "Real-time Chat Application",
-      description: "A messaging platform with real-time updates, user authentication, and message history.",
-      imagePlaceholder: "/project-2.svg",
-      technologies: ["React", "Socket.io", "Express", "MongoDB", "JWT"],
-      githubLink: "https://github.com",
-      liveLink: "https://project.com"
-    },
-    {
-      title: "Task Management Dashboard",
-      description: "A productivity tool for teams to manage tasks, track progress, and collaborate efficiently.",
-      imagePlaceholder: "/project-3.svg",
-      technologies: ["React", "Redux", "Node.js", "PostgreSQL", "Chart.js"],
-      githubLink: "https://github.com",
-      liveLink: "https://project.com"
-    },
-    {
-      title: "Fitness Tracking App",
-      description: "A mobile-responsive application for tracking workouts, nutrition, and fitness goals.",
-      imagePlaceholder: "/project-4.svg",
-      technologies: ["React Native", "Firebase", "Redux", "Express", "OAuth"],
-      githubLink: "https://github.com",
-      liveLink: "https://project.com"
-    }
-  ]
+type HeroBadge = {
+  text: string;
+  bgColor: string;
+  textColor: string;
+  darkBgColor: string;
+  darkTextColor: string;
 };
 
-const experienceContent = {
-  title: "Professional Experience",
-  subtitle: "My Journey",
-  description: "A timeline of my professional experience and career journey.",
-  experiences: [
-    {
-      title: "Senior Frontend Developer",
-      company: "Tech Innovations Inc.",
-      period: "Jan 2021 - Present",
-      responsibilities: [
-        "Lead developer for multiple client projects using React and TypeScript",
-        "Implemented state management solutions using Redux and Context API",
-        "Mentored junior developers and conducted code reviews",
-        "Introduced performance optimizations reducing load times by 40%"
-      ]
-    },
-    {
-      title: "Full-Stack Developer",
-      company: "WebSolutions Agency",
-      period: "Mar 2018 - Dec 2020",
-      responsibilities: [
-        "Developed full-stack applications using MERN stack",
-        "Created RESTful APIs and implemented authentication systems",
-        "Collaborated with design team to implement responsive UI components",
-        "Deployed and maintained applications on AWS"
-      ]
-    },
-    {
-      title: "Web Developer",
-      company: "Digital Creations",
-      period: "Jun 2016 - Feb 2018",
-      responsibilities: [
-        "Built and maintained client websites using JavaScript and PHP",
-        "Implemented responsive designs using HTML5, CSS3, and Bootstrap",
-        "Optimized website performance and SEO",
-        "Provided technical support and bug fixes for existing projects"
-      ]
-    }
-  ]
+type HeroStat = {
+  value: string;
+  label: string;
+  icon: string;
 };
 
-const contactContent = {
-  title: "Get In Touch",
-  subtitle: "Contact Me",
-  description: "Feel free to reach out to me for collaboration, opportunities, or just to say hello!",
-  email: "mark.remetio@example.com",
-  socialLinks: [
-    { name: "GitHub", url: "https://github.com", icon: "FaGithub" },
-    { name: "LinkedIn", url: "https://linkedin.com", icon: "FaLinkedin" },
-    { name: "Twitter", url: "https://twitter.com", icon: "FaTwitter" }
-  ],
+type HeroContent = {
+  greeting: string;
+  name: string;
+  title: string;
+  shortDescription: string;
+  ctaButtons: HeroCTA[];
+  stats: HeroStat[];
+  badges: HeroBadge[];
+  profilePicture?: string;
+};
+
+export type AboutContentData = {
+  title: string;
+  subtitle?: string;
+  description: string[];
+  profilePicture?: string;
+  imageAlt?: string;
+  experience?: string;
+  features?: AboutFeature[];
+  statItems?: StatItem[];
+};
+
+type SkillItem = {
+  name: string;
+  percentage: number;
+  colorClass: string;
+};
+
+type SkillCategory = {
+  title: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  titleColor: string;
+  skills: SkillItem[];
+};
+
+type SkillsContentData = {
+  title: string;
+  subtitle: string;
+  description: string;
+  categories: SkillCategory[];
+  technologies: Array<{ name: string; icon: string }>;
+};
+
+type ProjectItem = {
+  title: string;
+  description: string;
+  imagePlaceholder: string;
+  technologies: string[];
+  githubLink?: string;
+  liveLink?: string;
+};
+
+type ProjectsContentData = {
+  title: string;
+  subtitle: string;
+  description: string;
+  projects: ProjectItem[];
+};
+
+type ExperienceItem = {
+  title: string;
+  company: string;
+  period: string;
+  responsibilities: string[];
+};
+
+type ExperienceContentData = {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  experiences: ExperienceItem[];
+};
+
+type ContactContentData = {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  email: string;
+  contactInfo?: Array<{
+    type: string;
+    value: string;
+    link?: string;
+    icon?: string;
+  }>;
+  socialLinks: Array<{ name: string; url: string; icon: string }>;
+  availableFor?: Array<{
+    type: string;
+    bgClass: string;
+    textClass: string;
+    darkBgClass: string;
+    darkTextClass: string;
+  }>;
   formLabels: {
-    name: "Your Name",
-    email: "Your Email",
-    subject: "Subject",
-    message: "Your Message",
-    button: "Send Message"
-  }
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    button: string;
+  };
+  formFields?: Array<Record<string, unknown>>;
 };
 
-const galleryContent = {
-  title: "Project Gallery",
-  subtitle: "Visual Showcase",
-  description: "A visual showcase of UI/UX designs and development work",
-  images: [
-    "/uploads/image_1744279279949.png",
-    "/uploads/image_1744275110120.png",
-    "/uploads/image_1744273642730.png",
-    "/uploads/image_1744272209932.png"
-  ]
+type GalleryContentData = {
+  title: string;
+  subtitle: string;
+  description: string;
+  images: string[];
 };
+
+// Shared default content (read-only, comes from Supabase seed data)
+const heroContent = defaultContent.hero as HeroContent;
+const aboutContent = defaultContent.about as AboutContentData;
+const skillsContent = defaultContent.skills as SkillsContentData;
+const projectsContent = defaultContent.projects as ProjectsContentData;
+const experienceContent = defaultContent.experience as ExperienceContentData;
+const contactContent = defaultContent.contact as ContactContentData;
+const galleryContent = defaultContent.gallery as GalleryContentData;
 
 // Helper functions for API calls
 export const getHeroContent = () => heroContent;
-export const getAboutContent = () => aboutContent;
-export const getSkillsContent = () => skillsContent;
-export const getProjectsContent = () => projectsContent;
-export const getExperienceContent = () => experienceContent;
-export const getContactContent = () => contactContent;
-export const getGalleryContent = () => galleryContent;
+export const getAboutContent = (): AboutContentData => aboutContent;
+export const getSkillsContent = (): SkillsContentData => skillsContent;
+export const getProjectsContent = (): ProjectsContentData => projectsContent;
+export const getExperienceContent = (): ExperienceContentData =>
+  experienceContent;
+export const getContactContent = (): ContactContentData => contactContent;
+export const getGalleryContent = (): GalleryContentData => galleryContent;
 
 // Function to fetch content from the API
 export const getContent = async (section: string) => {
