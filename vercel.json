@@ -2,19 +2,20 @@
   "version": 2,
   "buildCommand": "npm run build",
   "builds": [
-    { "src": "api/serverless.ts", "use": "@vercel/node" },
+    {
+      "src": "api/serverless.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "server/**",
+          "shared/**",
+          "attached_assets/**",
+          "public/uploads/**"
+        ]
+      }
+    },
     { "src": "dist/public/**", "use": "@vercel/static" }
   ],
-  "functions": {
-    "api/serverless.ts": {
-      "includeFiles": [
-        "server/**",
-        "shared/**",
-        "attached_assets/**",
-        "public/uploads/**"
-      ]
-    }
-  },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/serverless.ts" },
     { "handle": "filesystem" },
