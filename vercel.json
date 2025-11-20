@@ -5,6 +5,16 @@
     { "src": "api/serverless.ts", "use": "@vercel/node" },
     { "src": "dist/public/**", "use": "@vercel/static" }
   ],
+  "functions": {
+    "api/serverless.ts": {
+      "includeFiles": [
+        "server/**",
+        "shared/**",
+        "attached_assets/**",
+        "public/uploads/**"
+      ]
+    }
+  },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/serverless.ts" },
     { "handle": "filesystem" },
