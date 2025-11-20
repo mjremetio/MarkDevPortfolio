@@ -1,5 +1,4 @@
-import type { Express, Request, Response, NextFunction } from "express";
-import { createServer, type Server } from "http";
+import type { Express, Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -58,7 +57,7 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCa
   }
 };
 
-const upload = multer({ 
+const upload = multer({
   storage: uploadStorage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB file size limit
@@ -66,7 +65,7 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export function registerRoutes(app: Express) {
   // Set up authentication
   setupAuth(app);
   // Contact form submission endpoint
@@ -270,7 +269,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
-
-  return httpServer;
 }
