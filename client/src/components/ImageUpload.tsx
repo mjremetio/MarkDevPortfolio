@@ -70,6 +70,7 @@ export function ImageUpload({ onImageUploaded, currentImagePath, label = 'Image'
       
       const response = await fetch('/api/upload', {
         method: 'POST',
+        credentials: "include",
         body: formData,
       });
       
@@ -212,6 +213,7 @@ export function MultipleImageUpload({ onImagesUploaded, label = 'Images' }: Mult
       
       const response = await fetch('/api/upload/multiple', {
         method: 'POST',
+        credentials: "include",
         body: formData,
       });
       
