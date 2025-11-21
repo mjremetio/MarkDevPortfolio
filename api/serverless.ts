@@ -20,6 +20,7 @@ async function getHandler(): Promise<Handler> {
 async function loadApp() {
   const distAppPath = path.join(process.cwd(), "dist", "server", "app.js");
   const hasDistApp = fs.existsSync(distAppPath);
+  console.log("[api/serverless] dist app path:", distAppPath, "exists:", hasDistApp);
 
   if (hasDistApp) {
     const module: Record<string, any> = await import(
