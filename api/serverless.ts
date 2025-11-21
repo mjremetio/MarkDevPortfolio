@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { createApp } from "../server/app";
+import fs from "fs";
+import path from "path";
+import { pathToFileURL } from "url";
 
 type Handler = (req: VercelRequest, res: VercelResponse) => void;
 
@@ -10,9 +12,42 @@ async function getHandler(): Promise<Handler> {
     return cachedHandler;
   }
 
-  const app = await createApp();
+  const app = await loadApp();
   cachedHandler = app as Handler;
   return cachedHandler;
+}
+
+async function loadApp() {
+  const distAppPath = path.join(process.cwd(), "dist", "server", "app.js");
+  const hasDistApp = fs.existsSync(distAppPath);
+
+  if (hasDistApp) {
+    const module: Record<string, any> = await import(
+      pathToFileURL(distAppPath).href
+    );
+    if (typeof module.createApp === "function") {
+      return module.createApp();
+    }
+    if (typeof module.default === "function") {
+      return module.default();
+    }
+    if (typeof module.default?.createApp === "function") {
+      return module.default.createApp();
+    }
+  }
+
+  const module: Record<string, any> = await import("../server/app");
+  if (typeof module.createApp === "function") {
+    return module.createApp();
+  }
+  if (typeof module.default === "function") {
+    return module.default();
+  }
+  if (typeof module.default?.createApp === "function") {
+    return module.default.createApp();
+  }
+
+  throw new Error("Unable to load Express app");
 }
 
 export default async function handler(
