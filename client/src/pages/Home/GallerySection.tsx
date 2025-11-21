@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getGalleryContent } from "@/utils/contentLoader";
+import { getRenderableImageSource } from "@/utils/imagePath";
 
 interface GalleryContent {
   title: string;
@@ -16,6 +17,8 @@ interface GalleryItemProps {
 }
 
 const GalleryItem = ({ imagePath, alt, index }: GalleryItemProps) => {
+  const resolvedImage = getRenderableImageSource(imagePath);
+
   return (
     <motion.div 
       className="gallery-image-container rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 aspect-video"
@@ -34,10 +37,10 @@ const GalleryItem = ({ imagePath, alt, index }: GalleryItemProps) => {
         }
       `}} />
       
-      {imagePath ? (
+      {resolvedImage ? (
         <div className="w-full h-full relative gallery-image">
           <img 
-            src={imagePath} 
+            src={resolvedImage} 
             alt={alt || `Gallery image ${index + 1}`} 
             className="w-full h-full object-cover" 
           />

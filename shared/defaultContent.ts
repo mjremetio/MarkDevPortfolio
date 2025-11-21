@@ -43,7 +43,8 @@ export const defaultContent: DefaultContentMap = {
       "Detail-oriented Web Developer with nearly 5 years of hands-on experience specializing in both Front-End and Back-End development, including UI/UX design and server management. Proven track record in deploying live applications and driving their market presence, demonstrating a keen understanding of the complete development lifecycle.",
       "I'm passionate about creating clean, efficient code and intuitive user experiences. My expertise spans from crafting visually appealing interfaces to implementing robust back-end systems and managing server infrastructure.",
     ],
-    profilePicture: "/uploads/image-1749275722523-511992083.png",
+    profilePicture:
+      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=800&q=80",
     imageAlt: "Mark Remetio profile picture",
     experience: "6+ Years",
     statItems: [
@@ -213,7 +214,8 @@ export const defaultContent: DefaultContentMap = {
         title: "Clearance Management System",
         description:
           "A Clearance Management System designed to efficiently monitor student clearance statuses and manage remarks, ensuring a streamlined and organized process.",
-        imagePlaceholder: "/uploads/image-1745740094680-914758790.jpg",
+        imagePlaceholder:
+          "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
         technologies: [
           "PHP",
           "MySQL",
@@ -231,7 +233,8 @@ export const defaultContent: DefaultContentMap = {
         title: "Online Ordering and Inventory Management System",
         description:
           "A comprehensive capstone project for Claytonecille General Merchandising that showcases an eCommerce platform combined with an inventory management system.",
-        imagePlaceholder: "/uploads/image-1745740248097-704011875.jpg",
+        imagePlaceholder:
+          "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
         technologies: [
           "PHP OOP",
           "JavaScript",
@@ -428,8 +431,8 @@ export const defaultContent: DefaultContentMap = {
     description:
       "A visual showcase of my projects, work environment, and professional journey",
     images: [
-      "/uploads/image-1745740094680-914758790.jpg",
-      "/uploads/image-1745740248097-704011875.jpg",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?auto=format&fit=crop&w=1200&q=80",
     ],
   },
 };

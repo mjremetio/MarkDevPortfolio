@@ -4,11 +4,12 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import path from "path";
 import fs from "fs";
+import path from "path";
 import { registerRoutes } from "./routes";
 import { seedContentFromDefaults } from "./seedContent";
 import { log } from "./logger";
+import { isDiskUpload, uploadsDir } from "./uploadStrategy";
 
 let appPromise: Promise<Express> | null = null;
 
@@ -29,28 +30,31 @@ async function initializeApp(): Promise<Express> {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    console.log("Creating uploads directory at:", uploadsDir);
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-
-  const testImagePath = path.join(uploadsDir, "test-image.svg");
-  if (!fs.existsSync(testImagePath)) {
-    const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-    <rect width="200" height="200" fill="#f0f0f0" />
-    <text x="50%" y="50%" font-family="Arial" font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#333">Test Image</text>
-  </svg>`;
-    fs.writeFileSync(testImagePath, testSvg);
-    console.log("Created test image at:", testImagePath);
-  }
-
   const publicDir = path.join(process.cwd(), "public");
   app.use(express.static(publicDir));
   console.log("Serving static files from:", publicDir);
 
-  app.use("/uploads", express.static(uploadsDir));
-  console.log("Serving uploads from:", uploadsDir);
+  if (isDiskUpload) {
+    if (!fs.existsSync(uploadsDir)) {
+      console.log("Creating uploads directory at:", uploadsDir);
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    const testImagePath = path.join(uploadsDir, "test-image.svg");
+    if (!fs.existsSync(testImagePath)) {
+      const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+    <rect width="200" height="200" fill="#f0f0f0" />
+    <text x="50%" y="50%" font-family="Arial" font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#333">Test Image</text>
+  </svg>`;
+      fs.writeFileSync(testImagePath, testSvg);
+      console.log("Created test image at:", testImagePath);
+    }
+
+    app.use("/uploads", express.static(uploadsDir));
+    console.log("Serving uploads from:", uploadsDir);
+  } else {
+    console.log("Disk uploads disabled in this environment. Skipping static uploads mount.");
+  }
 
   app.use((req, res, next) => {
     const start = Date.now();

@@ -1,30 +1,38 @@
 import type { Express, Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from 'url';
-import { getContent, updateContent, listContentSections } from './contentRoutes';
-import { setupAuth, requireAuth } from './auth';
-import multer from 'multer';
+import { fileURLToPath } from "url";
+import multer from "multer";
+import { desc, eq } from "drizzle-orm";
+import { mediaUploads } from "@shared/schema";
+import { getContent, updateContent, listContentSections } from "./contentRoutes";
+import { setupAuth, requireAuth } from "./auth";
+import { db } from "./db";
+import {
+  isDatabaseUpload,
+  isDiskUpload,
+  isSupabaseUpload,
+  uploadsDir,
+} from "./uploadStrategy";
 import { supabase, SUPABASE_STORAGE_BUCKET } from "./supabaseClient";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const useSupabaseStorage = Boolean(supabase);
+const useSupabaseStorage = isSupabaseUpload && Boolean(supabase);
+const useDatabaseStorage = isDatabaseUpload;
+const useDiskStorage = isDiskUpload;
+const useMemoryStorage = useSupabaseStorage || useDatabaseStorage;
 
 const diskUploadStorage = multer.diskStorage({
   destination: function(req, file, cb) {
-    const baseDir = path.join(process.cwd(), "public", "uploads");
-
-    console.log("Upload directory path:", baseDir);
-
-    if (!fs.existsSync(baseDir)) {
-      console.log("Creating upload directory at:", baseDir);
-      fs.mkdirSync(baseDir, { recursive: true });
+    if (!fs.existsSync(uploadsDir)) {
+      console.log("Creating upload directory at:", uploadsDir);
+      fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    cb(null, baseDir);
+    cb(null, uploadsDir);
   },
   filename: function(req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -35,7 +43,7 @@ const diskUploadStorage = multer.diskStorage({
   }
 });
 
-const uploadStorage = useSupabaseStorage
+const uploadStorage = useMemoryStorage
   ? multer.memoryStorage()
   : diskUploadStorage;
 
@@ -60,11 +68,15 @@ const upload = multer({
 });
 
 const ensureUploadsDir = () => {
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  if (!useDiskStorage) {
+    return uploadsDir;
   }
-  return uploadDir;
+
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  return uploadsDir;
 };
 
 const buildUniqueFilename = (originalName: string) => {
@@ -96,13 +108,41 @@ const uploadFileToSupabase = async (file: Express.Multer.File) => {
   return data.publicUrl;
 };
 
+const saveFileToDatabase = async (file: Express.Multer.File) => {
+  if (!file.buffer) {
+    throw new Error("File buffer is not available for database storage");
+  }
+
+  const storedFilename = buildUniqueFilename(file.originalname);
+
+  const [record] = await db
+    .insert(mediaUploads)
+    .values({
+      filename: storedFilename,
+      mimeType: file.mimetype,
+      size: file.size,
+      dataBase64: file.buffer.toString("base64"),
+    })
+    .returning({ id: mediaUploads.id });
+
+  if (!record) {
+    throw new Error("Failed to persist uploaded file");
+  }
+
+  return `/api/uploads/${record.id}`;
+};
+
 const saveFile = async (file: Express.Multer.File) => {
   if (useSupabaseStorage) {
     return await uploadFileToSupabase(file);
   }
 
+  if (useDatabaseStorage) {
+    return await saveFileToDatabase(file);
+  }
+
   ensureUploadsDir();
-  return `/uploads/${file.filename}`;
+  return `/api/uploads/${file.filename}`;
 };
 
 const saveFiles = async (files: Express.Multer.File[]) =>
@@ -158,63 +198,115 @@ export function registerRoutes(app: Express) {
   app.get('/api/content/:section', getContent);
   app.post('/api/content/:section', requireAuth, updateContent);
   
-  // Endpoint to check if an uploaded file exists
-  app.get('/api/uploads/:filename', (req: Request, res: Response) => {
+  // Endpoint to serve stored uploads
+  app.get('/api/uploads/:id', async (req: Request, res: Response) => {
     try {
-      const filename = req.params.filename;
-      const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
-      
-      console.log('Checking if file exists at:', filePath);
-      
-      if (fs.existsSync(filePath)) {
-        // Return the URL to the file
-        return res.status(200).json({
-          exists: true,
-          url: `/uploads/${filename}`
-        });
-      } else {
-        return res.status(404).json({
-          exists: false,
-          message: 'File not found'
-        });
+      if (useDatabaseStorage) {
+        const uploadId = Number(req.params.id);
+
+        if (Number.isNaN(uploadId)) {
+          return res.status(400).json({ message: 'Invalid file identifier' });
+        }
+
+        const [record] = await db
+          .select({
+            id: mediaUploads.id,
+            filename: mediaUploads.filename,
+            mimeType: mediaUploads.mimeType,
+            size: mediaUploads.size,
+            dataBase64: mediaUploads.dataBase64,
+          })
+          .from(mediaUploads)
+          .where(eq(mediaUploads.id, uploadId))
+          .limit(1);
+
+        if (!record) {
+          return res.status(404).json({ message: 'File not found' });
+        }
+
+        const fileBuffer = Buffer.from(record.dataBase64, "base64");
+
+        res.setHeader('Content-Type', record.mimeType);
+        res.setHeader('Content-Length', record.size.toString());
+        res.setHeader(
+          'Content-Disposition',
+          `inline; filename="${record.filename}"`,
+        );
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+
+        return res.send(fileBuffer);
       }
+
+      const filename = req.params.id;
+      const filePath = path.join(uploadsDir, filename);
+
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: 'File not found' });
+      }
+
+      return res.sendFile(filePath);
     } catch (error) {
-      console.error('Error checking file:', error);
+      console.error('Error serving uploaded file:', error);
       return res.status(500).json({
-        exists: false,
-        message: 'Error checking file'
+        message: 'Error serving file',
       });
     }
   });
   
   // Debug endpoint to list uploaded files
-  app.get('/api/debug/uploads', requireAuth, (req: Request, res: Response) => {
+  app.get('/api/debug/uploads', requireAuth, async (_req: Request, res: Response) => {
     try {
-      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-      
+      if (useDatabaseStorage) {
+        const rows = await db
+          .select({
+            id: mediaUploads.id,
+            filename: mediaUploads.filename,
+            size: mediaUploads.size,
+            mimeType: mediaUploads.mimeType,
+            createdAt: mediaUploads.createdAt,
+          })
+          .from(mediaUploads)
+          .orderBy(desc(mediaUploads.createdAt))
+          .limit(100);
+
+        return res.status(200).json({
+          strategy: 'database',
+          count: rows.length,
+          files: rows.map((row) => ({
+            id: row.id,
+            path: `/api/uploads/${row.id}`,
+            filename: row.filename,
+            size: row.size,
+            mimeType: row.mimeType,
+            createdAt: row.createdAt,
+          })),
+        });
+      }
+
       if (!fs.existsSync(uploadsDir)) {
         return res.status(404).json({
           message: 'Uploads directory not found',
-          path: uploadsDir
+          path: uploadsDir,
         });
       }
-      
+
       const files = fs.readdirSync(uploadsDir);
-      const fileData = files.map(file => {
+      const fileData = files.map((file) => {
         const fullPath = path.join(uploadsDir, file);
         const stats = fs.statSync(fullPath);
         return {
           name: file,
-          path: `/uploads/${file}`,
+          path: `/api/uploads/${file}`,
           size: stats.size,
-          created: stats.birthtime
+          created: stats.birthtime,
         };
       });
-      
+
       return res.status(200).json({
+        strategy: 'disk',
         directory: uploadsDir,
         count: files.length,
-        files: fileData
+        files: fileData,
       });
     } catch (error) {
       console.error('Error listing uploads:', error);

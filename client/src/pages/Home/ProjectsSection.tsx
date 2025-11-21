@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getProjectsContent } from "@/utils/contentLoader";
+import { getRenderableImageSource } from "@/utils/imagePath";
 
 interface ProjectsContent {
   title: string;
@@ -38,8 +39,8 @@ const ProjectCard = ({
   githubLink,
   liveLink
 }: ProjectCardProps) => {
-  // Check if imagePlaceholder is a URL (starts with /uploads or http)
-  const isImageUrl = imagePlaceholder && (imagePlaceholder.startsWith('/uploads') || imagePlaceholder.startsWith('http'));
+  const imageSrc = getRenderableImageSource(imagePlaceholder);
+  const hasImage = Boolean(imageSrc);
 
   return (
     <motion.div 
@@ -56,11 +57,11 @@ const ProjectCard = ({
       `}} />
       
       <div className="relative h-56 overflow-hidden">
-        {isImageUrl ? (
+        {hasImage && imageSrc ? (
           // Display the actual image if a URL is provided
           <div className="w-full h-full relative">
             <img 
-              src={imagePlaceholder} 
+              src={imageSrc} 
               alt={title}
               className="w-full h-full object-cover"
               onError={(e) => console.error("Error loading image:", title)} 

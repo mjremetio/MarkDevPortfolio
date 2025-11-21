@@ -1,10 +1,11 @@
 import {
+  integer,
+  jsonb,
   pgTable,
   serial,
-  varchar,
-  jsonb,
-  timestamp,
   text,
+  timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const admins = pgTable("admins", {
@@ -25,6 +26,17 @@ export const contentSections = pgTable("content_sections", {
     .notNull(),
 });
 
+export const mediaUploads = pgTable("media_uploads", {
+  id: serial("id").primaryKey(),
+  filename: varchar("filename", { length: 255 }).notNull(),
+  mimeType: varchar("mime_type", { length: 128 }).notNull(),
+  size: integer("size").notNull(),
+  dataBase64: text("data_base64").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
 export const CONTENT_SECTION_NAMES = [
   "hero",
   "about",
@@ -41,3 +53,5 @@ export type NewContentSection = typeof contentSections.$inferInsert;
 
 export type AdminRecord = typeof admins.$inferSelect;
 export type NewAdmin = typeof admins.$inferInsert;
+export type MediaUploadRecord = typeof mediaUploads.$inferSelect;
+export type NewMediaUpload = typeof mediaUploads.$inferInsert;
