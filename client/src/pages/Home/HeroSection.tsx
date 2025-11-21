@@ -38,6 +38,12 @@ interface HeroContent {
 const HeroSection = () => {
   const [content, setContent] = useState<HeroContent>(getHeroContent() as HeroContent);
   const { theme } = useTheme();
+  const accentIconWrapper =
+    theme === "dark"
+      ? "bg-white/10 border-4 border-gray-900 text-white"
+      : "bg-white border-4 border-gray-100 text-primary-700";
+  const accentIconBackground =
+    theme === "dark" ? "bg-primary-500 text-white" : "bg-primary-100 text-primary-700";
   
   useEffect(() => {
     // Attempt to fetch updated content from API
@@ -192,24 +198,24 @@ const HeroSection = () => {
               </motion.div>
               
               <motion.div 
-                className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg border-4 border-gray-100 dark:border-gray-900"
+                className={`absolute -bottom-4 -right-4 p-3 rounded-full shadow-lg ${accentIconWrapper}`}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="bg-primary-600 dark:bg-primary-500 p-2 rounded-full">
-                  <Code className="h-5 w-5 text-white" strokeWidth={2.5} />
+                <div className={`${accentIconBackground} p-2 rounded-full transition-colors duration-300`}>
+                  <Code className="h-5 w-5" strokeWidth={2.5} />
                 </div>
               </motion.div>
               
               <motion.div 
-                className="absolute -top-4 -left-4 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg border-4 border-gray-100 dark:border-gray-900"
+                className={`absolute -top-4 -left-4 p-3 rounded-full shadow-lg ${accentIconWrapper}`}
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="bg-primary-600 dark:bg-primary-500 p-2 rounded-full">
-                  <Paintbrush className="h-5 w-5 text-white" strokeWidth={2.5} />
+                <div className={`${accentIconBackground} p-2 rounded-full transition-colors duration-300`}>
+                  <Paintbrush className="h-5 w-5" strokeWidth={2.5} />
                 </div>
               </motion.div>
             </div>
