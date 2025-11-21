@@ -8,7 +8,7 @@ import path from "path";
 import fs from "fs";
 import { registerRoutes } from "./routes";
 import { seedContentFromDefaults } from "./seedContent";
-import { log } from "./vite";
+import { log } from "./logger";
 
 let appPromise: Promise<Express> | null = null;
 
