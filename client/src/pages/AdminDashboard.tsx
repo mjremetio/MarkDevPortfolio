@@ -179,7 +179,9 @@ const AdminDashboard = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/admin/status');
+        const response = await fetch('/api/admin/status', {
+          credentials: "include",
+        });
         const data = await response.json();
         
         setIsAuthenticated(data.isAuthenticated);
@@ -204,7 +206,9 @@ const AdminDashboard = () => {
   // Fetch content sections
   const fetchSections = async () => {
     try {
-      const response = await fetch('/api/content');
+      const response = await fetch('/api/content', {
+        credentials: "include",
+      });
       const data = await response.json();
       
       if (data.sections && data.sections.length > 0) {
@@ -226,7 +230,9 @@ const AdminDashboard = () => {
   const fetchContent = async (section: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/content/${section}`);
+    const response = await fetch(`/api/content/${section}`, {
+      credentials: "include",
+    });
       const data = await response.json();
       
       setContentData(data);
@@ -261,6 +267,7 @@ const AdminDashboard = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: "include",
         body: JSON.stringify(contentToSave),
       });
       
@@ -310,6 +317,7 @@ const AdminDashboard = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: "include",
         body: JSON.stringify(contentData),
       });
       
@@ -345,7 +353,10 @@ const AdminDashboard = () => {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await fetch('/api/admin/logout', { method: 'POST' });
+      await fetch('/api/admin/logout', {
+        method: 'POST',
+        credentials: "include",
+      });
       setLocation('/maglogin');
     } catch (error) {
       console.error('Error logging out:', error);
