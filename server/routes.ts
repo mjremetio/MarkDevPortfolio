@@ -13,27 +13,19 @@ const __dirname = path.dirname(__filename);
 // Configure multer for file uploads
 const uploadStorage = multer.diskStorage({
   destination: function(req, file, cb) {
-    // Store uploads in the public directory so they can be accessed via the web
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    
-    console.log('Upload directory path:', uploadDir);
-    
-    // Create the uploads directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      console.log('Creating upload directory as it does not exist');
-      fs.mkdirSync(uploadDir, { recursive: true });
-    } else {
-      console.log('Upload directory exists');
+    const baseDir =
+      process.env.VERCEL || process.env.NODE_ENV === "production"
+        ? path.join(process.cwd(), "tmp", "uploads")
+        : path.join(process.cwd(), "public", "uploads");
+
+    console.log("Upload directory path:", baseDir);
+
+    if (!fs.existsSync(baseDir)) {
+      console.log("Creating upload directory at:", baseDir);
+      fs.mkdirSync(baseDir, { recursive: true });
     }
-    
-    // Double check
-    if (fs.existsSync(uploadDir)) {
-      console.log('Upload directory confirmed to exist');
-    } else {
-      console.log('ERROR: Upload directory still does not exist after creation attempt');
-    }
-    
-    cb(null, uploadDir);
+
+    cb(null, baseDir);
   },
   filename: function(req, file, cb) {
     // Create a unique filename with original extension
@@ -197,21 +189,21 @@ export function registerRoutes(app: Express) {
       console.log('File uploaded:', req.file);
       console.log('File destination:', req.file.destination);
       console.log('File path:', req.file.path);
-      
-      // Verify the file exists at the saved path
-      if (fs.existsSync(req.file.path)) {
-        console.log('File confirmed to exist on disk at:', req.file.path);
-      } else {
-        console.log('WARNING: File does not exist at path:', req.file.path);
+      let publicPath = '/uploads/' + req.file.filename;
+
+      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+        const publicUploadsDir = path.join(process.cwd(), 'public', 'uploads');
+        if (!fs.existsSync(publicUploadsDir)) {
+          fs.mkdirSync(publicUploadsDir, { recursive: true });
+        }
+        const destPath = path.join(publicUploadsDir, req.file.filename);
+        fs.copyFileSync(req.file.path, destPath);
+        publicPath = '/uploads/' + req.file.filename;
       }
-      
-      // Return the file path relative to the public directory
-      const relativePath = '/uploads/' + req.file.filename;
-      console.log('Returning relative path:', relativePath);
       
       return res.status(200).json({
         success: true,
-        filePath: relativePath,
+        filePath: publicPath,
         message: 'File uploaded successfully!'
       });
     } catch (error) {
@@ -238,21 +230,24 @@ export function registerRoutes(app: Express) {
       
       console.log('Files uploaded:', req.files);
       
-      // Verify all files exist
       const files = req.files as Express.Multer.File[];
-      files.forEach((file, index) => {
+      const publicUploadsDir = path.join(process.cwd(), 'public', 'uploads');
+
+      if (!fs.existsSync(publicUploadsDir)) {
+        fs.mkdirSync(publicUploadsDir, { recursive: true });
+      }
+
+      const filePaths = files.map((file, index) => {
         console.log(`File ${index} destination:`, file.destination);
         console.log(`File ${index} path:`, file.path);
-        
-        if (fs.existsSync(file.path)) {
-          console.log(`File ${index} confirmed to exist on disk at:`, file.path);
-        } else {
-          console.log(`WARNING: File ${index} does not exist at path:`, file.path);
+
+        const destPath = path.join(publicUploadsDir, file.filename);
+        if (!fs.existsSync(destPath)) {
+          fs.copyFileSync(file.path, destPath);
         }
+
+        return '/uploads/' + file.filename;
       });
-      
-      // Return the file paths relative to the public directory
-      const filePaths = files.map(file => '/uploads/' + file.filename);
       console.log('Returning relative paths:', filePaths);
       
       return res.status(200).json({
