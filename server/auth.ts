@@ -5,6 +5,8 @@ import {
   type NextFunction,
 } from "express";
 import session from "express-session";
+import RedisStore from "connect-redis";
+import Redis from "ioredis";
 import { createHash } from "crypto";
 import { eq } from "drizzle-orm";
 import { admins } from "@shared/schema";
@@ -18,6 +20,8 @@ const DEFAULT_ADMIN_PASSWORD_HASH =
   createHash("sha256").update(DEFAULT_ADMIN_PASSWORD).digest("hex");
 const SESSION_SECRET =
   process.env.SESSION_SECRET ?? "replace-this-session-secret";
+const REDIS_URL = process.env.REDIS_URL;
+const redisClient = REDIS_URL ? new Redis(REDIS_URL) : null;
 
 let seedPromise: Promise<void> | null = null;
 
@@ -57,6 +61,11 @@ export const setupAuth = (app: Express) => {
       secret: SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
+      store: redisClient
+        ? new RedisStore({
+            client: redisClient,
+          })
+        : undefined,
       cookie: {
         secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
