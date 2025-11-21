@@ -5,18 +5,17 @@ import { fileURLToPath } from 'url';
 import { getContent, updateContent, listContentSections } from './contentRoutes';
 import { setupAuth, requireAuth } from './auth';
 import multer from 'multer';
+import { supabase, SUPABASE_STORAGE_BUCKET } from "./supabaseClient";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configure multer for file uploads
-const uploadStorage = multer.diskStorage({
+const useSupabaseStorage = Boolean(supabase);
+
+const diskUploadStorage = multer.diskStorage({
   destination: function(req, file, cb) {
-    const baseDir =
-      process.env.VERCEL || process.env.NODE_ENV === "production"
-        ? path.join(process.cwd(), "tmp", "uploads")
-        : path.join(process.cwd(), "public", "uploads");
+    const baseDir = path.join(process.cwd(), "public", "uploads");
 
     console.log("Upload directory path:", baseDir);
 
@@ -28,7 +27,6 @@ const uploadStorage = multer.diskStorage({
     cb(null, baseDir);
   },
   filename: function(req, file, cb) {
-    // Create a unique filename with original extension
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
     const filename = file.fieldname + '-' + uniqueSuffix + ext;
@@ -36,6 +34,10 @@ const uploadStorage = multer.diskStorage({
     cb(null, filename);
   }
 });
+
+const uploadStorage = useSupabaseStorage
+  ? multer.memoryStorage()
+  : diskUploadStorage;
 
 // File filter to only allow certain image types
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
@@ -56,6 +58,55 @@ const upload = multer({
   },
   fileFilter: fileFilter
 });
+
+const ensureUploadsDir = () => {
+  const uploadDir = path.join(process.cwd(), "public", "uploads");
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  return uploadDir;
+};
+
+const buildUniqueFilename = (originalName: string) => {
+  const ext = path.extname(originalName);
+  return `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+};
+
+const uploadFileToSupabase = async (file: Express.Multer.File) => {
+  if (!supabase) {
+    throw new Error("Supabase client is not configured");
+  }
+
+  const filename = buildUniqueFilename(file.originalname);
+  const { error } = await supabase.storage
+    .from(SUPABASE_STORAGE_BUCKET)
+    .upload(filename, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(`Supabase upload failed: ${error.message}`);
+  }
+
+  const { data } = supabase.storage
+    .from(SUPABASE_STORAGE_BUCKET)
+    .getPublicUrl(filename);
+
+  return data.publicUrl;
+};
+
+const saveFile = async (file: Express.Multer.File) => {
+  if (useSupabaseStorage) {
+    return await uploadFileToSupabase(file);
+  }
+
+  ensureUploadsDir();
+  return `/uploads/${file.filename}`;
+};
+
+const saveFiles = async (files: Express.Multer.File[]) =>
+  Promise.all(files.map((file) => saveFile(file)));
 
 export function registerRoutes(app: Express) {
   // Set up authentication
@@ -174,7 +225,7 @@ export function registerRoutes(app: Express) {
   });
   
   // File upload routes
-  app.post('/api/upload', requireAuth, upload.single('image'), (req: Request, res: Response) => {
+  app.post('/api/upload', requireAuth, upload.single('image'), async (req: Request, res: Response) => {
     try {
       console.log('Upload request received');
       
@@ -187,19 +238,7 @@ export function registerRoutes(app: Express) {
       }
       
       console.log('File uploaded:', req.file);
-      console.log('File destination:', req.file.destination);
-      console.log('File path:', req.file.path);
-      let publicPath = '/uploads/' + req.file.filename;
-
-      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-        const publicUploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        if (!fs.existsSync(publicUploadsDir)) {
-          fs.mkdirSync(publicUploadsDir, { recursive: true });
-        }
-        const destPath = path.join(publicUploadsDir, req.file.filename);
-        fs.copyFileSync(req.file.path, destPath);
-        publicPath = '/uploads/' + req.file.filename;
-      }
+      const publicPath = await saveFile(req.file);
       
       return res.status(200).json({
         success: true,
@@ -216,7 +255,7 @@ export function registerRoutes(app: Express) {
   });
 
   // Multiple file upload route (for gallery)
-  app.post('/api/upload/multiple', requireAuth, upload.array('images', 10), (req: Request, res: Response) => {
+  app.post('/api/upload/multiple', requireAuth, upload.array('images', 10), async (req: Request, res: Response) => {
     try {
       console.log('Multiple upload request received');
       
@@ -231,23 +270,7 @@ export function registerRoutes(app: Express) {
       console.log('Files uploaded:', req.files);
       
       const files = req.files as Express.Multer.File[];
-      const publicUploadsDir = path.join(process.cwd(), 'public', 'uploads');
-
-      if (!fs.existsSync(publicUploadsDir)) {
-        fs.mkdirSync(publicUploadsDir, { recursive: true });
-      }
-
-      const filePaths = files.map((file, index) => {
-        console.log(`File ${index} destination:`, file.destination);
-        console.log(`File ${index} path:`, file.path);
-
-        const destPath = path.join(publicUploadsDir, file.filename);
-        if (!fs.existsSync(destPath)) {
-          fs.copyFileSync(file.path, destPath);
-        }
-
-        return '/uploads/' + file.filename;
-      });
+      const filePaths = await saveFiles(files);
       console.log('Returning relative paths:', filePaths);
       
       return res.status(200).json({
