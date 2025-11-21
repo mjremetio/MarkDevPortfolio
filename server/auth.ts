@@ -5,12 +5,11 @@ import {
   type NextFunction,
 } from "express";
 import session from "express-session";
-import RedisStore from "connect-redis";
-import Redis from "ioredis";
+import connectPgSimple from "connect-pg-simple";
 import { createHash } from "crypto";
 import { eq } from "drizzle-orm";
 import { admins } from "@shared/schema";
-import { db } from "./db";
+import { db, connectionPool } from "./db";
 
 const DEFAULT_ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "admin";
 const DEFAULT_ADMIN_PASSWORD =
@@ -20,8 +19,7 @@ const DEFAULT_ADMIN_PASSWORD_HASH =
   createHash("sha256").update(DEFAULT_ADMIN_PASSWORD).digest("hex");
 const SESSION_SECRET =
   process.env.SESSION_SECRET ?? "replace-this-session-secret";
-const REDIS_URL = process.env.REDIS_URL;
-const redisClient = REDIS_URL ? new Redis(REDIS_URL) : null;
+const PgStore = connectPgSimple(session);
 
 let seedPromise: Promise<void> | null = null;
 
@@ -61,11 +59,10 @@ export const setupAuth = (app: Express) => {
       secret: SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
-      store: redisClient
-        ? new RedisStore({
-            client: redisClient,
-          })
-        : undefined,
+      store: new PgStore({
+        pool: connectionPool,
+        createTableIfMissing: true,
+      }),
       cookie: {
         secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
