@@ -95,7 +95,7 @@ const ProjectCard = ({
           ))}
         </div>
         <div className="flex justify-between items-center">
-          <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium text-sm flex items-center">
+          <a href="#" className="text-black dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm flex items-center">
             <span>View Project</span>
             <i className="fas fa-arrow-right ml-1"></i>
           </a>
