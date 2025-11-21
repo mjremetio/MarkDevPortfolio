@@ -13,6 +13,7 @@ import InteractiveBackground from "@/components/InteractiveBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import AccessibilityPanel from "@/components/AccessibilityPanel";
+import { ContentLoadingProvider } from "@/contexts/ContentLoadingContext";
 
 function App() {
   return (
@@ -28,15 +29,17 @@ function App() {
                 <AdminDashboard />
               </Route>
               <Route path="/">
-                <>
-                  <Header />
-                  <ScrollProgressBar />
-                  <InteractiveBackground />
-                  <main className="flex-1">
-                    <Home />
-                  </main>
-                  <Footer />
-                </>
+                <ContentLoadingProvider>
+                  <>
+                    <Header />
+                    <ScrollProgressBar />
+                    <InteractiveBackground />
+                    <main className="flex-1">
+                      <Home />
+                    </main>
+                    <Footer />
+                  </>
+                </ContentLoadingProvider>
               </Route>
               <Route>
                 <NotFound />

@@ -6,6 +6,7 @@ import { ChevronDown, Code, Paintbrush } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getHeroContent } from "@/utils/contentLoader";
 import { useTheme } from "@/hooks/useTheme";
+import { useContentLoading } from "@/contexts/ContentLoadingContext";
 
 // Define interfaces to match the structure from AdminDashboard.tsx
 interface HeroContent {
@@ -38,6 +39,7 @@ interface HeroContent {
 const HeroSection = () => {
   const [content, setContent] = useState<HeroContent>(getHeroContent() as HeroContent);
   const { theme } = useTheme();
+  const { beginLoading, endLoading } = useContentLoading();
   const accentIconWrapper =
     theme === "dark"
       ? "bg-white/10 border-4 border-gray-900 text-white"
@@ -46,20 +48,31 @@ const HeroSection = () => {
     theme === "dark" ? "bg-primary-500 text-white" : "bg-primary-100 text-primary-700";
   
   useEffect(() => {
-    // Attempt to fetch updated content from API
-    fetch('/api/content/hero')
-      .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Failed to fetch hero content');
-      })
-      .then(data => {
-        setContent(data);
-      })
-      .catch(error => {
-        console.log('Using default hero content:', error);
-        // On error, use the local content (already set as default)
-      });
-  }, []);
+    let isMounted = true;
+    const loadHeroContent = async () => {
+      beginLoading();
+      try {
+        const response = await fetch("/api/content/hero");
+        if (!response.ok) {
+          throw new Error("Failed to fetch hero content");
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setContent(data);
+        }
+      } catch (error) {
+        console.log("Using default hero content:", error);
+      } finally {
+        endLoading();
+      }
+    };
+
+    void loadHeroContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [beginLoading, endLoading]);
 
   return (
     <section 

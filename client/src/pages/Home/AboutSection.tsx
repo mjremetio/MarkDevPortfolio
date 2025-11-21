@@ -1,25 +1,37 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { getAboutContent } from "@/utils/contentLoader";
+import { useContentLoading } from "@/contexts/ContentLoadingContext";
 
 const AboutSection = () => {
   const [content, setContent] = useState(getAboutContent());
+  const { beginLoading, endLoading } = useContentLoading();
   
   useEffect(() => {
-    // Attempt to fetch updated content from API
-    fetch('/api/content/about')
-      .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Failed to fetch about content');
-      })
-      .then(data => {
-        setContent(data);
-      })
-      .catch(error => {
-        console.log('Using default about content:', error);
-        // On error, use the local content (already set as default)
-      });
-  }, []);
+    let isMounted = true;
+    const loadAboutContent = async () => {
+      beginLoading();
+      try {
+        const response = await fetch("/api/content/about");
+        if (!response.ok) {
+          throw new Error("Failed to fetch about content");
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setContent(data);
+        }
+      } catch (error) {
+        console.log("Using default about content:", error);
+      } finally {
+        endLoading();
+      }
+    };
+
+    void loadAboutContent();
+    return () => {
+      isMounted = false;
+    };
+  }, [beginLoading, endLoading]);
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { 

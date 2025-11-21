@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { getSkillsContent } from "@/utils/contentLoader";
+import { useContentLoading } from "@/contexts/ContentLoadingContext";
 
 interface SkillItemProps {
   name: string;
@@ -121,22 +122,33 @@ const TechIcon = ({ icon, name, delay }: { icon: string, name: string, delay: nu
 
 const SkillsSection = () => {
   const [content, setContent] = useState(getSkillsContent());
+  const { beginLoading, endLoading } = useContentLoading();
   
   useEffect(() => {
-    // Attempt to fetch updated content from API
-    fetch('/api/content/skills')
-      .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Failed to fetch skills content');
-      })
-      .then(data => {
-        setContent(data);
-      })
-      .catch(error => {
-        console.log('Using default skills content:', error);
-        // On error, use the local content (already set as default)
-      });
-  }, []);
+    let isMounted = true;
+    const loadSkillsContent = async () => {
+      beginLoading();
+      try {
+        const response = await fetch("/api/content/skills");
+        if (!response.ok) {
+          throw new Error("Failed to fetch skills content");
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setContent(data);
+        }
+      } catch (error) {
+        console.log("Using default skills content:", error);
+      } finally {
+        endLoading();
+      }
+    };
+
+    void loadSkillsContent();
+    return () => {
+      isMounted = false;
+    };
+  }, [beginLoading, endLoading]);
   
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },

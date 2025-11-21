@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getProjectsContent } from "@/utils/contentLoader";
+import { useContentLoading } from "@/contexts/ContentLoadingContext";
 import { getRenderableImageSource } from "@/utils/imagePath";
 
 interface ProjectsContent {
@@ -141,6 +142,7 @@ const ProjectsSection = () => {
       }
     ]
   });
+  const { beginLoading, endLoading } = useContentLoading();
 
   useEffect(() => {
     // Set default content
@@ -148,19 +150,31 @@ const ProjectsSection = () => {
     setContent(defaultContent);
     
     // Attempt to fetch updated content from API
-    fetch('/api/content/projects')
-      .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Failed to fetch projects content');
-      })
-      .then(data => {
-        setContent(data);
-      })
-      .catch(error => {
-        console.log('Using default projects content:', error);
-        // On error, use the local content (already set as default)
-      });
-  }, []);
+    let isMounted = true;
+    const loadProjectsContent = async () => {
+      beginLoading();
+      try {
+        const response = await fetch("/api/content/projects");
+        if (!response.ok) {
+          throw new Error("Failed to fetch projects content");
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setContent(data);
+        }
+      } catch (error) {
+        console.log("Using default projects content:", error);
+      } finally {
+        endLoading();
+      }
+    };
+
+    void loadProjectsContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [beginLoading, endLoading]);
 
   return (
     <section id="projects" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

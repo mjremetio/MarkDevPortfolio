@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getGalleryContent } from "@/utils/contentLoader";
+import { useContentLoading } from "@/contexts/ContentLoadingContext";
 import { getRenderableImageSource } from "@/utils/imagePath";
 
 interface GalleryContent {
@@ -64,26 +65,37 @@ const GallerySection = () => {
     description: "A visual showcase of UI/UX designs and development work",
     images: []
   });
+  const { beginLoading, endLoading } = useContentLoading();
 
   useEffect(() => {
-    // Set default content
     const defaultContent = getGalleryContent();
     setContent(defaultContent);
-    
-    // Attempt to fetch updated content from API
-    fetch('/api/content/gallery')
-      .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Failed to fetch gallery content');
-      })
-      .then(data => {
-        setContent(data);
-      })
-      .catch(error => {
-        console.log('Using default gallery content:', error);
-        // On error, use the local content (already set as default)
-      });
-  }, []);
+
+    let isMounted = true;
+    const loadGalleryContent = async () => {
+      beginLoading();
+      try {
+        const response = await fetch("/api/content/gallery");
+        if (!response.ok) {
+          throw new Error("Failed to fetch gallery content");
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setContent(data);
+        }
+      } catch (error) {
+        console.log("Using default gallery content:", error);
+      } finally {
+        endLoading();
+      }
+    };
+
+    void loadGalleryContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [beginLoading, endLoading]);
 
   // Display placeholder items if no images are available
   const placeholderItems = [
