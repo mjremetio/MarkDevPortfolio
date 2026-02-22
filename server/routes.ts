@@ -30,19 +30,16 @@ function rateLimit(maxRequests: number, windowMs: number) {
 // Clean up expired rate limit entries periodically
 setInterval(() => {
   const now = Date.now();
-  for (const [key, value] of rateLimitStore) {
+  for (const [key, value] of Array.from(rateLimitStore.entries())) {
     if (now > value.resetTime) {
       rateLimitStore.delete(key);
     }
   }
 }, 60000);
-import { desc, eq } from "drizzle-orm";
-import { mediaUploads } from "@shared/schema";
+
 import { getContent, updateContent, listContentSections } from "./contentRoutes";
 import { setupAuth, requireAuth } from "./auth";
-import { db } from "./db";
 import {
-  isDatabaseUpload,
   isDiskUpload,
   isSupabaseUpload,
   uploadsDir,
@@ -54,12 +51,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const useSupabaseStorage = isSupabaseUpload && Boolean(supabase);
-const useDatabaseStorage = isDatabaseUpload;
 const useDiskStorage = isDiskUpload;
-const useMemoryStorage = useSupabaseStorage || useDatabaseStorage;
 
 const diskUploadStorage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function(_req, _file, cb) {
     if (!fs.existsSync(uploadsDir)) {
       console.log("Creating upload directory at:", uploadsDir);
       fs.mkdirSync(uploadsDir, { recursive: true });
@@ -67,7 +62,7 @@ const diskUploadStorage = multer.diskStorage({
 
     cb(null, uploadsDir);
   },
-  filename: function(req, file, cb) {
+  filename: function(_req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
     const filename = file.fieldname + '-' + uniqueSuffix + ext;
@@ -76,19 +71,16 @@ const diskUploadStorage = multer.diskStorage({
   }
 });
 
-const uploadStorage = useMemoryStorage
+const uploadStorage = useSupabaseStorage
   ? multer.memoryStorage()
   : diskUploadStorage;
 
 // File filter to only allow certain image types
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  // Accept only image files
+const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else {
     cb(null, false);
-    // You can throw an error instead if you want
-    // cb(new Error('Only image files are allowed!'));
   }
 };
 
@@ -141,41 +133,13 @@ const uploadFileToSupabase = async (file: Express.Multer.File) => {
   return data.publicUrl;
 };
 
-const saveFileToDatabase = async (file: Express.Multer.File) => {
-  if (!file.buffer) {
-    throw new Error("File buffer is not available for database storage");
-  }
-
-  const storedFilename = buildUniqueFilename(file.originalname);
-
-  const [record] = await db
-    .insert(mediaUploads)
-    .values({
-      filename: storedFilename,
-      mimeType: file.mimetype,
-      size: file.size,
-      dataBase64: file.buffer.toString("base64"),
-    })
-    .returning({ id: mediaUploads.id });
-
-  if (!record) {
-    throw new Error("Failed to persist uploaded file");
-  }
-
-  return `/api/uploads/${record.id}`;
-};
-
 const saveFile = async (file: Express.Multer.File) => {
   if (useSupabaseStorage) {
     return await uploadFileToSupabase(file);
   }
 
-  if (useDatabaseStorage) {
-    return await saveFileToDatabase(file);
-  }
-
   ensureUploadsDir();
-  return `/api/uploads/${file.filename}`;
+  return `/uploads/${file.filename}`;
 };
 
 const saveFiles = async (files: Express.Multer.File[]) =>
@@ -184,20 +148,17 @@ const saveFiles = async (files: Express.Multer.File[]) =>
 export function registerRoutes(app: Express) {
   // Set up authentication
   setupAuth(app);
+
   // Contact form submission endpoint (rate limited: 5 requests per 15 minutes)
   app.post('/api/contact', rateLimit(5, 15 * 60 * 1000), async (req: Request, res: Response) => {
     try {
       const { name, email, subject, message } = req.body;
-      
-      // Basic validation
+
       if (!name || !email || !message) {
         return res.status(400).json({ message: 'Please provide name, email, and message' });
       }
-      
-      // Here you would typically send an email
-      // For now, just log the message and return success
+
       console.log('Contact form submission:', { name, email, subject, message });
-      
       return res.status(200).json({ message: 'Message received successfully' });
     } catch (error) {
       console.error('Error handling contact form:', error);
@@ -209,12 +170,11 @@ export function registerRoutes(app: Express) {
   app.get('/api/download-resume', (req: Request, res: Response) => {
     try {
       const resumePath = path.join(__dirname, '../attached_assets/Mark Remetio - CV (1).pdf');
-      
+
       if (fs.existsSync(resumePath)) {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=Mark_Remetio_CV.pdf');
-        
-        // Create a read stream and pipe it to the response
+
         const fileStream = fs.createReadStream(resumePath);
         fileStream.pipe(res);
       } else {
@@ -230,46 +190,10 @@ export function registerRoutes(app: Express) {
   app.get('/api/content', listContentSections);
   app.get('/api/content/:section', getContent);
   app.post('/api/content/:section', requireAuth, updateContent);
-  
-  // Endpoint to serve stored uploads
-  app.get('/api/uploads/:id', async (req: Request, res: Response) => {
+
+  // Endpoint to serve stored uploads (disk-based only)
+  app.get('/api/uploads/:id', (req: Request, res: Response) => {
     try {
-      if (useDatabaseStorage) {
-        const uploadId = Number(req.params.id);
-
-        if (Number.isNaN(uploadId)) {
-          return res.status(400).json({ message: 'Invalid file identifier' });
-        }
-
-        const [record] = await db
-          .select({
-            id: mediaUploads.id,
-            filename: mediaUploads.filename,
-            mimeType: mediaUploads.mimeType,
-            size: mediaUploads.size,
-            dataBase64: mediaUploads.dataBase64,
-          })
-          .from(mediaUploads)
-          .where(eq(mediaUploads.id, uploadId))
-          .limit(1);
-
-        if (!record) {
-          return res.status(404).json({ message: 'File not found' });
-        }
-
-        const fileBuffer = Buffer.from(record.dataBase64, "base64");
-
-        res.setHeader('Content-Type', record.mimeType);
-        res.setHeader('Content-Length', record.size.toString());
-        res.setHeader(
-          'Content-Disposition',
-          `inline; filename="${record.filename}"`,
-        );
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-
-        return res.send(fileBuffer);
-      }
-
       const filename = path.basename(req.params.id);
       if (filename !== req.params.id || filename.includes('..')) {
         return res.status(400).json({ message: 'Invalid filename' });
@@ -287,42 +211,13 @@ export function registerRoutes(app: Express) {
       return res.sendFile(filePath);
     } catch (error) {
       console.error('Error serving uploaded file:', error);
-      return res.status(500).json({
-        message: 'Error serving file',
-      });
+      return res.status(500).json({ message: 'Error serving file' });
     }
   });
-  
+
   // Debug endpoint to list uploaded files
-  app.get('/api/debug/uploads', requireAuth, async (_req: Request, res: Response) => {
+  app.get('/api/debug/uploads', requireAuth, (_req: Request, res: Response) => {
     try {
-      if (useDatabaseStorage) {
-        const rows = await db
-          .select({
-            id: mediaUploads.id,
-            filename: mediaUploads.filename,
-            size: mediaUploads.size,
-            mimeType: mediaUploads.mimeType,
-            createdAt: mediaUploads.createdAt,
-          })
-          .from(mediaUploads)
-          .orderBy(desc(mediaUploads.createdAt))
-          .limit(100);
-
-        return res.status(200).json({
-          strategy: 'database',
-          count: rows.length,
-          files: rows.map((row) => ({
-            id: row.id,
-            path: `/api/uploads/${row.id}`,
-            filename: row.filename,
-            size: row.size,
-            mimeType: row.mimeType,
-            createdAt: row.createdAt,
-          })),
-        });
-      }
-
       if (!fs.existsSync(uploadsDir)) {
         return res.status(404).json({
           message: 'Uploads directory not found',
@@ -336,42 +231,36 @@ export function registerRoutes(app: Express) {
         const stats = fs.statSync(fullPath);
         return {
           name: file,
-          path: `/api/uploads/${file}`,
+          path: `/uploads/${file}`,
           size: stats.size,
           created: stats.birthtime,
         };
       });
 
       return res.status(200).json({
-        strategy: 'disk',
+        strategy: useDiskStorage ? 'disk' : 'supabase',
         directory: uploadsDir,
         count: files.length,
         files: fileData,
       });
     } catch (error) {
       console.error('Error listing uploads:', error);
-      return res.status(500).json({
-        message: 'Error listing uploaded files'
-      });
+      return res.status(500).json({ message: 'Error listing uploaded files' });
     }
   });
-  
+
   // File upload routes
   app.post('/api/upload', requireAuth, upload.single('image'), async (req: Request, res: Response) => {
     try {
-      console.log('Upload request received');
-      
       if (!req.file) {
-        console.log('No file found in request');
         return res.status(400).json({
           success: false,
           message: 'No file uploaded or invalid file type'
         });
       }
-      
-      console.log('File uploaded:', req.file);
+
       const publicPath = await saveFile(req.file);
-      
+
       return res.status(200).json({
         success: true,
         filePath: publicPath,
@@ -389,22 +278,16 @@ export function registerRoutes(app: Express) {
   // Multiple file upload route (for gallery)
   app.post('/api/upload/multiple', requireAuth, upload.array('images', 10), async (req: Request, res: Response) => {
     try {
-      console.log('Multiple upload request received');
-      
       if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
-        console.log('No files found in request');
         return res.status(400).json({
           success: false,
           message: 'No files uploaded or invalid file types'
         });
       }
-      
-      console.log('Files uploaded:', req.files);
-      
+
       const files = req.files as Express.Multer.File[];
       const filePaths = await saveFiles(files);
-      console.log('Returning relative paths:', filePaths);
-      
+
       return res.status(200).json({
         success: true,
         filePaths: filePaths,
@@ -418,5 +301,4 @@ export function registerRoutes(app: Express) {
       });
     }
   });
-
 }
