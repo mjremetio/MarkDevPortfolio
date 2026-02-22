@@ -8,6 +8,29 @@ import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { createHash } from "crypto";
 import { eq } from "drizzle-orm";
+
+// Login rate limiter: 10 attempts per 15 minutes per IP
+const loginAttempts = new Map<string, { count: number; resetTime: number }>();
+
+function loginRateLimit(req: Request, res: Response, next: NextFunction) {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000;
+  const maxAttempts = 10;
+  const entry = loginAttempts.get(ip);
+
+  if (!entry || now > entry.resetTime) {
+    loginAttempts.set(ip, { count: 1, resetTime: now + windowMs });
+    return next();
+  }
+
+  if (entry.count >= maxAttempts) {
+    return res.status(429).json({ success: false, message: "Too many login attempts. Please try again later." });
+  }
+
+  entry.count++;
+  return next();
+}
 import { admins } from "@shared/schema";
 import { db, connectionPool } from "./db";
 
@@ -65,6 +88,8 @@ export const setupAuth = (app: Express) => {
       }),
       cookie: {
         secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+        sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000,
       },
     }),
@@ -74,7 +99,7 @@ export const setupAuth = (app: Express) => {
     console.error("Failed to seed default admin:", error);
   });
 
-  app.post("/api/admin/login", async (req: Request, res: Response) => {
+  app.post("/api/admin/login", loginRateLimit, async (req: Request, res: Response) => {
     const { username, password } = req.body ?? {};
 
     if (!username || !password) {

@@ -36,63 +36,69 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-sm' 
-        : 'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm'
+      isScrolled ? 'header-glass-scrolled' : 'header-glass'
     }`}>
-      <div className="container mx-auto px-4 md:px-6 py-5">
+      <div className="container mx-auto px-4 md:px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <a 
-            href="#home" 
+          <a
+            href="#home"
             onClick={(e) => { e.preventDefault(); handleNavClick('#home'); }}
-            className="text-xl md:text-2xl font-bold text-primary-600 dark:text-primary-400 font-sans tracking-tight"
+            className="text-xl md:text-2xl font-bold font-sans tracking-tight group"
           >
-            <span className="text-primary-600 dark:text-primary-400">&lt;</span>
-            Mark Remetio
-            <span className="text-primary-600 dark:text-primary-400">/&gt;</span>
+            <span className="text-indigo-600 dark:text-indigo-400 transition-colors">&lt;</span>
+            <span className="text-gray-900 dark:text-white transition-colors">Mark Remetio</span>
+            <span className="text-indigo-600 dark:text-indigo-400 transition-colors">/&gt;</span>
           </a>
-          
+
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
-              <a 
+              <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                className="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
+                className="nav-link text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
               >
                 {link.label}
               </a>
             ))}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleTheme} 
-              className="rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none"
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="theme-toggle rounded-full w-9 h-9 focus:outline-none"
               aria-label="Toggle dark mode"
             >
-              {theme === 'light' ? <Moon className="h-5 w-5 text-blue-600" /> : <Sun className="h-5 w-5 text-yellow-400" />}
+              {theme === 'light' ? (
+                <Moon className="h-[18px] w-[18px] text-indigo-600" />
+              ) : (
+                <Sun className="h-[18px] w-[18px] text-amber-400" />
+              )}
             </Button>
             <AccessibilityToggle />
           </nav>
-          
+
           {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleTheme} 
-              className="rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none mr-2"
+          <div className="flex items-center md:hidden space-x-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="theme-toggle rounded-full w-9 h-9 focus:outline-none"
               aria-label="Toggle dark mode"
             >
-              {theme === 'light' ? <Moon className="h-5 w-5 text-blue-600" /> : <Sun className="h-5 w-5 text-yellow-400" />}
+              {theme === 'light' ? (
+                <Moon className="h-[18px] w-[18px] text-indigo-600" />
+              ) : (
+                <Sun className="h-[18px] w-[18px] text-amber-400" />
+              )}
             </Button>
             <AccessibilityToggle />
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-700 dark:text-gray-300 focus:outline-none"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -104,16 +110,18 @@ const Header = () => {
             </Button>
           </div>
         </div>
-        
+
         {/* Mobile Menu */}
-        <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} mt-4 pb-2`}>
-          <nav className="flex flex-col space-y-4">
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${
+          isMobileMenuOpen ? 'max-h-96 opacity-100 mt-4 pb-2' : 'max-h-0 opacity-0'
+        }`}>
+          <nav className="flex flex-col space-y-3 py-2 border-t border-gray-200 dark:border-gray-700/50">
             {navLinks.map((link) => (
-              <a 
+              <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                className="text-sm font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200 py-1"
               >
                 {link.label}
               </a>
