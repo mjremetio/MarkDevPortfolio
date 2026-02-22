@@ -7,7 +7,6 @@ import express, {
 import fs from "fs";
 import path from "path";
 import { registerRoutes } from "./routes";
-import { seedContentFromDefaults } from "./seedContent";
 import { log } from "./logger";
 import { isDiskUpload, uploadsDir } from "./uploadStrategy";
 
@@ -54,16 +53,6 @@ async function initializeApp(): Promise<Express> {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    const testImagePath = path.join(uploadsDir, "test-image.svg");
-    if (!fs.existsSync(testImagePath)) {
-      const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-    <rect width="200" height="200" fill="#f0f0f0" />
-    <text x="50%" y="50%" font-family="Arial" font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#333">Test Image</text>
-  </svg>`;
-      fs.writeFileSync(testImagePath, testSvg);
-      console.log("Created test image at:", testImagePath);
-    }
-
     app.use("/uploads", express.static(uploadsDir));
     console.log("Serving uploads from:", uploadsDir);
   } else {
@@ -98,10 +87,6 @@ async function initializeApp(): Promise<Express> {
     });
 
     next();
-  });
-
-  await seedContentFromDefaults().catch((error) => {
-    console.error("Failed to seed content:", error);
   });
 
   registerRoutes(app);
