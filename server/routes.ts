@@ -1,8 +1,41 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
+
+// Simple in-memory rate limiter
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+function rateLimit(maxRequests: number, windowMs: number) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
+    const now = Date.now();
+    const entry = rateLimitStore.get(ip);
+
+    if (!entry || now > entry.resetTime) {
+      rateLimitStore.set(ip, { count: 1, resetTime: now + windowMs });
+      return next();
+    }
+
+    if (entry.count >= maxRequests) {
+      return res.status(429).json({ message: "Too many requests. Please try again later." });
+    }
+
+    entry.count++;
+    return next();
+  };
+}
+
+// Clean up expired rate limit entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of rateLimitStore) {
+    if (now > value.resetTime) {
+      rateLimitStore.delete(key);
+    }
+  }
+}, 60000);
 import { desc, eq } from "drizzle-orm";
 import { mediaUploads } from "@shared/schema";
 import { getContent, updateContent, listContentSections } from "./contentRoutes";
@@ -151,8 +184,8 @@ const saveFiles = async (files: Express.Multer.File[]) =>
 export function registerRoutes(app: Express) {
   // Set up authentication
   setupAuth(app);
-  // Contact form submission endpoint
-  app.post('/api/contact', async (req: Request, res: Response) => {
+  // Contact form submission endpoint (rate limited: 5 requests per 15 minutes)
+  app.post('/api/contact', rateLimit(5, 15 * 60 * 1000), async (req: Request, res: Response) => {
     try {
       const { name, email, subject, message } = req.body;
       
@@ -237,8 +270,15 @@ export function registerRoutes(app: Express) {
         return res.send(fileBuffer);
       }
 
-      const filename = req.params.id;
-      const filePath = path.join(uploadsDir, filename);
+      const filename = path.basename(req.params.id);
+      if (filename !== req.params.id || filename.includes('..')) {
+        return res.status(400).json({ message: 'Invalid filename' });
+      }
+
+      const filePath = path.resolve(path.join(uploadsDir, filename));
+      if (!filePath.startsWith(path.resolve(uploadsDir))) {
+        return res.status(400).json({ message: 'Invalid file path' });
+      }
 
       if (!fs.existsSync(filePath)) {
         return res.status(404).json({ message: 'File not found' });

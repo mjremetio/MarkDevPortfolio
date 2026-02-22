@@ -27,7 +27,21 @@ async function initializeApp(): Promise<Express> {
   if (process.env.VERCEL || process.env.NODE_ENV === "production") {
     app.set("trust proxy", 1);
   }
-  app.use(express.json());
+
+  // Security headers middleware
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    if (process.env.NODE_ENV === "production") {
+      res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    }
+    next();
+  });
+
+  app.use(express.json({ limit: "1mb" }));
   app.use(express.urlencoded({ extended: false }));
 
   const publicDir = path.join(process.cwd(), "public");

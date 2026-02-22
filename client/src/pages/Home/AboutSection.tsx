@@ -6,7 +6,7 @@ import { useContentLoading } from "@/contexts/ContentLoadingContext";
 const AboutSection = () => {
   const [content, setContent] = useState(getAboutContent());
   const { beginLoading, endLoading } = useContentLoading();
-  
+
   useEffect(() => {
     let isMounted = true;
     const loadAboutContent = async () => {
@@ -34,17 +34,17 @@ const AboutSection = () => {
   }, [beginLoading, endLoading]);
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.6 }
     }
   };
 
   return (
-    <section id="about" className="py-16 md:py-24 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm transition-colors duration-300">
+    <section id="about" className="py-16 md:py-24 bg-white dark:bg-slate-900 transition-colors duration-500">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial="hidden"
           whileInView="visible"
@@ -52,11 +52,11 @@ const AboutSection = () => {
           variants={fadeIn}
         >
           <h2 className="text-3xl md:text-4xl font-bold font-sans text-gray-900 dark:text-white">About Me</h2>
-          <div className="mt-3 w-16 h-1 bg-gradient-to-r from-primary-600 to-secondary-500 mx-auto rounded-full"></div>
+          <div className="section-divider"></div>
         </motion.div>
 
         <div className="flex flex-col lg:flex-row items-center gap-10">
-          <motion.div 
+          <motion.div
             className="w-full lg:w-2/5"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -64,23 +64,23 @@ const AboutSection = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="relative">
-              <div className="rounded-lg overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-[1.02] border-2 border-gray-100 dark:border-gray-700">
-                <img 
-                  src={content.profilePicture || "/images/profile-photo.png"} 
-                  alt={content.imageAlt || "Mark Remetio"} 
-                  className="w-full h-64 object-contain bg-gray-50 dark:bg-gray-800"
+              <div className="card-enhanced rounded-xl overflow-hidden border border-gray-100 dark:border-slate-700/50">
+                <img
+                  src={content.profilePicture || "/images/profile-photo.png"}
+                  alt={content.imageAlt || "Mark Remetio"}
+                  className="w-full h-64 object-contain bg-gray-50 dark:bg-slate-800"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-500/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-indigo-600/10 to-transparent"></div>
               </div>
-              <div className="absolute bottom-6 left-6 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+              <div className="absolute bottom-6 left-6 p-4 bg-white/90 dark:bg-slate-800/90 rounded-lg shadow-lg backdrop-blur-sm border border-gray-100 dark:border-slate-700/50">
                 <p className="text-gray-800 dark:text-gray-200 font-medium">
-                  <span className="text-primary-600 dark:text-primary-400 font-bold">{content.experience}</span> Experience
+                  <span className="text-indigo-600 dark:text-indigo-400 font-bold">{content.experience}</span> Experience
                 </p>
               </div>
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="w-full lg:w-3/5 mt-10 lg:mt-0"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -90,15 +90,15 @@ const AboutSection = () => {
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
               {content.title}
             </h3>
-            {content.description?.map((paragraph, index) => (
-              <p key={index} className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+            {content.description?.map((paragraph: string, index: number) => (
+              <p key={index} className="text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
                 {paragraph}
               </p>
             ))}
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              {content.features?.map((feature, index) => (
-                <motion.div 
+              {content.features?.map((feature: any, index: number) => (
+                <motion.div
                   key={index}
                   className="flex items-start"
                   initial={{ opacity: 0, y: 20 }}
@@ -106,12 +106,12 @@ const AboutSection = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.1 * (index + 1) }}
                 >
-                  <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full mr-4">
-                    <i className={`fas fa-${feature.icon} text-primary-600 dark:text-primary-400`}></i>
+                  <div className="bg-indigo-50 dark:bg-indigo-500/10 p-3 rounded-full mr-4 flex-shrink-0">
+                    <i className={`fas fa-${feature.icon} text-indigo-600 dark:text-indigo-400`}></i>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-white">{feature.title}</h4>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{feature.description}</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{feature.description}</p>
                   </div>
                 </motion.div>
               ))}

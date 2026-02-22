@@ -10,41 +10,29 @@ interface TimelineItemProps {
 
 const TimelineItem = ({ title, company, period, responsibilities, index }: TimelineItemProps) => {
   return (
-    <motion.div 
+    <motion.div
       className="timeline-item relative pl-10 pb-10"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <style dangerouslySetInnerHTML={{__html: `
-        .timeline-item:not(:last-child)::after {
-          content: '';
-          position: absolute;
-          left: 9px;
-          top: 24px;
-          height: calc(100% - 24px);
-          width: 2px;
-          background-color: rgb(99 102 241);
-        }
-      `}} />
-      
-      <div className="absolute left-0 top-0 bg-primary-600 dark:bg-primary-500 w-5 h-5 rounded-full z-10 shadow-md"></div>
-      
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-transform duration-300 hover:shadow-lg border-l-4 border-primary-600 dark:border-primary-500">
+      <div className="absolute left-0 top-0 bg-indigo-600 dark:bg-indigo-400 w-5 h-5 rounded-full z-10 shadow-md ring-4 ring-white dark:ring-slate-900"></div>
+
+      <div className="card-enhanced bg-white dark:bg-slate-800 rounded-xl p-6 border-l-4 border-indigo-600 dark:border-indigo-400 border border-gray-100 dark:border-slate-700/50">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h3>
           <div className="flex items-center mt-2 md:mt-0">
-            <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 px-3 py-1 rounded-full text-sm">{period}</span>
+            <span className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full text-sm font-medium">{period}</span>
           </div>
         </div>
-        
-        <p className="text-gray-600 dark:text-gray-300 text-lg mb-2">{company}</p>
-        
-        <ul className="mt-4 space-y-2 text-gray-600 dark:text-gray-400">
+
+        <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">{company}</p>
+
+        <ul className="mt-4 space-y-2 text-gray-500 dark:text-gray-400">
           {responsibilities.map((item, i) => (
             <li key={i} className="flex items-start">
-              <i className="fas fa-check-circle text-primary-600 dark:text-primary-400 mt-1 mr-2"></i>
+              <i className="fas fa-check-circle text-indigo-600 dark:text-indigo-400 mt-1 mr-2 flex-shrink-0"></i>
               <span>{item}</span>
             </li>
           ))}
@@ -115,9 +103,9 @@ const ExperienceSection = () => {
   ];
 
   return (
-    <section id="experience" className="py-16 md:py-24 bg-white dark:bg-gray-800 transition-colors duration-300">
+    <section id="experience" className="py-16 md:py-24 bg-white dark:bg-slate-900 transition-colors duration-500">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -125,8 +113,8 @@ const ExperienceSection = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold font-sans text-gray-900 dark:text-white">Work Experience</h2>
-          <div className="mt-3 w-16 h-1 bg-gradient-to-r from-primary-600 to-secondary-500 mx-auto rounded-full"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <div className="section-divider"></div>
+          <p className="mt-4 text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
             A journey through my professional experience and achievements
           </p>
         </motion.div>
@@ -135,7 +123,7 @@ const ExperienceSection = () => {
           {/* Timeline Container */}
           <div className="relative">
             {experiences.map((exp, index) => (
-              <TimelineItem 
+              <TimelineItem
                 key={index}
                 title={exp.title}
                 company={exp.company}
