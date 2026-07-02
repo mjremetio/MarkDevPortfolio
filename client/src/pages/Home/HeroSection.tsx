@@ -37,6 +37,21 @@ const ICONS: Record<string, string> = {
   download: "fa-download",
 };
 
+// Inlined so the placeholder always renders, even where repo-root /public
+// assets aren't part of the deployed static output (e.g. Vercel).
+const FALLBACK_AVATAR =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">` +
+      `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
+      `<stop offset="0" stop-color="#6f6cf7"/><stop offset="1" stop-color="#45e6d6"/>` +
+      `</linearGradient></defs>` +
+      `<rect width="400" height="400" fill="#0c1020"/>` +
+      `<circle cx="200" cy="158" r="70" fill="url(#g)"/>` +
+      `<path d="M92 352c0-60 48-98 108-98s108 38 108 98Z" fill="url(#g)"/>` +
+      `</svg>`
+  );
+
 const ROLES = [
   "Full-Stack Web Developer",
   "Front-End Engineer",
@@ -211,15 +226,13 @@ const HeroSection = () => {
                 onMouseLeave={resetTilt}
               >
                 <img
-                  src={content.profilePicture || "/images/profile.svg"}
+                  src={content.profilePicture || FALLBACK_AVATAR}
                   alt="Mark Remetio — Full-Stack Web Developer"
                   width={640}
                   height={636}
                   onError={(e) => {
                     const img = e.currentTarget;
-                    if (!img.src.endsWith("/images/profile.svg")) {
-                      img.src = "/images/profile.svg";
-                    }
+                    if (img.src !== FALLBACK_AVATAR) img.src = FALLBACK_AVATAR;
                   }}
                 />
               </div>
