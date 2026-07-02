@@ -26,8 +26,8 @@
     --bg: #060913;
     --panel: rgba(14, 18, 38, 0.55);
     --panel-solid: #0c1020;
-    --ink: #eef1ff;
-    --muted: #98a1c8;
+    --ink: #f2f4ff;
+    --muted: #b3bce0;
     --indigo: #6f6cf7;
     --cyan: #45e6d6;
     --magenta: #c47bff;
@@ -66,15 +66,15 @@
 /* Dark theme = the void */
 .dark {
   --bg: #060913;
-  --panel: rgba(14, 18, 38, 0.55);
+  --panel: rgba(14, 18, 38, 0.6);
   --panel-solid: #0c1020;
-  --ink: #eef1ff;
-  --muted: #98a1c8;
-  --indigo: #6f6cf7;
-  --cyan: #45e6d6;
-  --magenta: #c47bff;
-  --line: rgba(150, 160, 230, 0.16);
-  --line-strong: rgba(150, 160, 230, 0.3);
+  --ink: #f2f4ff;
+  --muted: #b3bce0;
+  --indigo: #7d7bff;
+  --cyan: #57ecdd;
+  --magenta: #c98bff;
+  --line: rgba(150, 160, 230, 0.2);
+  --line-strong: rgba(150, 160, 230, 0.36);
   --glow-i: rgba(111, 108, 247, 0.5);
   --glow-c: rgba(69, 230, 214, 0.4);
   --input-bg: rgba(150, 160, 230, 0.06);
@@ -87,15 +87,15 @@
 /* Light theme = daylight variant of the same system */
 .light {
   --bg: #f4f6fc;
-  --panel: rgba(255, 255, 255, 0.72);
+  --panel: rgba(255, 255, 255, 0.82);
   --panel-solid: #ffffff;
-  --ink: #14183a;
-  --muted: #5b6488;
-  --indigo: #5b56e6;
-  --cyan: #0e9bad;
-  --magenta: #9b4dea;
-  --line: rgba(80, 90, 160, 0.16);
-  --line-strong: rgba(80, 90, 160, 0.28);
+  --ink: #0f1330;
+  --muted: #454c6c;
+  --indigo: #4b45d6;
+  --cyan: #0b7f8f;
+  --magenta: #8a3fd6;
+  --line: rgba(60, 70, 130, 0.22);
+  --line-strong: rgba(60, 70, 130, 0.34);
   --glow-i: rgba(91, 86, 230, 0.22);
   --glow-c: rgba(14, 155, 173, 0.2);
   --input-bg: rgba(30, 40, 90, 0.04);
@@ -940,6 +940,62 @@ body.no3d .site-bg .glow-layer {
   box-shadow: 0 0 12px rgba(196, 123, 255, 0.4);
 }
 
+/* AI tools showcase */
+.ai-showcase {
+  padding: 28px 26px;
+  margin-bottom: 80px;
+}
+.ai-fi {
+  color: var(--magenta) !important;
+  background: rgba(196, 123, 255, 0.14) !important;
+}
+.ai-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.ai-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  padding: 18px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--input-bg);
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+.ai-chip:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: 0 14px 34px rgba(3, 5, 14, 0.28), 0 0 24px rgba(196, 123, 255, 0.14);
+}
+.ai-chip .ai-ic {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(150, 160, 230, 0.08);
+  border: 1px solid var(--line);
+}
+.ai-chip .ai-label {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+}
+@media (max-width: 900px) {
+  .ai-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .ai-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* 3D tech ring */
 .ring-stage {
   height: 340px;
@@ -1439,7 +1495,7 @@ body.no3d .site-bg .glow-layer {
 .fgroup input::placeholder,
 .fgroup textarea::placeholder {
   color: var(--muted);
-  opacity: 0.7;
+  opacity: 0.9;
 }
 .fgroup input:focus,
 .fgroup textarea:focus {

@@ -1,3 +1,5 @@
+import { AI_TOOLS, AiIcon } from "@/components/AiToolIcons";
+
 const TECHS = [
   { name: "HTML5", icon: "fab fa-html5", color: "#e34f26" },
   { name: "CSS3", icon: "fab fa-css3-alt", color: "#1572b6" },
@@ -14,16 +16,31 @@ const TECHS = [
   { name: "Sass", icon: "fab fa-sass", color: "#cc6699" },
 ];
 
+type Item =
+  | { kind: "fa"; name: string; icon: string; color: string }
+  | { kind: "ai"; name: string; label: string; color: string };
+
+const ITEMS: Item[] = [
+  ...TECHS.map((t) => ({ kind: "fa" as const, ...t })),
+  ...AI_TOOLS.map((t) => ({ kind: "ai" as const, ...t })),
+];
+
 const TechMarquee = () => {
   // Rendered twice so the -50% keyframe loops seamlessly.
-  const loop = [...TECHS, ...TECHS];
+  const loop = [...ITEMS, ...ITEMS];
   return (
     <div className="marquee-wrap" aria-hidden="true">
       <div className="marquee">
         {loop.map((t, i) => (
           <span className="tech-item" key={i}>
-            <i className={t.icon} style={{ color: t.color }} />
-            {t.name}
+            {t.kind === "fa" ? (
+              <i className={t.icon} style={{ color: t.color }} />
+            ) : (
+              <span style={{ color: t.color, display: "inline-flex" }}>
+                <AiIcon name={t.name} size={22} />
+              </span>
+            )}
+            {t.kind === "fa" ? t.name : t.label}
           </span>
         ))}
       </div>

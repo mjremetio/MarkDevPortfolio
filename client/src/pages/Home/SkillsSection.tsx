@@ -2,6 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { getSkillsContent } from "@/utils/contentLoader";
 import { useContentLoading } from "@/contexts/ContentLoadingContext";
+import { AI_TOOLS, AiIcon } from "@/components/AiToolIcons";
 
 interface Skill {
   name: string;
@@ -111,6 +112,31 @@ const SkillsSection = () => {
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          className="ai-showcase glass"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="sp-head">
+            <div className="fi ai-fi">
+              <i className="fas fa-robot" />
+            </div>
+            <h3>AI Tools &amp; Platforms</h3>
+          </div>
+          <div className="ai-grid">
+            {AI_TOOLS.map((t) => (
+              <div className="ai-chip" key={t.name}>
+                <span className="ai-ic" style={{ color: t.color }}>
+                  <AiIcon name={t.name} size={22} />
+                </span>
+                <span className="ai-label">{t.label}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
 
         <div className="ring-stage">
           <div className="ring3d">
