@@ -226,7 +226,7 @@ const HeroSection = () => {
                 onMouseLeave={resetTilt}
               >
                 <img
-                  src={content.profilePicture || FALLBACK_AVATAR}
+                  src={content.profilePicture || "/mark-remetio.jpg"}
                   alt="Mark Remetio — Full-Stack Web Developer"
                   width={640}
                   height={636}
