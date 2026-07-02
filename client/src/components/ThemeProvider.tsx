@@ -22,21 +22,25 @@ export function useTheme() {
 }
 
 // Theme provider component
+// Resolve the theme the pre-paint script already applied to <html>, so the
+// provider's initial state matches the first paint and there is no flash.
+function getInitialTheme(): Theme {
+  if (typeof document !== "undefined") {
+    if (document.documentElement.classList.contains("dark")) return "dark";
+    if (document.documentElement.classList.contains("light")) return "light";
+  }
+  try {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") return saved;
+    if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) return "dark";
+  } catch {
+    /* no-op */
+  }
+  return "light";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Initialize theme with SSR-safe approach
-  const [theme, setTheme] = useState<Theme>("light");
-  
-  // Initialize theme from localStorage on component mount
-  useEffect(() => {
-    // Check local storage first
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
-      setTheme(savedTheme);
-    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      // Then check system preference
-      setTheme("dark");
-    }
-  }, []);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
   // Update document classes and localStorage when theme changes
   useEffect(() => {

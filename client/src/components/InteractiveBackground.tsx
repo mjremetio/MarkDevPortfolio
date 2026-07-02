@@ -8,12 +8,25 @@ const InteractiveBackground = () => {
   
   useEffect(() => {
     if (!containerRef.current) return;
-    
+    // The starfield reads as intended only against the deep void backdrop.
+    // In light mode the soft radial glow layer handles the ambiance instead.
+    if (theme !== "dark") return;
+
     // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
+
+    // Creating a WebGL context can fail (blocked/unavailable GPU, headless
+    // browsers). Degrade gracefully to the static glow layer instead of
+    // throwing an uncaught error that would blank the page.
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    } catch (err) {
+      console.warn("WebGL unavailable; using static background.", err);
+      return;
+    }
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     containerRef.current.appendChild(renderer.domElement);
@@ -33,9 +46,9 @@ const InteractiveBackground = () => {
     const starColors = new Float32Array(starCount * 3);
     const starSizes = new Float32Array(starCount);
     
-    // Use consistent brand colors with your theme
-    const primaryColor = theme === 'dark' ? 0x6366f1 : 0x4f46e5; // Indigo
-    const secondaryColor = theme === 'dark' ? 0xec4899 : 0xdb2777; // Pink
+    // Void palette: indigo core drifting toward cyan/magenta accents
+    const primaryColor = 0x6f6cf7; // Indigo
+    const secondaryColor = 0x45e6d6; // Cyan
     
     const color1 = new THREE.Color(primaryColor);
     const color2 = new THREE.Color(secondaryColor);
@@ -107,8 +120,8 @@ const InteractiveBackground = () => {
     scene.add(starSystem);
     
     // Create constellation lines
-    const linesMaterial = new THREE.LineBasicMaterial({ 
-      color: theme === 'dark' ? 0x6366f1 : 0x4f46e5,
+    const linesMaterial = new THREE.LineBasicMaterial({
+      color: 0x6f6cf7,
       transparent: true,
       opacity: 0.2,
       blending: THREE.AdditiveBlending
@@ -329,9 +342,10 @@ const InteractiveBackground = () => {
   }, [theme]);
   
   return (
-    <div 
-      ref={containerRef} 
-      className="fixed inset-0 -z-10 pointer-events-none"
+    <div
+      ref={containerRef}
+      className="site-canvas fixed inset-0 pointer-events-none"
+      style={{ zIndex: 0 }}
       aria-hidden="true"
     />
   );

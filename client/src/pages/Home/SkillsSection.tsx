@@ -1,122 +1,49 @@
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { getSkillsContent } from "@/utils/contentLoader";
 import { useContentLoading } from "@/contexts/ContentLoadingContext";
 
-interface SkillItemProps {
+interface Skill {
   name: string;
   percentage: number;
-  delay: number;
-  colorClass: string;
 }
-
-interface SkillCategory {
+interface Category {
   title: string;
   icon: string;
-  iconBg: string;
-  iconColor: string;
-  titleColor: string;
-  skills: Array<{
-    name: string;
-    percentage: number;
-    colorClass: string;
-  }>;
+  skills: Skill[];
 }
 
-interface Technology {
-  name: string;
-  icon: string;
-}
+const PANEL_VARIANTS = ["sp-front", "sp-back", "sp-devops"];
 
-const SkillItem = ({ name, percentage, delay, colorClass }: SkillItemProps) => {
-  const progressRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+const RING = [
+  { icon: "fab fa-html5", name: "HTML5", color: "#e34f26" },
+  { icon: "fab fa-css3-alt", name: "CSS3", color: "#1572b6" },
+  { icon: "fab fa-js", name: "JS", color: "#f7df1e" },
+  { icon: "fab fa-react", name: "React", color: "#61dafb" },
+  { icon: "fab fa-vuejs", name: "Vue", color: "#42b883" },
+  { icon: "fab fa-angular", name: "Angular", color: "#dd0031" },
+  { icon: "fab fa-node-js", name: "Node", color: "#3c873a" },
+  { icon: "fab fa-php", name: "PHP", color: "#777bb4" },
+  { icon: "fab fa-laravel", name: "Laravel", color: "#ff2d20" },
+  { icon: "fab fa-wordpress", name: "WP", color: "#21759b" },
+  { icon: "fab fa-aws", name: "AWS", color: "#ff9900" },
+  { icon: "fab fa-git-alt", name: "Git", color: "#f05032" },
+  { icon: "fab fa-sass", name: "Sass", color: "#cc6699" },
+];
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && progressRef.current) {
-          setTimeout(() => {
-            if (progressRef.current) {
-              progressRef.current.style.width = `${percentage}%`;
-            }
-          }, delay * 100);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    if (progressRef.current) {
-      observer.observe(progressRef.current);
-    }
-
-    return () => {
-      if (progressRef.current) {
-        observer.unobserve(progressRef.current);
-      }
-    };
-  }, [percentage, delay]);
-
+const SkillBar = ({ name, percentage }: Skill) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -8% 0px" });
   return (
-    <div className="cursor-pointer" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <div className="flex justify-between mb-1.5">
-        <motion.span
-          className="text-sm font-medium text-gray-600 dark:text-gray-300"
-          initial={{ x: 0 }}
-          animate={{ x: isHovered ? 2 : 0 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          style={{ fontWeight: isHovered ? 600 : 500 }}
-        >
-          {name}
-        </motion.span>
-        <motion.span
-          className="text-sm font-semibold text-indigo-600 dark:text-indigo-400"
-          initial={{ scale: 1 }}
-          animate={{ scale: isHovered ? 1.1 : 1 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          {percentage}%
-        </motion.span>
+    <div className="bar-row" ref={ref}>
+      <div className="bar-top">
+        <b>{name}</b>
+        <span>{percentage}%</span>
       </div>
-      <div
-        className={`progress-bar bg-gray-100 dark:bg-slate-700 ${isHovered ? 'h-3' : 'h-2.5'} rounded-full overflow-hidden transition-all duration-300`}
-      >
-        <div
-          ref={progressRef}
-          className="progress-bar-fill h-full w-0 rounded-full transition-all duration-1000 ease-out"
-          style={{ boxShadow: isHovered ? "0 0 8px rgba(99, 102, 241, 0.4)" : "none" }}
-        ></div>
+      <div className="bar">
+        <i style={{ width: inView ? `${percentage}%` : 0 }} />
       </div>
     </div>
-  );
-};
-
-const TechIcon = ({ icon, name, delay }: { icon: string, name: string, delay: number }) => {
-  return (
-    <motion.div
-      className="flex flex-col items-center"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: delay * 0.1 }}
-      whileHover={{ y: -5 }}
-    >
-      <motion.div
-        className="w-16 h-16 flex items-center justify-center bg-white dark:bg-slate-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700/50"
-        whileHover={{
-          scale: 1.1,
-          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
-        }}
-        transition={{ type: "spring", stiffness: 300 }}
-      >
-        <i className={`${icon} text-3xl`}></i>
-      </motion.div>
-      <motion.span
-        className="mt-2 text-sm text-gray-500 dark:text-gray-400"
-        whileHover={{ fontWeight: 600 }}
-      >
-        {name}
-      </motion.span>
-    </motion.div>
   );
 };
 
@@ -126,121 +53,83 @@ const SkillsSection = () => {
 
   useEffect(() => {
     let isMounted = true;
-    const loadSkillsContent = async () => {
+    const load = async () => {
       beginLoading();
       try {
-        const response = await fetch("/api/content/skills");
-        if (!response.ok) {
-          throw new Error("Failed to fetch skills content");
-        }
-        const data = await response.json();
-        if (isMounted) {
-          setContent(data);
-        }
+        const res = await fetch("/api/content/skills");
+        if (!res.ok) throw new Error("Failed to fetch skills content");
+        const data = await res.json();
+        if (isMounted) setContent(data);
       } catch (error) {
         console.log("Using default skills content:", error);
       } finally {
         endLoading();
       }
     };
-
-    void loadSkillsContent();
+    void load();
     return () => {
       isMounted = false;
     };
   }, [beginLoading, endLoading]);
 
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 }
-    }
-  };
-
   return (
-    <section id="skills" className="py-16 md:py-24 section-alt transition-colors duration-500">
-      <div className="container mx-auto px-4 md:px-6">
+    <section id="skills">
+      <div className="wrap">
         <motion.div
-          className="text-center mb-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeIn}
+          className="section-head"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-sans text-gray-900 dark:text-white">{content.title}</h2>
-          <div className="section-divider"></div>
-          <p className="mt-4 text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-            {content.subtitle}
-          </p>
+          <div className="eyebrow">// skills.config.js</div>
+          <h2 className="h2">
+            Technical <span className="grad">Skills</span>
+          </h2>
+          <p className="sub">{content.subtitle}</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {content.categories?.map((category: SkillCategory, categoryIndex: number) => (
+        <div className="skills-grid">
+          {(content.categories as Category[])?.map((cat, i) => (
             <motion.div
-              key={category.title}
-              className="card-enhanced bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-700/50"
+              className={`skill-panel glass ${PANEL_VARIANTS[i % PANEL_VARIANTS.length]}`}
+              key={cat.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
             >
-              <div className="p-6">
-                <div className="flex items-center mb-5">
-                  <div className={`${category.iconBg} p-3 rounded-xl mr-4`}>
-                    <i className={`${category.icon} ${category.iconColor}`}></i>
-                  </div>
-                  <h3 className={`text-xl font-semibold ${category.titleColor}`}>{category.title}</h3>
+              <div className="sp-head">
+                <div className="fi">
+                  <i className={cat.icon} />
                 </div>
-
-                <div className="space-y-4">
-                  {category.skills?.map((skill, skillIndex) => (
-                    <SkillItem
-                      key={skill.name}
-                      name={skill.name}
-                      percentage={skill.percentage}
-                      delay={skillIndex + 1}
-                      colorClass={skill.colorClass}
-                    />
-                  ))}
-                </div>
+                <h3>{cat.title}</h3>
               </div>
+              {cat.skills?.map((s) => (
+                <SkillBar key={s.name} name={s.name} percentage={s.percentage} />
+              ))}
             </motion.div>
           ))}
         </div>
 
-        <motion.div
-          className="mt-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeIn}
-        >
-          <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-white mb-8">Technologies I Work With</h3>
-
-          <div className="relative overflow-hidden py-6">
-            <div className="tech-slider pr-8">
-              {content.technologies?.map((tech: Technology, index: number) => (
-                <TechIcon
-                  key={`first-${tech.name}`}
-                  icon={tech.icon}
-                  name={tech.name}
-                  delay={index}
-                />
-              ))}
-
-              {content.technologies?.map((tech: Technology, index: number) => (
-                <TechIcon
-                  key={`second-${tech.name}`}
-                  icon={tech.icon}
-                  name={tech.name}
-                  delay={index}
-                />
-              ))}
-            </div>
+        <div className="ring-stage">
+          <div className="ring3d">
+            {RING.map((t, i) => (
+              <div
+                className="node"
+                key={t.name}
+                style={{
+                  transform: `rotateY(${i * (360 / RING.length)}deg) translateZ(250px)`,
+                  color: t.color,
+                }}
+              >
+                <i className={t.icon} />
+                <span>{t.name}</span>
+              </div>
+            ))}
           </div>
-        </motion.div>
+          <div className="ring-caption">// hover to pause · {RING.length} technologies in orbit</div>
+        </div>
       </div>
     </section>
   );

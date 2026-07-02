@@ -10,6 +10,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import InteractiveBackground from "@/components/InteractiveBackground";
+import CustomCursor from "@/components/CustomCursor";
+import BackToTop from "@/components/BackToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import AccessibilityPanel from "@/components/AccessibilityPanel";
@@ -20,32 +22,40 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AccessibilityProvider>
-          <div className="flex min-h-screen flex-col antialiased">
-            <Switch>
-              <Route path="/maglogin">
-                <AdminLogin />
-              </Route>
-              <Route path="/admin">
-                <AdminDashboard />
-              </Route>
-              <Route path="/">
-                <ContentLoadingProvider>
-                  <>
-                    <Header />
-                    <ScrollProgressBar />
-                    <InteractiveBackground />
-                    <main className="flex-1">
-                      <Home />
-                    </main>
-                    <Footer />
-                  </>
-                </ContentLoadingProvider>
-              </Route>
-              <Route>
-                <NotFound />
-              </Route>
-            </Switch>
-          </div>
+          <Switch>
+            <Route path="/maglogin">
+              <AdminLogin />
+            </Route>
+            <Route path="/admin">
+              <AdminDashboard />
+            </Route>
+            <Route path="/">
+              <ContentLoadingProvider>
+                {/* Fixed void backdrop layers */}
+                <div className="site-bg" aria-hidden="true">
+                  <div className="glow-layer" />
+                </div>
+                <InteractiveBackground />
+                <div className="vignette" aria-hidden="true" />
+
+                <ScrollProgressBar />
+                <CustomCursor />
+
+                <div className="portfolio-root flex min-h-screen flex-col">
+                  <Header />
+                  <main className="flex-1">
+                    <Home />
+                  </main>
+                  <Footer />
+                </div>
+
+                <BackToTop />
+              </ContentLoadingProvider>
+            </Route>
+            <Route>
+              <NotFound />
+            </Route>
+          </Switch>
           <AccessibilityPanel />
           <Toaster />
         </AccessibilityProvider>
