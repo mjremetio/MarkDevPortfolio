@@ -1,346 +1,310 @@
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { useTheme } from '@/hooks/useTheme';
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import { useTheme } from "@/hooks/useTheme";
+
+/**
+ * Scroll-driven flight through a "developer nebula" — a 1:1 port of the
+ * reference template's Three.js scene: three tinted particle clouds, floating
+ * code-glyph sprites, wireframe landmarks, a grid floor/ceiling, and per-section
+ * color palettes that lerp as you scroll. Runs in dark mode (its native
+ * environment — additive blending needs the void backdrop); light mode falls
+ * back to the static CSS glow layer.
+ */
+
+const SECTION_IDS = ["home", "about", "skills", "projects", "experience", "contact"];
+
+// Per-section palettes: [cloudA, cloudB, cloudC, fog]
+const PAL = [
+  [0x6f6cf7, 0x45e6d6, 0xc47bff, 0x060913], // home
+  [0x45e6d6, 0x6f6cf7, 0x7bffd0, 0x061018], // about
+  [0xc47bff, 0x6f6cf7, 0x45e6d6, 0x0a0916], // skills
+  [0x6f6cf7, 0x4aa8ff, 0x45e6d6, 0x050b18], // projects
+  [0x8f7bff, 0x45e6d6, 0xc47bff, 0x080a16], // experience
+  [0x45e6d6, 0xc47bff, 0x6f6cf7, 0x061213], // contact
+];
+
+const GLYPHS = ["</>", "{ }", "=>", "();", "#", "<div>", "fn", "&&"];
+const GCOLORS = ["#8f8cff", "#5df0e0", "#d29bff"];
 
 const InteractiveBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
-  
+
   useEffect(() => {
-    if (!containerRef.current) return;
-    // The starfield reads as intended only against the deep void backdrop.
-    // In light mode the soft radial glow layer handles the ambiance instead.
-    if (theme !== "dark") return;
-
-    // Scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-    // Creating a WebGL context can fail (blocked/unavailable GPU, headless
-    // browsers). Degrade gracefully to the static glow layer instead of
-    // throwing an uncaught error that would blank the page.
-    let renderer: THREE.WebGLRenderer;
-    try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    } catch (err) {
-      console.warn("WebGL unavailable; using static background.", err);
+    const container = containerRef.current;
+    if (!container) return;
+    // The nebula reads as intended only against the deep void backdrop.
+    // In light mode the CSS glow layer handles the ambiance instead.
+    if (theme !== "dark") {
+      document.body.classList.remove("no3d");
       return;
     }
 
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (err) {
+      console.warn("WebGL unavailable; using static background.", err);
+      document.body.classList.add("no3d");
+      return;
+    }
+    document.body.classList.remove("no3d");
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    containerRef.current.appendChild(renderer.domElement);
-    
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(0, 10, 5);
-    scene.add(directionalLight);
-    
-    // Create constellation stars
-    const starCount = 100;
-    const starGeometry = new THREE.BufferGeometry();
-    const starPositions = new Float32Array(starCount * 3);
-    const starColors = new Float32Array(starCount * 3);
-    const starSizes = new Float32Array(starCount);
-    
-    // Void palette: indigo core drifting toward cyan/magenta accents
-    const primaryColor = 0x6f6cf7; // Indigo
-    const secondaryColor = 0x45e6d6; // Cyan
-    
-    const color1 = new THREE.Color(primaryColor);
-    const color2 = new THREE.Color(secondaryColor);
-    
-    const stars: THREE.Vector3[] = [];
-    
-    for (let i = 0; i < starCount; i++) {
-      // Position stars in a more structured pattern for constellation-like effect
-      const radius = 8;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.random() * Math.PI;
-      
-      const x = radius * Math.sin(phi) * Math.cos(theta);
-      const y = radius * Math.sin(phi) * Math.sin(theta);
-      const z = radius * Math.cos(phi);
-      
-      starPositions[i * 3] = x;
-      starPositions[i * 3 + 1] = y;
-      starPositions[i * 3 + 2] = z;
-      
-      stars.push(new THREE.Vector3(x, y, z));
-      
-      // Color
-      const mixRatio = Math.random();
-      const starColor = new THREE.Color().lerpColors(color1, color2, mixRatio);
-      
-      starColors[i * 3] = starColor.r;
-      starColors[i * 3 + 1] = starColor.g;
-      starColors[i * 3 + 2] = starColor.b;
-      
-      // Size - make some stars larger for visual interest
-      starSizes[i] = Math.random() * 0.15 + 0.05;
-    }
-    
-    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-    starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
-    
-    // Create star shader material
-    const starMaterial = new THREE.ShaderMaterial({
-      vertexShader: `
-        attribute float size;
-        varying vec3 vColor;
-        void main() {
-          vColor = color;
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size * (300.0 / -mvPosition.z);
-          gl_Position = projectionMatrix * mvPosition;
-        }
-      `,
-      fragmentShader: `
-        varying vec3 vColor;
-        void main() {
-          float distance = length(gl_PointCoord - vec2(0.5, 0.5));
-          if (distance > 0.5) discard;
-          
-          // Create a star-like glow effect
-          float intensity = 1.0 - distance * 2.0;
-          gl_FragColor = vec4(vColor, intensity);
-        }
-      `,
-      blending: THREE.AdditiveBlending,
-      depthTest: false,
-      transparent: true,
-      vertexColors: true
-    });
-    
-    const starSystem = new THREE.Points(starGeometry, starMaterial);
-    scene.add(starSystem);
-    
-    // Create constellation lines
-    const linesMaterial = new THREE.LineBasicMaterial({
-      color: 0x6f6cf7,
-      transparent: true,
-      opacity: 0.2,
-      blending: THREE.AdditiveBlending
-    });
-    
-    // Create connections between stars to form constellations
-    const constellationLines: THREE.Line[] = [];
-    
-    // Create some predefined constellation shapes
-    const constellationShapes = [
-      // Pentagon
-      (centerX: number, centerY: number, centerZ: number, size: number) => {
-        const points: THREE.Vector3[] = [];
-        for (let i = 0; i < 5; i++) {
-          const angle = (i / 5) * Math.PI * 2;
-          points.push(new THREE.Vector3(
-            centerX + Math.cos(angle) * size,
-            centerY + Math.sin(angle) * size,
-            centerZ
-          ));
-        }
-        points.push(points[0]); // Close the shape
-        return points;
-      },
-      // Triangle
-      (centerX: number, centerY: number, centerZ: number, size: number) => {
-        const points: THREE.Vector3[] = [];
-        for (let i = 0; i < 3; i++) {
-          const angle = (i / 3) * Math.PI * 2;
-          points.push(new THREE.Vector3(
-            centerX + Math.cos(angle) * size,
-            centerY + Math.sin(angle) * size,
-            centerZ
-          ));
-        }
-        points.push(points[0]); // Close the shape
-        return points;
-      },
-      // Square
-      (centerX: number, centerY: number, centerZ: number, size: number) => {
-        const points: THREE.Vector3[] = [];
-        for (let i = 0; i < 4; i++) {
-          const angle = (i / 4) * Math.PI * 2;
-          points.push(new THREE.Vector3(
-            centerX + Math.cos(angle) * size,
-            centerY + Math.sin(angle) * size,
-            centerZ
-          ));
-        }
-        points.push(points[0]); // Close the shape
-        return points;
-      },
-      // Custom shape (e.g., house-like)
-      (centerX: number, centerY: number, centerZ: number, size: number) => {
-        return [
-          new THREE.Vector3(centerX - size, centerY - size, centerZ),
-          new THREE.Vector3(centerX + size, centerY - size, centerZ),
-          new THREE.Vector3(centerX + size, centerY + size * 0.5, centerZ),
-          new THREE.Vector3(centerX, centerY + size * 1.2, centerZ),
-          new THREE.Vector3(centerX - size, centerY + size * 0.5, centerZ),
-          new THREE.Vector3(centerX - size, centerY - size, centerZ)
-        ];
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x060913, 0.026);
+    const camera = new THREE.PerspectiveCamera(
+      62,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      200
+    );
+    const CAM_START = 10;
+    const CAM_END = -60;
+    camera.position.set(0, 0, CAM_START);
+
+    // Track disposables for cleanup.
+    const geometries: THREE.BufferGeometry[] = [];
+    const materials: THREE.Material[] = [];
+    const textures: THREE.Texture[] = [];
+
+    // --- particle clouds (3, individually tinted) ---
+    const makeCloud = (
+      count: number,
+      color: number,
+      size: number,
+      spread: number,
+      zFrom: number,
+      zTo: number
+    ) => {
+      const g = new THREE.BufferGeometry();
+      const pos = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        pos[i * 3] = (Math.random() - 0.5) * spread;
+        pos[i * 3 + 1] = (Math.random() - 0.5) * spread * 0.6;
+        pos[i * 3 + 2] = zFrom + Math.random() * (zTo - zFrom);
       }
-    ];
-    
-    // Create constellation shapes
-    const constellationCount = 4; 
-    
-    for (let c = 0; c < constellationCount; c++) {
-      const shapeIndex = Math.floor(Math.random() * constellationShapes.length);
-      const shape = constellationShapes[shapeIndex];
-      
-      // Random position and size for the shape
-      const centerX = (Math.random() - 0.5) * 6;
-      const centerY = (Math.random() - 0.5) * 6;
-      const centerZ = (Math.random() - 0.5) * 6;
-      const size = 1 + Math.random() * 2;
-      
-      const points = shape(centerX, centerY, centerZ, size);
-      
-      const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-      const line = new THREE.Line(lineGeometry, linesMaterial);
-      constellationLines.push(line);
-      scene.add(line);
-      
-      // Add stars at the vertices of the shape
-      points.forEach(point => {
-        const starIndex = Math.floor(Math.random() * starCount);
-        starPositions[starIndex * 3] = point.x;
-        starPositions[starIndex * 3 + 1] = point.y;
-        starPositions[starIndex * 3 + 2] = point.z;
-        
-        // Make these stars a bit brighter
-        starSizes[starIndex] = Math.random() * 0.2 + 0.1;
-        
-        // Update the stars array with the new position
-        stars[starIndex] = new THREE.Vector3(point.x, point.y, point.z);
+      g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      const m = new THREE.PointsMaterial({
+        color,
+        size,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        sizeAttenuation: true,
       });
+      const p = new THREE.Points(g, m);
+      scene.add(p);
+      geometries.push(g);
+      materials.push(m);
+      return p;
+    };
+    const cloudA = makeCloud(2400, 0x6f6cf7, 0.1, 46, 16, -78);
+    const cloudB = makeCloud(2200, 0x45e6d6, 0.07, 40, 16, -78);
+    const cloudC = makeCloud(1600, 0xc47bff, 0.12, 56, 16, -78);
+
+    // --- code glyph sprites ---
+    const glyphTexture = (txt: string, color: string) => {
+      const c = document.createElement("canvas");
+      c.width = c.height = 128;
+      const ctx = c.getContext("2d")!;
+      ctx.font = '600 64px "Fira Code", monospace';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 18;
+      ctx.fillStyle = color;
+      ctx.fillText(txt, 64, 68);
+      const t = new THREE.CanvasTexture(c);
+      textures.push(t);
+      return t;
+    };
+    const sprites: THREE.Sprite[] = [];
+    for (let gi = 0; gi < 26; gi++) {
+      const mat = new THREE.SpriteMaterial({
+        map: glyphTexture(GLYPHS[gi % GLYPHS.length], GCOLORS[gi % 3]),
+        transparent: true,
+        opacity: 0.55,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      const sp = new THREE.Sprite(mat);
+      sp.position.set(
+        (Math.random() - 0.5) * 34,
+        (Math.random() - 0.5) * 18,
+        12 - Math.random() * 84
+      );
+      const s = 1 + Math.random() * 1.6;
+      sp.scale.set(s, s, 1);
+      sp.userData.speed = 0.2 + Math.random() * 0.5;
+      sprites.push(sp);
+      scene.add(sp);
+      materials.push(mat);
     }
-    
-    // Update star geometry after modifications
-    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
-    
-    // Add some random connections between stars for a natural look
-    const connectionCount = 20;
-    for (let i = 0; i < connectionCount; i++) {
-      const index1 = Math.floor(Math.random() * starCount);
-      const index2 = Math.floor(Math.random() * starCount);
-      
-      // Only connect if stars are reasonably close to each other
-      const star1 = stars[index1];
-      const star2 = stars[index2];
-      const distance = star1.distanceTo(star2);
-      
-      if (distance < 3) {
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints([star1, star2]);
-        const line = new THREE.Line(lineGeometry, linesMaterial);
-        constellationLines.push(line);
-        scene.add(line);
-      }
-    }
-    
-    camera.position.z = 10;
-    
-    // Mouse interaction
+
+    // --- wireframe landmarks along the corridor ---
+    const wire = (
+      geo: THREE.BufferGeometry,
+      color: number,
+      x: number,
+      y: number,
+      z: number,
+      rSpeed: number
+    ) => {
+      const m = new THREE.MeshBasicMaterial({
+        color,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.5,
+      });
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.position.set(x, y, z);
+      mesh.userData.r = rSpeed;
+      scene.add(mesh);
+      geometries.push(geo);
+      materials.push(m);
+      return mesh;
+    };
+    const meshes = [
+      wire(new THREE.IcosahedronGeometry(3.4, 0), 0x6f6cf7, 7.5, 1.5, 1, 0.0022),
+      wire(new THREE.TorusKnotGeometry(2.4, 0.7, 110, 14), 0x45e6d6, -8, -2, -14, 0.0016),
+      wire(new THREE.OctahedronGeometry(3.6, 0), 0xc47bff, 8, 2.4, -28, 0.0026),
+      wire(new THREE.DodecahedronGeometry(3.2, 0), 0x6f6cf7, -7.5, -1, -42, 0.0018),
+      wire(new THREE.TorusGeometry(3, 0.85, 14, 42), 0x45e6d6, 7, -2.2, -56, 0.002),
+    ];
+
+    // --- grid floor & ceiling ---
+    const gridF = new THREE.GridHelper(240, 60, 0x6f6cf7, 0x1c2246);
+    gridF.position.y = -11;
+    (gridF.material as THREE.Material).transparent = true;
+    (gridF.material as THREE.Material).opacity = 0.22;
+    scene.add(gridF);
+    const gridC = new THREE.GridHelper(240, 60, 0x45e6d6, 0x14203c);
+    gridC.position.y = 12.5;
+    (gridC.material as THREE.Material).transparent = true;
+    (gridC.material as THREE.Material).opacity = 0.1;
+    scene.add(gridC);
+    geometries.push(gridF.geometry, gridC.geometry);
+    materials.push(gridF.material as THREE.Material, gridC.material as THREE.Material);
+
+    const curA = new THREE.Color(PAL[0][0]);
+    const curB = new THREE.Color(PAL[0][1]);
+    const curC = new THREE.Color(PAL[0][2]);
+    const curF = new THREE.Color(PAL[0][3]);
+
+    // --- interaction state ---
     let mouseX = 0;
     let mouseY = 0;
-    const handleMouseMove = (event: MouseEvent) => {
-      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+    let smX = 0;
+    let smY = 0;
+    let scrollP = 0;
+    let smScroll = 0;
+    let sectionIndex = 0;
+
+    const onPointerMove = (e: PointerEvent) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    // Resize handler
-    const handleResize = () => {
+    const onScroll = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      scrollP = h > 0 ? window.scrollY / h : 0;
+      let cur = 0;
+      SECTION_IDS.forEach((id, i) => {
+        const s = document.getElementById(id);
+        if (s && window.scrollY >= s.offsetTop - window.innerHeight * 0.45) cur = i;
+      });
+      sectionIndex = Math.min(cur, PAL.length - 1);
+    };
+    const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    
-    window.addEventListener('resize', handleResize);
-    
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-      
-      const time = Date.now() * 0.001;
-      
-      // Very slow, gentle rotation effect
-      starSystem.rotation.x += 0.0003;
-      starSystem.rotation.y += 0.0004;
-      
-      // Add slight breathing effect to the entire system
-      const breathingScale = 1 + 0.02 * Math.sin(time * 0.3);
-      starSystem.scale.set(breathingScale, breathingScale, breathingScale);
-      
-      // Rotate all constellation lines to match the stars
-      constellationLines.forEach((line, index) => {
-        line.rotation.x = starSystem.rotation.x;
-        line.rotation.y = starSystem.rotation.y;
-        
-        // Make lines pulsate with different frequencies
-        const lineMaterial = line.material as THREE.LineBasicMaterial;
-        lineMaterial.opacity = 0.1 + 0.2 * Math.sin(time * 0.2 + index * 0.5);
+
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    onScroll();
+    smScroll = scrollP;
+
+    let running = true;
+    const onVisibility = () => {
+      running = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const clock = new THREE.Clock();
+    let raf = 0;
+    const tmp = new THREE.Color();
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      if (!running) return;
+      const t = clock.getElapsedTime();
+
+      // smooth scroll & mouse
+      smScroll += (scrollP - smScroll) * (reduceMotion ? 1 : 0.06);
+      smX += (mouseX - smX) * 0.05;
+      smY += (mouseY - smY) * 0.05;
+
+      // camera flight
+      camera.position.z = CAM_START + (CAM_END - CAM_START) * smScroll;
+      camera.position.x =
+        smX * (reduceMotion ? 0.4 : 1.6) + Math.sin(smScroll * Math.PI * 2) * 1.2;
+      camera.position.y = -smY * (reduceMotion ? 0.3 : 1.1) + Math.sin(t * 0.3) * 0.25;
+      camera.lookAt(camera.position.x * 0.4, camera.position.y * 0.4, camera.position.z - 12);
+
+      // palette lerp toward current section
+      const p = PAL[sectionIndex];
+      curA.lerp(tmp.set(p[0]), 0.03);
+      curB.lerp(tmp.set(p[1]), 0.03);
+      curC.lerp(tmp.set(p[2]), 0.03);
+      curF.lerp(tmp.set(p[3]), 0.03);
+      (cloudA.material as THREE.PointsMaterial).color.copy(curA);
+      (cloudB.material as THREE.PointsMaterial).color.copy(curB);
+      (cloudC.material as THREE.PointsMaterial).color.copy(curC);
+      (scene.fog as THREE.FogExp2).color.copy(curF);
+
+      // ambient motion
+      cloudA.rotation.y = t * 0.012;
+      cloudB.rotation.y = -t * 0.016;
+      cloudC.rotation.y = t * 0.008;
+      meshes.forEach((m, i) => {
+        m.rotation.x += m.userData.r;
+        m.rotation.y += m.userData.r * 1.35;
+        m.position.y += Math.sin(t * 0.6 + i) * 0.0035;
       });
-      
-      // Subtle camera movement based on mouse
-      camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02;
-      camera.position.y += (mouseY * 0.3 - camera.position.y) * 0.02;
-      camera.lookAt(scene.position);
-      
-      // Enhanced twinkle effect for stars
-      const sizes = starSystem.geometry.attributes.size.array as Float32Array;
-      const colors = starSystem.geometry.attributes.color.array as Float32Array;
-      
-      for (let i = 0; i < starCount; i++) {
-        // Size twinkle
-        const originalSize = starSizes[i];
-        const twinkleFactor = 1 + 0.3 * Math.sin(time * (0.5 + Math.random() * 0.5) + i * 3.14);
-        sizes[i] = originalSize * twinkleFactor;
-        
-        // Color brightness twinkle - subtle effect
-        const i3 = i * 3;
-        const brightness = 0.9 + 0.2 * Math.sin(time * 0.7 + i);
-        
-        colors[i3] = Math.min(colors[i3] * brightness, 1.0);
-        colors[i3 + 1] = Math.min(colors[i3 + 1] * brightness, 1.0);
-        colors[i3 + 2] = Math.min(colors[i3 + 2] * brightness, 1.0);
-      }
-      
-      starSystem.geometry.attributes.size.needsUpdate = true;
-      starSystem.geometry.attributes.color.needsUpdate = true;
-      
+      sprites.forEach((sp, i) => {
+        sp.position.y += Math.sin(t * sp.userData.speed + i) * 0.004;
+        (sp.material as THREE.SpriteMaterial).opacity = 0.38 + Math.sin(t * 0.8 + i) * 0.18;
+      });
+      gridF.position.z = camera.position.z - 60;
+      gridC.position.z = camera.position.z - 60;
+
       renderer.render(scene, camera);
     };
-    
-    animate();
-    
-    // Cleanup
+    tick();
+
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-      containerRef.current?.removeChild(renderer.domElement);
-      
-      // Clean up resources
-      scene.remove(starSystem);
-      starGeometry.dispose();
-      (starMaterial as THREE.Material).dispose();
-      
-      constellationLines.forEach(line => {
-        scene.remove(line);
-        line.geometry.dispose();
-      });
-      (linesMaterial as THREE.Material).dispose();
+      cancelAnimationFrame(raf);
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (renderer.domElement.parentNode === container) {
+        container.removeChild(renderer.domElement);
+      }
+      geometries.forEach((g) => g.dispose());
+      materials.forEach((m) => m.dispose());
+      textures.forEach((tx) => tx.dispose());
+      renderer.dispose();
     };
   }, [theme]);
-  
+
   return (
     <div
       ref={containerRef}
