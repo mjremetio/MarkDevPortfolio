@@ -3,18 +3,19 @@ import * as THREE from "three";
 import { useTheme } from "@/hooks/useTheme";
 
 /**
- * Scroll-driven flight through a "developer nebula" — a 1:1 port of the
- * reference template's Three.js scene: three tinted particle clouds, floating
- * code-glyph sprites, wireframe landmarks, a grid floor/ceiling, and per-section
- * color palettes that lerp as you scroll. Runs in dark mode (its native
- * environment — additive blending needs the void backdrop); light mode falls
- * back to the static CSS glow layer.
+ * Scroll-driven flight through a "developer nebula" — three tinted particle
+ * clouds, floating code-glyph sprites, wireframe landmarks, a grid floor/ceiling,
+ * and per-section color palettes that lerp as you scroll, with mouse parallax.
+ *
+ * Runs in BOTH themes: dark uses additive blending on the void; light uses
+ * normal blending with saturated colors + a light fog so it reads on white.
+ * Falls back to the static CSS glow layer if WebGL is unavailable (body.no3d).
  */
 
 const SECTION_IDS = ["home", "about", "skills", "projects", "experience", "contact"];
 
-// Per-section palettes: [cloudA, cloudB, cloudC, fog]
-const PAL = [
+// Dark palettes: [cloudA, cloudB, cloudC, fog]
+const PAL_DARK = [
   [0x6f6cf7, 0x45e6d6, 0xc47bff, 0x060913], // home
   [0x45e6d6, 0x6f6cf7, 0x7bffd0, 0x061018], // about
   [0xc47bff, 0x6f6cf7, 0x45e6d6, 0x0a0916], // skills
@@ -22,9 +23,17 @@ const PAL = [
   [0x8f7bff, 0x45e6d6, 0xc47bff, 0x080a16], // experience
   [0x45e6d6, 0xc47bff, 0x6f6cf7, 0x061213], // contact
 ];
+// Light palettes: saturated particle tints + a light fog tone
+const PAL_LIGHT = [
+  [0x5b56e6, 0x12b3c0, 0xa855f7, 0xe9edfa], // home
+  [0x12b3c0, 0x5b56e6, 0x1fb894, 0xe6f2f5], // about
+  [0xa855f7, 0x5b56e6, 0x12b3c0, 0xefe9fb], // skills
+  [0x5b56e6, 0x2f8fe0, 0x12b3c0, 0xe8eefc], // projects
+  [0x7b6fe6, 0x12b3c0, 0xa855f7, 0xece7fb], // experience
+  [0x12b3c0, 0xa855f7, 0x5b56e6, 0xe6f4f2], // contact
+];
 
 const GLYPHS = ["</>", "{ }", "=>", "();", "#", "<div>", "fn", "&&"];
-const GCOLORS = ["#8f8cff", "#5df0e0", "#d29bff"];
 
 const InteractiveBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,12 +42,21 @@ const InteractiveBackground = () => {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    // The nebula reads as intended only against the deep void backdrop.
-    // In light mode the CSS glow layer handles the ambiance instead.
-    if (theme !== "dark") {
-      document.body.classList.remove("no3d");
-      return;
-    }
+
+    const isLight = theme === "light";
+    const PALETTE = isLight ? PAL_LIGHT : PAL_DARK;
+    const blend = isLight ? THREE.NormalBlending : THREE.AdditiveBlending;
+    const cloudOpacity = isLight ? 0.6 : 0.85;
+    const spriteOpacityBase = isLight ? 0.5 : 0.38;
+    const spriteOpacitySwing = isLight ? 0.14 : 0.18;
+    const meshOpacity = isLight ? 0.32 : 0.5;
+    const fogDensity = isLight ? 0.02 : 0.026;
+    const gColors = isLight
+      ? ["#5b56e6", "#0e97a8", "#9b4dea"]
+      : ["#8f8cff", "#5df0e0", "#d29bff"];
+    const wire3 = isLight
+      ? { i: 0x5b56e6, c: 0x12b3c0, m: 0xa855f7 }
+      : { i: 0x6f6cf7, c: 0x45e6d6, m: 0xc47bff };
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -56,7 +74,7 @@ const InteractiveBackground = () => {
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x060913, 0.026);
+    scene.fog = new THREE.FogExp2(PALETTE[0][3], fogDensity);
     const camera = new THREE.PerspectiveCamera(
       62,
       window.innerWidth / window.innerHeight,
@@ -67,7 +85,6 @@ const InteractiveBackground = () => {
     const CAM_END = -60;
     camera.position.set(0, 0, CAM_START);
 
-    // Track disposables for cleanup.
     const geometries: THREE.BufferGeometry[] = [];
     const materials: THREE.Material[] = [];
     const textures: THREE.Texture[] = [];
@@ -93,8 +110,8 @@ const InteractiveBackground = () => {
         color,
         size,
         transparent: true,
-        opacity: 0.85,
-        blending: THREE.AdditiveBlending,
+        opacity: cloudOpacity,
+        blending: blend,
         depthWrite: false,
         sizeAttenuation: true,
       });
@@ -104,9 +121,9 @@ const InteractiveBackground = () => {
       materials.push(m);
       return p;
     };
-    const cloudA = makeCloud(2400, 0x6f6cf7, 0.1, 46, 16, -78);
-    const cloudB = makeCloud(2200, 0x45e6d6, 0.07, 40, 16, -78);
-    const cloudC = makeCloud(1600, 0xc47bff, 0.12, 56, 16, -78);
+    const cloudA = makeCloud(2400, PALETTE[0][0], isLight ? 0.12 : 0.1, 46, 16, -78);
+    const cloudB = makeCloud(2200, PALETTE[0][1], isLight ? 0.09 : 0.07, 40, 16, -78);
+    const cloudC = makeCloud(1600, PALETTE[0][2], isLight ? 0.14 : 0.12, 56, 16, -78);
 
     // --- code glyph sprites ---
     const glyphTexture = (txt: string, color: string) => {
@@ -117,7 +134,7 @@ const InteractiveBackground = () => {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.shadowColor = color;
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = isLight ? 6 : 18;
       ctx.fillStyle = color;
       ctx.fillText(txt, 64, 68);
       const t = new THREE.CanvasTexture(c);
@@ -127,11 +144,11 @@ const InteractiveBackground = () => {
     const sprites: THREE.Sprite[] = [];
     for (let gi = 0; gi < 26; gi++) {
       const mat = new THREE.SpriteMaterial({
-        map: glyphTexture(GLYPHS[gi % GLYPHS.length], GCOLORS[gi % 3]),
+        map: glyphTexture(GLYPHS[gi % GLYPHS.length], gColors[gi % 3]),
         transparent: true,
-        opacity: 0.55,
+        opacity: spriteOpacityBase,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
+        blending: blend,
       });
       const sp = new THREE.Sprite(mat);
       sp.position.set(
@@ -160,7 +177,7 @@ const InteractiveBackground = () => {
         color,
         wireframe: true,
         transparent: true,
-        opacity: 0.5,
+        opacity: meshOpacity,
       });
       const mesh = new THREE.Mesh(geo, m);
       mesh.position.set(x, y, z);
@@ -171,31 +188,41 @@ const InteractiveBackground = () => {
       return mesh;
     };
     const meshes = [
-      wire(new THREE.IcosahedronGeometry(3.4, 0), 0x6f6cf7, 7.5, 1.5, 1, 0.0022),
-      wire(new THREE.TorusKnotGeometry(2.4, 0.7, 110, 14), 0x45e6d6, -8, -2, -14, 0.0016),
-      wire(new THREE.OctahedronGeometry(3.6, 0), 0xc47bff, 8, 2.4, -28, 0.0026),
-      wire(new THREE.DodecahedronGeometry(3.2, 0), 0x6f6cf7, -7.5, -1, -42, 0.0018),
-      wire(new THREE.TorusGeometry(3, 0.85, 14, 42), 0x45e6d6, 7, -2.2, -56, 0.002),
+      wire(new THREE.IcosahedronGeometry(3.4, 0), wire3.i, 7.5, 1.5, 1, 0.0022),
+      wire(new THREE.TorusKnotGeometry(2.4, 0.7, 110, 14), wire3.c, -8, -2, -14, 0.0016),
+      wire(new THREE.OctahedronGeometry(3.6, 0), wire3.m, 8, 2.4, -28, 0.0026),
+      wire(new THREE.DodecahedronGeometry(3.2, 0), wire3.i, -7.5, -1, -42, 0.0018),
+      wire(new THREE.TorusGeometry(3, 0.85, 14, 42), wire3.c, 7, -2.2, -56, 0.002),
     ];
 
     // --- grid floor & ceiling ---
-    const gridF = new THREE.GridHelper(240, 60, 0x6f6cf7, 0x1c2246);
+    const gridF = new THREE.GridHelper(
+      240,
+      60,
+      isLight ? 0x8f8cff : 0x6f6cf7,
+      isLight ? 0xcfd5f0 : 0x1c2246
+    );
     gridF.position.y = -11;
     (gridF.material as THREE.Material).transparent = true;
-    (gridF.material as THREE.Material).opacity = 0.22;
+    (gridF.material as THREE.Material).opacity = isLight ? 0.16 : 0.22;
     scene.add(gridF);
-    const gridC = new THREE.GridHelper(240, 60, 0x45e6d6, 0x14203c);
+    const gridC = new THREE.GridHelper(
+      240,
+      60,
+      isLight ? 0x3ec9d6 : 0x45e6d6,
+      isLight ? 0xd6ece9 : 0x14203c
+    );
     gridC.position.y = 12.5;
     (gridC.material as THREE.Material).transparent = true;
-    (gridC.material as THREE.Material).opacity = 0.1;
+    (gridC.material as THREE.Material).opacity = isLight ? 0.09 : 0.1;
     scene.add(gridC);
     geometries.push(gridF.geometry, gridC.geometry);
     materials.push(gridF.material as THREE.Material, gridC.material as THREE.Material);
 
-    const curA = new THREE.Color(PAL[0][0]);
-    const curB = new THREE.Color(PAL[0][1]);
-    const curC = new THREE.Color(PAL[0][2]);
-    const curF = new THREE.Color(PAL[0][3]);
+    const curA = new THREE.Color(PALETTE[0][0]);
+    const curB = new THREE.Color(PALETTE[0][1]);
+    const curC = new THREE.Color(PALETTE[0][2]);
+    const curF = new THREE.Color(PALETTE[0][3]);
 
     // --- interaction state ---
     let mouseX = 0;
@@ -218,7 +245,7 @@ const InteractiveBackground = () => {
         const s = document.getElementById(id);
         if (s && window.scrollY >= s.offsetTop - window.innerHeight * 0.45) cur = i;
       });
-      sectionIndex = Math.min(cur, PAL.length - 1);
+      sectionIndex = Math.min(cur, PALETTE.length - 1);
     };
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -246,20 +273,17 @@ const InteractiveBackground = () => {
       if (!running) return;
       const t = clock.getElapsedTime();
 
-      // smooth scroll & mouse
       smScroll += (scrollP - smScroll) * (reduceMotion ? 1 : 0.06);
       smX += (mouseX - smX) * 0.05;
       smY += (mouseY - smY) * 0.05;
 
-      // camera flight
       camera.position.z = CAM_START + (CAM_END - CAM_START) * smScroll;
       camera.position.x =
         smX * (reduceMotion ? 0.4 : 1.6) + Math.sin(smScroll * Math.PI * 2) * 1.2;
       camera.position.y = -smY * (reduceMotion ? 0.3 : 1.1) + Math.sin(t * 0.3) * 0.25;
       camera.lookAt(camera.position.x * 0.4, camera.position.y * 0.4, camera.position.z - 12);
 
-      // palette lerp toward current section
-      const p = PAL[sectionIndex];
+      const p = PALETTE[sectionIndex];
       curA.lerp(tmp.set(p[0]), 0.03);
       curB.lerp(tmp.set(p[1]), 0.03);
       curC.lerp(tmp.set(p[2]), 0.03);
@@ -269,7 +293,6 @@ const InteractiveBackground = () => {
       (cloudC.material as THREE.PointsMaterial).color.copy(curC);
       (scene.fog as THREE.FogExp2).color.copy(curF);
 
-      // ambient motion
       cloudA.rotation.y = t * 0.012;
       cloudB.rotation.y = -t * 0.016;
       cloudC.rotation.y = t * 0.008;
@@ -280,7 +303,8 @@ const InteractiveBackground = () => {
       });
       sprites.forEach((sp, i) => {
         sp.position.y += Math.sin(t * sp.userData.speed + i) * 0.004;
-        (sp.material as THREE.SpriteMaterial).opacity = 0.38 + Math.sin(t * 0.8 + i) * 0.18;
+        (sp.material as THREE.SpriteMaterial).opacity =
+          spriteOpacityBase + Math.sin(t * 0.8 + i) * spriteOpacitySwing;
       });
       gridF.position.z = camera.position.z - 60;
       gridC.position.z = camera.position.z - 60;

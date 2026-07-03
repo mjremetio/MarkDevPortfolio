@@ -231,8 +231,13 @@ const HeroSection = () => {
                   width={640}
                   height={636}
                   onError={(e) => {
+                    // Legacy/unresolvable CMS paths → real headshot → gradient.
                     const img = e.currentTarget;
-                    if (img.src !== FALLBACK_AVATAR) img.src = FALLBACK_AVATAR;
+                    if (img.src.endsWith("/mark-remetio.jpg")) {
+                      img.src = FALLBACK_AVATAR;
+                    } else if (img.src !== FALLBACK_AVATAR) {
+                      img.src = "/mark-remetio.jpg";
+                    }
                   }}
                 />
               </div>
