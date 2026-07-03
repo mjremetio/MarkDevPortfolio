@@ -97,6 +97,7 @@ const AdminLogin = () => {
             <label htmlFor="username" className="admin-label">Username</label>
             <input
               id="username"
+              type="text"
               autoComplete="username"
               placeholder="admin"
               value={username}

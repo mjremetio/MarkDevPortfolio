@@ -87,11 +87,7 @@
 }
 .admin-input,
 .admin-textarea,
-.admin-page input[type="text"],
-.admin-page input[type="password"],
-.admin-page input[type="email"],
-.admin-page input[type="url"],
-.admin-page input[type="number"],
+.admin-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="image"]),
 .admin-page textarea {
   width: 100%;
   background: var(--input-bg, rgba(255, 255, 255, 0.04));
