@@ -77,6 +77,32 @@ export async function listSectionsContent(): Promise<string[]> {
   return jsonList();
 }
 
+/**
+ * Legacy media (hero photo, project/gallery images) was stored as base64 in the
+ * `media_uploads` table and referenced as `/api/uploads/{numericId}`. Serve
+ * those straight from Supabase so the images resolve on Vercel.
+ */
+export async function getMediaById(
+  id: number
+): Promise<{ mime: string; buffer: Buffer } | null> {
+  const p = getPool();
+  if (!p) return null;
+  try {
+    const r = await p.query<{ mime_type: string; data_base64: string }>(
+      "select mime_type, data_base64 from media_uploads where id = $1 limit 1",
+      [id]
+    );
+    if (!r.rows[0]) return null;
+    return {
+      mime: r.rows[0].mime_type || "application/octet-stream",
+      buffer: Buffer.from(r.rows[0].data_base64, "base64"),
+    };
+  } catch (err) {
+    console.error("[contentStore] getMediaById failed:", (err as Error).message);
+    return null;
+  }
+}
+
 export async function updateSectionContent(
   section: string,
   payload: SectionPayload

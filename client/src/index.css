@@ -147,7 +147,9 @@ section {
 .site-bg .glow-layer {
   position: absolute;
   inset: 0;
-  opacity: 1;
+  /* Hidden while the Three.js nebula renders (both themes); shown as the
+     fallback when WebGL is unavailable (body.no3d). */
+  opacity: 0;
   transition: opacity 0.6s ease;
 }
 .dark .site-bg .glow-layer {

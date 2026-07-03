@@ -45,6 +45,7 @@ import {
   uploadsDir,
 } from "./uploadStrategy";
 import { supabase, SUPABASE_STORAGE_BUCKET } from "./supabaseClient";
+import { getMediaById } from "./contentStore";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -191,9 +192,21 @@ export function registerRoutes(app: Express) {
   app.get('/api/content/:section', getContent);
   app.post('/api/content/:section', requireAuth, updateContent);
 
-  // Endpoint to serve stored uploads (disk-based only)
-  app.get('/api/uploads/:id', (req: Request, res: Response) => {
+  // Endpoint to serve stored uploads.
+  // Numeric ids (legacy /api/uploads/{N}) are served from the Supabase
+  // media_uploads table; named files are served from disk.
+  app.get('/api/uploads/:id', async (req: Request, res: Response) => {
     try {
+      if (/^\d+$/.test(req.params.id)) {
+        const media = await getMediaById(Number(req.params.id));
+        if (!media) {
+          return res.status(404).json({ message: 'File not found' });
+        }
+        res.setHeader('Content-Type', media.mime);
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        return res.send(media.buffer);
+      }
+
       const filename = path.basename(req.params.id);
       if (filename !== req.params.id || filename.includes('..')) {
         return res.status(400).json({ message: 'Invalid filename' });
