@@ -11,6 +11,7 @@ interface ProjectItem {
   technologies: string[];
   githubLink?: string;
   liveLink?: string;
+  appStoreLink?: string;
 }
 
 const FILTERS = [
@@ -74,15 +75,17 @@ const ProjectCard = ({ project, index }: { project: ProjectItem; index: number }
           ))}
         </div>
         <div className="plinks">
-          {project.liveLink && project.liveLink !== "#" ? (
+          {project.liveLink && project.liveLink !== "#" && (
             <a href={project.liveLink} target="_blank" rel="noopener noreferrer">
               <i className="fas fa-arrow-up-right-from-square" />
               Live
             </a>
-          ) : (
-            <span className="dim" style={{ fontSize: 13, color: "var(--muted)" }}>
-              <i className="fas fa-clock" /> In progress
-            </span>
+          )}
+          {project.appStoreLink && (
+            <a href={project.appStoreLink} target="_blank" rel="noopener noreferrer">
+              <i className="fab fa-app-store" />
+              App Store
+            </a>
           )}
           {project.githubLink && (
             <a className="dim" href={project.githubLink} target="_blank" rel="noopener noreferrer">
@@ -90,6 +93,13 @@ const ProjectCard = ({ project, index }: { project: ProjectItem; index: number }
               Code
             </a>
           )}
+          {!(project.liveLink && project.liveLink !== "#") &&
+            !project.appStoreLink &&
+            !project.githubLink && (
+              <span className="dim" style={{ fontSize: 13, color: "var(--muted)" }}>
+                <i className="fas fa-clock" /> In progress
+              </span>
+            )}
         </div>
       </div>
     </motion.article>
