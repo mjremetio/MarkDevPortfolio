@@ -339,6 +339,18 @@
     "title": "Featured Projects",
     "projects": [
       {
+        "title": "Dispute2Suit",
+        "liveLink": "https://dispute2suite.com/",
+        "description": "Consumer-protection platform that helps people push back on unlawful debt collection. It reviews each case for FDCPA & FCRA violations, surfaces collector misconduct, and guides users to action through a free case review — plus a dedicated portal for credit-repair organizations (CROs).",
+        "technologies": [
+          "React",
+          "Node.js",
+          "Express",
+          "REST API"
+        ],
+        "imagePlaceholder": "/api/uploads/38"
+      },
+      {
         "title": "PisoWise",
         "liveLink": "https://pisowise.vercel.app/",
         "description": "Personal-finance app for everyday Filipino life — track net worth, accounts, spending, budgets, goals, debts, bills, groceries, and investments in Philippine Peso. Includes Piso AI for natural-language expense logging plus gamified habits and rewards, powered by Apple Intelligence.",
