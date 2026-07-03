@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /maglogin
+
+Sitemap: https://markremetio.vercel.app/sitemap.xml

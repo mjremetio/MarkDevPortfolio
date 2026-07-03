@@ -9,8 +9,10 @@ import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
-import InteractiveBackground from "@/components/InteractiveBackground";
 import CustomCursor from "@/components/CustomCursor";
+import { lazy, Suspense } from "react";
+// Three.js is heavy — load the WebGL background after the initial paint.
+const InteractiveBackground = lazy(() => import("@/components/InteractiveBackground"));
 import BackToTop from "@/components/BackToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
@@ -35,7 +37,9 @@ function App() {
                 <div className="site-bg" aria-hidden="true">
                   <div className="glow-layer" />
                 </div>
-                <InteractiveBackground />
+                <Suspense fallback={null}>
+                  <InteractiveBackground />
+                </Suspense>
                 <div className="vignette" aria-hidden="true" />
 
                 <ScrollProgressBar />

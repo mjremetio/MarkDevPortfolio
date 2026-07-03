@@ -1,18 +1,24 @@
 {
   "hero": {
-    "greeting": "Hello, I'm",
     "name": "Mark Remetio",
-    "title": "Full-Stack Web Developer",
-    "shortDescription": "I build beautiful, functional websites and web applications with modern technologies.",
-    "ctaButtons": [
-      { "text": "View Projects", "link": "#projects", "primary": true, "icon": "eye" },
-      { "text": "Download Resume", "link": "#", "primary": false, "icon": "file-text", "downloadAction": true }
-    ],
     "stats": [
-      { "value": "5+", "label": "Years Experience", "icon": "calendar" },
-      { "value": "50+", "label": "Projects Completed", "icon": "check-circle" },
-      { "value": "30+", "label": "Happy Clients", "icon": "users" }
+      {
+        "icon": "calendar",
+        "label": "Years Experience",
+        "value": "7+"
+      },
+      {
+        "icon": "check-circle",
+        "label": "Projects Completed",
+        "value": "50+"
+      },
+      {
+        "icon": "users",
+        "label": "Happy Clients",
+        "value": "30+"
+      }
     ],
+    "title": "Full-Stack Developer",
     "badges": [
       {
         "text": "Available for Work",
@@ -22,148 +28,488 @@
         "darkTextColor": "dark:text-green-300"
       }
     ],
-    "profilePicture": ""
+    "greeting": "Hello, I'm",
+    "ctaButtons": [
+      {
+        "icon": "eye",
+        "link": "#projects",
+        "text": "View Projects",
+        "primary": true
+      },
+      {
+        "icon": "file-text",
+        "link": "#",
+        "text": "Download Resume",
+        "primary": false,
+        "downloadAction": true
+      }
+    ],
+    "profilePicture": "/api/uploads/2",
+    "shortDescription": "I build beautiful, functional websites and web applications with modern technologies."
   },
   "about": {
     "title": "Versatile Full-Stack Web Developer & Designer",
+    "features": [
+      {
+        "icon": "laptop-code",
+        "title": "Front-End Development",
+        "description": "Creating responsive, interactive user interfaces with modern frameworks"
+      },
+      {
+        "icon": "server",
+        "title": "Back-End Systems",
+        "description": "Building secure, scalable API endpoints and database architectures"
+      },
+      {
+        "icon": "paint-brush",
+        "title": "UI/UX Design",
+        "description": "Designing intuitive, aesthetically pleasing user experiences"
+      },
+      {
+        "icon": "cloud",
+        "title": "Cloud Infrastructure",
+        "description": "Managing AWS services and server environments"
+      }
+    ],
+    "imageAlt": "Mark Remetio profile picture",
     "subtitle": "About Me",
+    "statItems": [
+      {
+        "label": "Years Experience",
+        "value": "7+"
+      },
+      {
+        "label": "Projects Completed",
+        "value": "30+"
+      },
+      {
+        "label": "Client Satisfaction",
+        "value": "100%"
+      }
+    ],
+    "experience": "7+ Years",
     "description": [
-      "Detail-oriented Web Developer with nearly 5 years of hands-on experience specializing in both Front-End and Back-End development, including UI/UX design and server management. Proven track record in deploying live applications and driving their market presence, demonstrating a keen understanding of the complete development lifecycle.",
+      "Detail-oriented Web Developer with over 7 years of hands-on experience specializing in both Front-End and Back-End development, including UI/UX design and server management. Proven track record in deploying live applications and driving their market presence, demonstrating a keen understanding of the complete development lifecycle.",
       "I'm passionate about creating clean, efficient code and intuitive user experiences. My expertise spans from crafting visually appealing interfaces to implementing robust back-end systems and managing server infrastructure."
     ],
-    "profilePicture": "",
-    "imageAlt": "Mark Remetio profile picture",
-    "experience": "6+ Years",
-    "statItems": [
-      { "label": "Years Experience", "value": "6+" },
-      { "label": "Projects Completed", "value": "50+" },
-      { "label": "Client Satisfaction", "value": "100%" }
-    ],
-    "features": [
-      { "title": "Front-End Development", "description": "Creating responsive, interactive user interfaces with modern frameworks", "icon": "laptop-code" },
-      { "title": "Back-End Systems", "description": "Building secure, scalable API endpoints and database architectures", "icon": "server" },
-      { "title": "UI/UX Design", "description": "Designing intuitive, aesthetically pleasing user experiences", "icon": "paint-brush" },
-      { "title": "Cloud Infrastructure", "description": "Managing AWS services and server environments", "icon": "cloud" }
-    ]
+    "profilePicture": "/api/uploads/3"
   },
   "skills": {
     "title": "Technical Skills",
     "subtitle": "A comprehensive set of skills accumulated over 5+ years",
-    "description": "I have a broad range of technical skills across multiple technologies and frameworks.",
     "categories": [
       {
-        "title": "Frontend Development",
         "icon": "fas fa-code",
-        "iconBg": "bg-primary-100 dark:bg-primary-900/30",
-        "iconColor": "text-primary-600 dark:text-primary-400",
-        "titleColor": "text-gray-800 dark:text-white",
+        "title": "Frontend Development",
         "skills": [
-          { "name": "HTML5/CSS3", "percentage": 95, "colorClass": "text-primary-600 dark:text-primary-400" },
-          { "name": "JavaScript", "percentage": 90, "colorClass": "text-primary-600 dark:text-primary-400" },
-          { "name": "React/Vue/Angular", "percentage": 85, "colorClass": "text-primary-600 dark:text-primary-400" },
-          { "name": "CSS Preprocessors (SASS/LESS)", "percentage": 90, "colorClass": "text-primary-600 dark:text-primary-400" },
-          { "name": "UI/UX Design", "percentage": 80, "colorClass": "text-primary-600 dark:text-primary-400" }
+          {
+            "name": "HTML5 / CSS3 / Tailwind",
+            "percentage": 95
+          },
+          {
+            "name": "JavaScript (ES6+) & TypeScript",
+            "percentage": 90
+          },
+          {
+            "name": "React / Next.js",
+            "percentage": 88
+          },
+          {
+            "name": "Vue.js & Angular",
+            "percentage": 82
+          },
+          {
+            "name": "SASS / LESS",
+            "percentage": 90
+          },
+          {
+            "name": "Responsive & Accessible UI",
+            "percentage": 88
+          },
+          {
+            "name": "Three.js / GSAP Animation",
+            "percentage": 76
+          }
         ]
       },
       {
-        "title": "Backend Development",
         "icon": "fas fa-database",
-        "iconBg": "bg-secondary-100 dark:bg-secondary-900/30",
-        "iconColor": "text-secondary-600 dark:text-secondary-400",
-        "titleColor": "text-gray-800 dark:text-white",
+        "title": "Backend Development",
         "skills": [
-          { "name": "PHP (Laravel, WordPress)", "percentage": 90, "colorClass": "text-secondary-600 dark:text-secondary-400" },
-          { "name": "Node.js", "percentage": 85, "colorClass": "text-secondary-600 dark:text-secondary-400" },
-          { "name": "MySQL/PostgreSQL", "percentage": 85, "colorClass": "text-secondary-600 dark:text-secondary-400" },
-          { "name": "MongoDB", "percentage": 80, "colorClass": "text-secondary-600 dark:text-secondary-400" },
-          { "name": "API Development", "percentage": 90, "colorClass": "text-secondary-600 dark:text-secondary-400" }
+          {
+            "name": "PHP (Laravel, WordPress)",
+            "percentage": 92
+          },
+          {
+            "name": "Node.js / Express",
+            "percentage": 85
+          },
+          {
+            "name": "REST API Design",
+            "percentage": 90
+          },
+          {
+            "name": "MySQL / PostgreSQL",
+            "percentage": 88
+          },
+          {
+            "name": "MongoDB",
+            "percentage": 80
+          },
+          {
+            "name": "Auth & Security (JWT, OAuth)",
+            "percentage": 82
+          },
+          {
+            "name": "Caching (Redis)",
+            "percentage": 72
+          }
         ]
       },
       {
-        "title": "DevOps & Tools",
-        "icon": "fas fa-cloud",
-        "iconBg": "bg-blue-100 dark:bg-blue-900/30",
-        "iconColor": "text-blue-600 dark:text-blue-400",
-        "titleColor": "text-gray-800 dark:text-white",
+        "icon": "fas fa-mobile-screen-button",
+        "title": "Mobile Development",
         "skills": [
-          { "name": "AWS (EC2, EBS, SES)", "percentage": 85, "colorClass": "text-blue-600 dark:text-blue-400" },
-          { "name": "Git/GitHub/BitBucket", "percentage": 90, "colorClass": "text-blue-600 dark:text-blue-400" },
-          { "name": "Linux (SSH, Terminal)", "percentage": 85, "colorClass": "text-blue-600 dark:text-blue-400" },
-          { "name": "Project Management", "percentage": 80, "colorClass": "text-blue-600 dark:text-blue-400" },
-          { "name": "CRM Systems", "percentage": 85, "colorClass": "text-blue-600 dark:text-blue-400" }
+          {
+            "name": "SwiftUI & Swift",
+            "percentage": 82
+          },
+          {
+            "name": "iOS App Development",
+            "percentage": 80
+          },
+          {
+            "name": "App Store Deployment",
+            "percentage": 85
+          },
+          {
+            "name": "Apple Intelligence",
+            "percentage": 75
+          },
+          {
+            "name": "Progressive Web Apps",
+            "percentage": 84
+          }
+        ]
+      },
+      {
+        "icon": "fas fa-robot",
+        "title": "AI & Automation",
+        "skills": [
+          {
+            "name": "LLM Integration (OpenAI, Claude)",
+            "percentage": 88
+          },
+          {
+            "name": "Prompt Engineering",
+            "percentage": 88
+          },
+          {
+            "name": "AI-Assisted Development",
+            "percentage": 90
+          },
+          {
+            "name": "n8n / Zapier Workflows",
+            "percentage": 85
+          },
+          {
+            "name": "Chatbots & NLP Features",
+            "percentage": 80
+          }
+        ]
+      },
+      {
+        "icon": "fas fa-cloud",
+        "title": "DevOps & Cloud",
+        "skills": [
+          {
+            "name": "AWS (EC2, EBS, SES, S3)",
+            "percentage": 85
+          },
+          {
+            "name": "Vercel / Netlify",
+            "percentage": 88
+          },
+          {
+            "name": "Git / GitHub / BitBucket",
+            "percentage": 92
+          },
+          {
+            "name": "Linux (SSH, Terminal)",
+            "percentage": 85
+          },
+          {
+            "name": "CI/CD Pipelines",
+            "percentage": 78
+          },
+          {
+            "name": "Docker",
+            "percentage": 72
+          }
+        ]
+      },
+      {
+        "icon": "fas fa-toolbox",
+        "title": "Tools & Platforms",
+        "skills": [
+          {
+            "name": "Moodle / LMS",
+            "percentage": 90
+          },
+          {
+            "name": "WordPress / TeamSite CMS",
+            "percentage": 88
+          },
+          {
+            "name": "Salesforce & CRM",
+            "percentage": 82
+          },
+          {
+            "name": "Figma",
+            "percentage": 80
+          },
+          {
+            "name": "Google Analytics & Ads",
+            "percentage": 80
+          },
+          {
+            "name": "Supabase / Firebase",
+            "percentage": 82
+          }
         ]
       }
     ],
+    "description": "I have a broad range of technical skills across multiple technologies and frameworks.",
     "technologies": [
-      { "name": "HTML5", "icon": "fab fa-html5 text-orange-500" },
-      { "name": "CSS", "icon": "fab fa-css3-alt text-blue-500" },
-      { "name": "JavaScript", "icon": "fab fa-js text-yellow-400" },
-      { "name": "React", "icon": "fab fa-react text-blue-400" },
-      { "name": "Vue.js", "icon": "fab fa-vuejs text-green-500" },
-      { "name": "Angular", "icon": "fab fa-angular text-red-600" },
-      { "name": "Node.js", "icon": "fab fa-node-js text-green-600" },
-      { "name": "PHP", "icon": "fab fa-php text-purple-600" },
-      { "name": "Laravel", "icon": "fab fa-laravel text-red-500" },
-      { "name": "WordPress", "icon": "fab fa-wordpress text-blue-800" },
-      { "name": "AWS", "icon": "fab fa-aws text-orange-400" },
-      { "name": "Git", "icon": "fab fa-git-alt text-red-500" },
-      { "name": "SASS / SCSS", "icon": "fab fa-sass text-pink-500" }
+      {
+        "icon": "fab fa-html5 text-orange-500",
+        "name": "HTML5"
+      },
+      {
+        "icon": "fab fa-css3-alt text-blue-500",
+        "name": "CSS"
+      },
+      {
+        "icon": "fab fa-js text-yellow-400",
+        "name": "JavaScript"
+      },
+      {
+        "icon": "fab fa-react text-blue-400",
+        "name": "React"
+      },
+      {
+        "icon": "fab fa-vuejs text-green-500",
+        "name": "Vue.js"
+      },
+      {
+        "icon": "fab fa-angular text-red-600",
+        "name": "Angular"
+      },
+      {
+        "icon": "fab fa-node-js text-green-600",
+        "name": "Node.js"
+      },
+      {
+        "icon": "fab fa-php text-purple-600",
+        "name": "PHP"
+      },
+      {
+        "icon": "fab fa-laravel text-red-500",
+        "name": "Laravel"
+      },
+      {
+        "icon": "fab fa-wordpress text-blue-800",
+        "name": "WordPress"
+      },
+      {
+        "icon": "fab fa-aws text-orange-400",
+        "name": "AWS"
+      },
+      {
+        "icon": "fab fa-git-alt text-red-500",
+        "name": "Git"
+      },
+      {
+        "icon": "fab fa-sass text-pink-500",
+        "name": "SASS / SCSS"
+      }
     ]
   },
   "projects": {
     "title": "Featured Projects",
-    "subtitle": "Showcasing some of my best work across various technologies and platforms",
-    "description": "Here are some of the projects I've worked on recently.",
     "projects": [
       {
-        "title": "Clearance Management System",
-        "description": "A Clearance Management System designed to efficiently monitor student clearance statuses and manage remarks, ensuring a streamlined and organized process.",
-        "imagePlaceholder": "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
-        "technologies": ["PHP", "MySQL", "Bootstrap", "HTML", "CSS", "JavaScript", "Admin LTE", "JQuery"],
-        "githubLink": "https://github.com/",
-        "liveLink": "#"
+        "title": "PisoWise",
+        "liveLink": "https://pisowise.vercel.app/",
+        "description": "Personal-finance app for everyday Filipino life — track net worth, accounts, spending, budgets, goals, debts, bills, groceries, and investments in Philippine Peso. Includes Piso AI for natural-language expense logging plus gamified habits and rewards, powered by Apple Intelligence.",
+        "appStoreLink": "https://apps.apple.com/ph/app/pisowise/id6777351147",
+        "technologies": [
+          "SwiftUI",
+          "Swift",
+          "iOS",
+          "Apple Intelligence",
+          "Vercel"
+        ],
+        "imagePlaceholder": "/api/uploads/37"
       },
       {
         "title": "Online Ordering and Inventory Management System",
-        "description": "A comprehensive capstone project for Claytonecille General Merchandising that showcases an eCommerce platform combined with an inventory management system.",
-        "imagePlaceholder": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-        "technologies": ["PHP OOP", "JavaScript", "MySQL", "Bootstrap", "HTML", "CSS", "RDBMS"],
+        "liveLink": "#",
         "githubLink": "https://github.com/",
-        "liveLink": "#"
+        "description": "A comprehensive capstone project for Claytonecille General Merchandising that showcases an eCommerce platform combined with an inventory management system.",
+        "technologies": [
+          "PHP OOP",
+          "JavaScript",
+          "MySQL",
+          "Bootstrap",
+          "HTML",
+          "CSS",
+          "RDBMS"
+        ],
+        "imagePlaceholder": "/api/uploads/5"
       },
       {
         "title": "Marketing Analytics Dashboard",
-        "description": "Real-time marketing performance dashboard with Salesforce and Google Analytics integration.",
-        "imagePlaceholder": "Marketing Dashboard",
-        "technologies": ["React", "Node.js", "Salesforce API", "D3.js"],
+        "liveLink": "#",
         "githubLink": "https://github.com/",
-        "liveLink": "#"
+        "description": "Real-time marketing performance dashboard with Salesforce and Google Analytics integration.",
+        "technologies": [
+          "React",
+          "Node.js",
+          "Salesforce API",
+          "D3.js"
+        ],
+        "imagePlaceholder": "Marketing Dashboard"
       },
       {
         "title": "Clearance Management System",
-        "description": "Automated clearance processing system for educational institutions with approval workflows.",
-        "imagePlaceholder": "Clearance System",
-        "technologies": ["PHP", "jQuery", "MySQL", "Bootstrap"],
+        "liveLink": "#",
         "githubLink": "https://github.com/",
-        "liveLink": "#"
+        "description": "Automated clearance processing system for educational institutions with approval workflows.",
+        "technologies": [
+          "PHP",
+          "jQuery",
+          "MySQL",
+          "Bootstrap"
+        ],
+        "imagePlaceholder": "/api/uploads/4"
       },
       {
-        "title": "Marketing Workflow Automation",
-        "description": "Custom workflow automation for marketing and CRM processes using Zapier and custom API integrations.",
-        "imagePlaceholder": "Workflow Automation",
-        "technologies": ["Node.js", "Zapier", "Salesforce", "REST APIs"],
+        "title": "n8n Automation Workflows",
+        "liveLink": "#",
         "githubLink": "https://github.com/",
-        "liveLink": "#"
+        "description": "Custom Workflow Automations for n8n",
+        "technologies": [
+          "n8n"
+        ],
+        "imagePlaceholder": "/api/uploads/36"
       },
       {
         "title": "Personal Portfolio Website",
+        "liveLink": "#",
+        "githubLink": "https://github.com/mjremetio/MarkDevPortfolio",
         "description": "Responsive personal portfolio site with modern design patterns and animations.",
-        "imagePlaceholder": "Portfolio Website",
-        "technologies": ["React", "Tailwind CSS", "GSAP", "GitHub Pages"],
-        "githubLink": "https://github.com/",
-        "liveLink": "#"
+        "technologies": [
+          "React",
+          "Tailwind CSS",
+          "GSAP",
+          "GitHub Pages"
+        ],
+        "imagePlaceholder": "Portfolio Website"
+      },
+      {
+        "title": "GSPTS LMS",
+        "liveLink": "",
+        "githubLink": "",
+        "description": "Learning Management System for Training Center",
+        "technologies": [
+          "Moodle",
+          "PHP",
+          "MySQL / MariaDB"
+        ],
+        "imagePlaceholder": "/api/uploads/7"
+      },
+      {
+        "title": "AIDEA LMS",
+        "liveLink": "",
+        "githubLink": "",
+        "description": "Learning Management System for AIDEA",
+        "technologies": [
+          "Moodle",
+          "PHP"
+        ],
+        "imagePlaceholder": "/api/uploads/6"
+      },
+      {
+        "title": "DTI COMPASS",
+        "liveLink": "",
+        "githubLink": "",
+        "description": "A competency assessment platform that integrated in DTI LMS",
+        "technologies": [
+          "Laravel",
+          "PHP",
+          "MySQL",
+          "Vue"
+        ],
+        "imagePlaceholder": "/api/uploads/8"
+      },
+      {
+        "title": "AI Writer Pro",
+        "liveLink": "https://content-craft-goatmezmedia.replit.app/",
+        "githubLink": "",
+        "description": "Professional content creation tools to help you write compelling blog posts, articles, headlines, and marketing copy that engages your audience.",
+        "technologies": [
+          "React",
+          "TypeScript",
+          "Neon / PostgreSQL",
+          "NextJS"
+        ],
+        "imagePlaceholder": "/api/uploads/10"
+      },
+      {
+        "title": "Goatmez Lead Generator Platform",
+        "liveLink": "",
+        "githubLink": "",
+        "description": "Lead Generation platform:\nYou can enter keywords and location to find potential business leads in your target area. The system will extract business name, address, phone, website, and other valuable details.",
+        "technologies": [
+          "Python",
+          "JavaScript",
+          "Google Search API",
+          "Google Maps API",
+          "PostgreSQL"
+        ],
+        "imagePlaceholder": "/api/uploads/9"
+      },
+      {
+        "title": "Credit Agent Pro",
+        "liveLink": "",
+        "githubLink": "",
+        "description": "Upload and analyze client credit reports with AI-powered insights",
+        "technologies": [
+          "React",
+          "NextJS",
+          "PostgreSQL",
+          "Open AI",
+          "Smart Credit API"
+        ],
+        "imagePlaceholder": "/api/uploads/11"
+      },
+      {
+        "title": "DepEd LMS Region 4a",
+        "liveLink": "https://lms.depedro4a.com",
+        "githubLink": "",
+        "description": "Learning Management System for DepEd Region 4a",
+        "technologies": [
+          "Moodle",
+          "Manifest",
+          "PHP",
+          "MySQL"
+        ],
+        "imagePlaceholder": "/api/uploads/12"
       }
-    ]
+    ],
+    "subtitle": "Showcasing some of my best work across various technologies and platforms",
+    "description": "Here are some of the projects I've worked on recently."
   },
   "experience": {
     "title": "Professional Experience",
@@ -172,8 +518,8 @@
     "experiences": [
       {
         "title": "Senior Frontend Developer",
-        "company": "Tech Innovations Inc.",
         "period": "Jan 2021 - Present",
+        "company": "Tech Innovations Inc.",
         "responsibilities": [
           "Lead developer for multiple client projects using React and TypeScript",
           "Implemented state management solutions using Redux and Context API",
@@ -183,8 +529,8 @@
       },
       {
         "title": "Full-Stack Developer",
-        "company": "WebSolutions Agency",
         "period": "Mar 2018 - Dec 2020",
+        "company": "WebSolutions Agency",
         "responsibilities": [
           "Developed full-stack applications using the MERN stack",
           "Created RESTful APIs and implemented authentication systems",
@@ -194,8 +540,8 @@
       },
       {
         "title": "Web Developer",
-        "company": "Digital Creations",
         "period": "Jun 2016 - Feb 2018",
+        "company": "Digital Creations",
         "responsibilities": [
           "Built and maintained client websites using JavaScript and PHP",
           "Implemented responsive designs using HTML5, CSS3, and Bootstrap",
@@ -206,48 +552,148 @@
     ]
   },
   "contact": {
+    "email": "mj.remetio001@gmail.com",
     "title": "Get In Touch",
     "subtitle": "Contact Me",
-    "description": "Feel free to reach out to me for collaboration, opportunities, or just to say hello!",
-    "email": "mj.remetio001@gmail.com",
-    "contactInfo": [
-      { "type": "Email", "value": "mj.remetio001@gmail.com", "link": "mailto:mj.remetio001@gmail.com", "icon": "envelope" },
-      { "type": "LinkedIn", "value": "linkedin.com/in/mark-joseph-remetio", "link": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/", "icon": "linkedin" },
-      { "type": "Location", "value": "Philippines", "icon": "globe" }
-    ],
-    "socialLinks": [
-      { "name": "LinkedIn", "url": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/", "icon": "FaLinkedin" },
-      { "name": "GitHub", "url": "https://github.com", "icon": "FaGithub" },
-      { "name": "Twitter", "url": "https://twitter.com", "icon": "FaTwitter" },
-      { "name": "Dribbble", "url": "https://dribbble.com", "icon": "FaDribbble" }
-    ],
-    "availableFor": [
-      { "type": "Freelance Projects", "bgClass": "bg-green-100", "textClass": "text-green-800", "darkBgClass": "dark:bg-green-900/30", "darkTextClass": "dark:text-green-300" },
-      { "type": "Full-time Position", "bgClass": "bg-blue-100", "textClass": "text-blue-800", "darkBgClass": "dark:bg-blue-900/30", "darkTextClass": "dark:text-blue-300" },
-      { "type": "Consulting", "bgClass": "bg-purple-100", "textClass": "text-purple-800", "darkBgClass": "dark:bg-purple-900/30", "darkTextClass": "dark:text-purple-300" },
-      { "type": "Remote Work", "bgClass": "bg-yellow-100", "textClass": "text-yellow-800", "darkBgClass": "dark:bg-yellow-900/30", "darkTextClass": "dark:text-yellow-300" }
+    "formFields": [
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Your Name",
+        "required": true,
+        "placeholder": "Enter your name"
+      },
+      {
+        "name": "email",
+        "type": "email",
+        "label": "Email Address",
+        "required": true,
+        "placeholder": "Enter your email"
+      },
+      {
+        "name": "subject",
+        "type": "text",
+        "label": "Subject",
+        "required": true,
+        "placeholder": "Enter message subject"
+      },
+      {
+        "name": "message",
+        "rows": 5,
+        "type": "textarea",
+        "label": "Message",
+        "required": true,
+        "placeholder": "Enter your message here..."
+      }
     ],
     "formLabels": {
       "name": "Your Name",
       "email": "Email Address",
-      "subject": "Subject",
+      "button": "Send Message",
       "message": "Message",
-      "button": "Send Message"
+      "subject": "Subject"
     },
-    "formFields": [
-      { "name": "name", "label": "Your Name", "type": "text", "placeholder": "Enter your name", "required": true },
-      { "name": "email", "label": "Email Address", "type": "email", "placeholder": "Enter your email", "required": true },
-      { "name": "subject", "label": "Subject", "type": "text", "placeholder": "Enter message subject", "required": true },
-      { "name": "message", "label": "Message", "type": "textarea", "placeholder": "Enter your message here...", "required": true, "rows": 5 }
+    "contactInfo": [
+      {
+        "icon": "envelope",
+        "link": "mailto:mj.remetio001@gmail.com",
+        "type": "Email",
+        "value": "mj.remetio001@gmail.com"
+      },
+      {
+        "icon": "linkedin",
+        "link": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+        "type": "LinkedIn",
+        "value": "linkedin.com/in/mark-joseph-remetio"
+      },
+      {
+        "icon": "globe",
+        "type": "Location",
+        "value": "Philippines"
+      }
+    ],
+    "description": "Feel free to reach out to me for collaboration, opportunities, or just to say hello!",
+    "socialLinks": [
+      {
+        "url": "https://www.linkedin.com/in/mark-joseph-remetio-11b58a18a/",
+        "icon": "FaLinkedin",
+        "name": "LinkedIn"
+      },
+      {
+        "url": "https://github.com",
+        "icon": "FaGithub",
+        "name": "GitHub"
+      },
+      {
+        "url": "https://twitter.com",
+        "icon": "FaTwitter",
+        "name": "Twitter"
+      },
+      {
+        "url": "https://dribbble.com",
+        "icon": "FaDribbble",
+        "name": "Dribbble"
+      }
+    ],
+    "availableFor": [
+      {
+        "type": "Freelance Projects",
+        "bgClass": "bg-green-100",
+        "textClass": "text-green-800",
+        "darkBgClass": "dark:bg-green-900/30",
+        "darkTextClass": "dark:text-green-300"
+      },
+      {
+        "type": "Full-time Position",
+        "bgClass": "bg-blue-100",
+        "textClass": "text-blue-800",
+        "darkBgClass": "dark:bg-blue-900/30",
+        "darkTextClass": "dark:text-blue-300"
+      },
+      {
+        "type": "Consulting",
+        "bgClass": "bg-purple-100",
+        "textClass": "text-purple-800",
+        "darkBgClass": "dark:bg-purple-900/30",
+        "darkTextClass": "dark:text-purple-300"
+      },
+      {
+        "type": "Remote Work",
+        "bgClass": "bg-yellow-100",
+        "textClass": "text-yellow-800",
+        "darkBgClass": "dark:bg-yellow-900/30",
+        "darkTextClass": "dark:text-yellow-300"
+      }
     ]
   },
   "gallery": {
     "title": "Photo Gallery",
-    "subtitle": "Visual Journey",
-    "description": "A visual showcase of my projects, work environment, and professional journey",
     "images": [
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?auto=format&fit=crop&w=1200&q=80"
-    ]
+      "/api/uploads/13",
+      "/api/uploads/16",
+      "/api/uploads/15",
+      "/api/uploads/14",
+      "/api/uploads/17",
+      "/api/uploads/19",
+      "/api/uploads/20",
+      "/api/uploads/18",
+      "/api/uploads/21",
+      "/api/uploads/26",
+      "/api/uploads/25",
+      "/api/uploads/22",
+      "/api/uploads/23",
+      "/api/uploads/24",
+      "/api/uploads/27",
+      "/api/uploads/28",
+      "/api/uploads/29",
+      "/api/uploads/30",
+      "/api/uploads/31",
+      "/api/uploads/32",
+      "/api/uploads/34",
+      "/api/uploads/35",
+      "/api/uploads/33"
+    ],
+    "subtitle": "Visual Journey",
+    "description": "A visual showcase of my projects, work environment, and professional journey"
   }
 }

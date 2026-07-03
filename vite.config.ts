@@ -29,5 +29,18 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        // Split heavy libraries into cacheable vendor chunks so the initial
+        // parse is lighter and updates don't bust the whole bundle.
+        manualChunks: {
+          three: ["three"],
+          motion: ["framer-motion"],
+          "react-vendor": ["react", "react-dom", "wouter"],
+        },
+      },
+    },
   },
 });
