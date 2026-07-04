@@ -120,6 +120,12 @@ export const DEFAULT_CREDENTIALS: CredentialsContent = {
         "Competed in Algolympics at UP Diliman (2018), Shopee Code League (2020), and UHACK (2017 & 2019).",
     },
     {
+      icon: "calendar-check",
+      title: "Conferences & summits",
+      description:
+        "Stay current through industry events — Moodle Moot Philippines, MarTech Summit Manila, and AWS events.",
+    },
+    {
       icon: "mobile-screen-button",
       title: "Published on the Apple App Store",
       description:
