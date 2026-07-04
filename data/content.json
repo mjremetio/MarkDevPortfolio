@@ -89,7 +89,7 @@
   },
   "skills": {
     "title": "Technical Skills",
-    "subtitle": "A comprehensive set of skills accumulated over 5+ years",
+    "subtitle": "A comprehensive set of skills accumulated over 7+ years",
     "categories": [
       {
         "icon": "fas fa-code",
@@ -238,6 +238,50 @@
           {
             "name": "Docker",
             "percentage": 72
+          },
+          {
+            "name": "GoDaddy",
+            "percentage": 88
+          },
+          {
+            "name": "NameCheap",
+            "percentage": 88
+          },
+          {
+            "name": "Hostinger",
+            "percentage": 85
+          },
+          {
+            "name": "HostGator",
+            "percentage": 82
+          },
+          {
+            "name": "SiteGround",
+            "percentage": 82
+          },
+          {
+            "name": "DigitalOcean",
+            "percentage": 84
+          },
+          {
+            "name": "BlueHost",
+            "percentage": 80
+          },
+          {
+            "name": "Google Sites",
+            "percentage": 85
+          },
+          {
+            "name": "Wix",
+            "percentage": 85
+          },
+          {
+            "name": "GoHighLevel",
+            "percentage": 80
+          },
+          {
+            "name": "Systeme.io",
+            "percentage": 80
           }
         ]
       },

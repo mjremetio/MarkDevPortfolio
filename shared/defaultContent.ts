@@ -72,7 +72,7 @@ export const defaultContent: DefaultContentMap = {
   },
   skills: {
     title: "Technical Skills",
-    subtitle: "A comprehensive set of skills accumulated over 5+ years",
+    subtitle: "A comprehensive set of skills accumulated over 7+ years",
     description:
       "I have a broad range of technical skills across multiple technologies and frameworks.",
     categories: [
