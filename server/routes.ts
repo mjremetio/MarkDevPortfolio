@@ -1,5 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
@@ -172,6 +173,58 @@ export function registerRoutes(app: Express) {
   app.get('/api/content', listContentSections);
   app.get('/api/content/:section', getContent);
   app.post('/api/content/:section', requireAuth, updateContent);
+
+  // GitHub contribution graph — proxied + cached (memory 6h, disk fallback) so
+  // the public page never hammers the upstream API or breaks if it's down.
+  const GH_USER = process.env.GITHUB_USERNAME || 'mjremetio';
+  const GH_TTL = 6 * 60 * 60 * 1000;
+  const ghDiskCache = path.join(os.tmpdir(), 'mdp-github-contributions.json');
+  let ghMemCache: { data: any; at: number } | null = null;
+
+  app.get('/api/github-contributions', async (_req: Request, res: Response) => {
+    const serveFallback = () => {
+      if (ghMemCache) return res.json(ghMemCache.data);
+      try {
+        return res.json(JSON.parse(fs.readFileSync(ghDiskCache, 'utf-8')));
+      } catch {
+        return res.json({ user: GH_USER, total: 0, contributions: [] });
+      }
+    };
+    if (ghMemCache && Date.now() - ghMemCache.at < GH_TTL) {
+      return res.json(ghMemCache.data);
+    }
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const upstream = await fetch(
+        `https://github-contributions.vercel.app/api/v1/${GH_USER}`,
+        { signal: controller.signal },
+      );
+      clearTimeout(timeout);
+      if (!upstream.ok) throw new Error(`upstream ${upstream.status}`);
+      const json: any = await upstream.json();
+      const all: any[] = Array.isArray(json.contributions) ? json.contributions : [];
+      // Rolling last ~53 weeks ending today (exclude future zero-filled days).
+      const today = new Date();
+      const todayStr = today.toISOString().slice(0, 10);
+      const start = new Date(today);
+      start.setDate(start.getDate() - 371);
+      const startStr = start.toISOString().slice(0, 10);
+      const contributions = all
+        .filter((c) => c.date >= startStr && c.date <= todayStr)
+        .sort((a, b) => (a.date < b.date ? -1 : 1))
+        .map((c) => ({ date: c.date, count: c.count || 0, level: Number(c.intensity) || 0 }));
+      const total = contributions.reduce((sum: number, c: any) => sum + (c.count || 0), 0);
+      const data = { user: GH_USER, total, contributions };
+      ghMemCache = { data, at: Date.now() };
+      try { fs.writeFileSync(ghDiskCache, JSON.stringify(data)); } catch { /* best effort */ }
+      res.setHeader('Cache-Control', 'public, max-age=21600');
+      return res.json(data);
+    } catch (err) {
+      console.error('[github] contributions fetch failed:', (err as Error).message);
+      return serveFallback();
+    }
+  });
 
   // Endpoint to serve stored uploads.
   // Numeric ids (legacy /api/uploads/{N}) are served from the Supabase

@@ -1383,6 +1383,126 @@ body.no3d .site-bg .glow-layer {
 }
 
 /* =====================================================
+   GITHUB CONTRIBUTIONS
+   ===================================================== */
+#github {
+  padding: 120px 0;
+}
+.gh-card {
+  padding: 26px 28px;
+}
+.gh-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.gh-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink);
+  transition: color 0.2s;
+}
+.gh-user:hover {
+  color: var(--cyan);
+}
+.gh-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.gh-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.gh-graph {
+  display: flex;
+  gap: 6px;
+  min-width: max-content;
+}
+.gh-weekdays {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 18px;
+}
+.gh-weekdays span {
+  height: 11px;
+  line-height: 11px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+.gh-cols-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.gh-months {
+  display: flex;
+  gap: 3px;
+  height: 16px;
+}
+.gh-months span {
+  width: 11px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  position: relative;
+}
+.gh-grid {
+  display: flex;
+  gap: 3px;
+}
+.gh-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.gh-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  display: inline-block;
+  flex: 0 0 auto;
+  transition: transform 0.12s;
+}
+.gh-graph .gh-cell:hover {
+  transform: scale(1.35);
+  outline: 1px solid var(--cyan);
+}
+.gh-empty {
+  background: transparent;
+}
+.gh-l0 {
+  background: rgba(150, 160, 230, 0.09);
+}
+.gh-l1 {
+  background: rgba(111, 108, 247, 0.35);
+}
+.gh-l2 {
+  background: rgba(94, 152, 240, 0.55);
+}
+.gh-l3 {
+  background: rgba(69, 230, 214, 0.7);
+}
+.gh-l4 {
+  background: var(--cyan);
+  box-shadow: 0 0 6px rgba(69, 230, 214, 0.6);
+}
+.light .gh-l0 {
+  background: rgba(60, 70, 130, 0.1);
+}
+
+/* =====================================================
    PROJECTS
    ===================================================== */
 #projects {
