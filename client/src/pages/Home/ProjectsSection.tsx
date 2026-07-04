@@ -93,13 +93,6 @@ const ProjectCard = ({ project, index }: { project: ProjectItem; index: number }
               Code
             </a>
           )}
-          {!(project.liveLink && project.liveLink !== "#") &&
-            !project.appStoreLink &&
-            !project.githubLink && (
-              <span className="dim" style={{ fontSize: 13, color: "var(--muted)" }}>
-                <i className="fas fa-clock" /> In progress
-              </span>
-            )}
         </div>
       </div>
     </motion.article>
