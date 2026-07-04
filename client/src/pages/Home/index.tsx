@@ -8,6 +8,7 @@ import CredentialsSection from "./CredentialsSection";
 import GitHubContributions from "./GitHubContributions";
 import GallerySection from "./GallerySection";
 import ProcessSection from "./ProcessSection";
+import ResourcesSection from "./ResourcesSection";
 import ContactSection from "./ContactSection";
 import TechMarquee from "@/components/TechMarquee";
 
@@ -19,12 +20,13 @@ const Home = () => {
       <AboutSection />
       <ServicesSection />
       <SkillsSection />
+      <GitHubContributions />
       <ProjectsSection />
       <ExperienceSection />
       <CredentialsSection />
-      <GitHubContributions />
       <GallerySection />
       <ProcessSection />
+      <ResourcesSection />
       <ContactSection />
     </>
   );

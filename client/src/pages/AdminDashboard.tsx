@@ -1975,7 +1975,7 @@ const AdminDashboard = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold" style={{ color: "var(--ink)" }}>Achievements</h3>
-            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["achievements"], { icon: "trophy", title: "", description: "" })}>
+            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["achievements"], { icon: "trophy", title: "", description: "", image: "" })}>
               <Plus className="w-4 h-4" /> Add achievement
             </button>
           </div>
@@ -1999,6 +1999,13 @@ const AdminDashboard = () => {
                 <Label>Description</Label>
                 <Textarea value={a.description || ""} onChange={(e) => sub(["achievements", i.toString(), "description"], e.target.value)} />
               </div>
+              <div className="mt-3">
+                <ImageUpload
+                  label="Image / photo (optional)"
+                  currentImagePath={a.image}
+                  onImageUploaded={(path) => sub(["achievements", i.toString(), "image"], path)}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -2006,7 +2013,7 @@ const AdminDashboard = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold" style={{ color: "var(--ink)" }}>Certifications</h3>
-            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["certifications"], { name: "", issuer: "", year: "", credentialId: "", skills: "" })}>
+            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["certifications"], { category: "", name: "", issuer: "", year: "", credentialId: "", skills: "", verifyUrl: "", image: "" })}>
               <Plus className="w-4 h-4" /> Add certification
             </button>
           </div>
@@ -2017,6 +2024,10 @@ const AdminDashboard = () => {
                 <ItemToolbar path={["certifications"]} index={i} count={certs.length} label="certification" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="md:col-span-2">
+                  <Label>Category (groups the card)</Label>
+                  <Input value={c.category || ""} onChange={(e) => sub(["certifications", i.toString(), "category"], e.target.value)} placeholder="AI & Machine Learning" />
+                </div>
                 <div>
                   <Label>Name</Label>
                   <Input value={c.name || ""} onChange={(e) => sub(["certifications", i.toString(), "name"], e.target.value)} />
@@ -2037,6 +2048,17 @@ const AdminDashboard = () => {
                   <Label>Skills</Label>
                   <Input value={c.skills || ""} onChange={(e) => sub(["certifications", i.toString(), "skills"], e.target.value)} placeholder="Generative AI · Software Development" />
                 </div>
+                <div className="md:col-span-2">
+                  <Label>Verify URL (optional)</Label>
+                  <Input value={c.verifyUrl || ""} onChange={(e) => sub(["certifications", i.toString(), "verifyUrl"], e.target.value)} placeholder="https://…" />
+                </div>
+              </div>
+              <div className="mt-3">
+                <ImageUpload
+                  label="Logo / badge (optional)"
+                  currentImagePath={c.image}
+                  onImageUploaded={(path) => sub(["certifications", i.toString(), "image"], path)}
+                />
               </div>
             </div>
           ))}

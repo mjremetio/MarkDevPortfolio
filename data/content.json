@@ -10,7 +10,7 @@
       {
         "icon": "check-circle",
         "label": "Projects Completed",
-        "value": "50+"
+        "value": "30+"
       },
       {
         "icon": "users",
@@ -699,6 +699,7 @@
     ],
     "certifications": [
       {
+        "category": "AI & Machine Learning",
         "name": "No-Code AI App Builder Certification",
         "issuer": "Airtable",
         "year": "2026",
@@ -706,15 +707,18 @@
         "skills": "Generative AI · Software Development"
       },
       {
+        "category": "AI & Machine Learning",
         "name": "Generative AI Certified",
         "issuer": "Google",
         "skills": "Generative AI"
       },
       {
+        "category": "AI & Machine Learning",
         "name": "AI Practitioner",
         "issuer": ""
       },
       {
+        "category": "Education & E-Learning",
         "name": "Moodle Educator Certified",
         "issuer": "Nephila Web",
         "skills": "Moodle"

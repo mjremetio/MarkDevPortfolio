@@ -13,11 +13,15 @@ interface Certification {
   year?: string;
   credentialId?: string;
   skills?: string;
+  category?: string;
+  image?: string;
+  verifyUrl?: string;
 }
 interface Achievement {
   icon: string;
   title: string;
   description: string;
+  image?: string;
 }
 interface CredentialsContent {
   title: string;
@@ -74,6 +78,7 @@ export const DEFAULT_CREDENTIALS: CredentialsContent = {
   ],
   certifications: [
     {
+      category: "AI & Machine Learning",
       name: "No-Code AI App Builder Certification",
       issuer: "Airtable",
       year: "2026",
@@ -81,15 +86,18 @@ export const DEFAULT_CREDENTIALS: CredentialsContent = {
       skills: "Generative AI · Software Development",
     },
     {
+      category: "AI & Machine Learning",
       name: "Generative AI Certified",
       issuer: "Google",
       skills: "Generative AI",
     },
     {
+      category: "AI & Machine Learning",
       name: "AI Practitioner",
       issuer: "",
     },
     {
+      category: "Education & E-Learning",
       name: "Moodle Educator Certified",
       issuer: "Nephila Web",
       skills: "Moodle",
@@ -181,6 +189,26 @@ const CredentialsSection = () => {
 
   const { aiWorkflow, certifications, achievements } = content;
 
+  // Cursor-follow glare for an interactive hover feel.
+  const handleGlare = (e: React.MouseEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--gx", `${((e.clientX - r.left) / r.width) * 100}%`);
+    el.style.setProperty("--gy", `${((e.clientY - r.top) / r.height) * 100}%`);
+  };
+
+  // Group certifications by category, preserving first-seen order.
+  const certGroups: { category: string; items: Certification[] }[] = [];
+  certifications.forEach((c) => {
+    const cat = c.category || "Certifications";
+    let g = certGroups.find((x) => x.category === cat);
+    if (!g) {
+      g = { category: cat, items: [] };
+      certGroups.push(g);
+    }
+    g.items.push(c);
+  });
+
   return (
     <section id="credentials">
       <div className="wrap">
@@ -242,14 +270,20 @@ const CredentialsSection = () => {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.2 }}
+                  onMouseMove={handleGlare}
                 >
-                  <span className="ach-icon">
-                    <i className={iconClass(a.icon)} />
+                  <span className={`ach-icon${a.image ? " has-img" : ""}`}>
+                    {a.image ? (
+                      <img src={a.image} alt="" loading="lazy" />
+                    ) : (
+                      <i className={iconClass(a.icon)} />
+                    )}
                   </span>
                   <div>
                     <h4>{a.title}</h4>
                     <p>{a.description}</p>
                   </div>
+                  <span className="card-glare" />
                 </motion.div>
               ))}
             </div>
@@ -263,35 +297,57 @@ const CredentialsSection = () => {
               <span className="eyebrow">// certifications</span>
               <h3>Certifications &amp; Credentials</h3>
             </div>
-            <div className="cert-grid">
-              {certifications.map((c, i) => (
-                <motion.div
-                  className="cert-card glass"
-                  key={i}
-                  custom={i}
-                  variants={rise}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
-                >
-                  <span className="cert-badge">
-                    <i className="fas fa-certificate" />
-                  </span>
-                  <div>
-                    <h4>{c.name}</h4>
-                    {[c.issuer, c.year].filter(Boolean).length > 0 && (
-                      <p className="cert-issuer">
-                        {[c.issuer, c.year].filter(Boolean).join(" · ")}
-                      </p>
-                    )}
-                    {c.skills && <div className="cert-skills">{c.skills}</div>}
-                    {c.credentialId && (
-                      <div className="cert-cred">ID · {c.credentialId}</div>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            {certGroups.map((group) => (
+              <div className="cert-group" key={group.category}>
+                <div className="cert-cat">{group.category}</div>
+                <div className="cert-grid">
+                  {group.items.map((c, i) => (
+                    <motion.div
+                      className="cert-card glass"
+                      key={i}
+                      custom={i}
+                      variants={rise}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.2 }}
+                      onMouseMove={handleGlare}
+                    >
+                      <span className={`cert-badge${c.image ? " has-img" : ""}`}>
+                        {c.image ? (
+                          <img src={c.image} alt="" loading="lazy" />
+                        ) : (
+                          <i className="fas fa-certificate" />
+                        )}
+                      </span>
+                      <div className="cert-body">
+                        <h4>{c.name}</h4>
+                        {[c.issuer, c.year].filter(Boolean).length > 0 && (
+                          <p className="cert-issuer">
+                            {[c.issuer, c.year].filter(Boolean).join(" · ")}
+                          </p>
+                        )}
+                        {c.skills && <div className="cert-skills">{c.skills}</div>}
+                        {c.credentialId && (
+                          <div className="cert-cred">ID · {c.credentialId}</div>
+                        )}
+                        {c.verifyUrl && (
+                          <a
+                            className="cert-verify"
+                            href={c.verifyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Verify credential
+                            <i className="fas fa-arrow-up-right-from-square" />
+                          </a>
+                        )}
+                      </div>
+                      <span className="card-glare" />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </>
         )}
       </div>

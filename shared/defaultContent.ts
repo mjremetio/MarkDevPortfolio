@@ -12,17 +12,10 @@ export const defaultContent: DefaultContentMap = {
       "I build beautiful, functional websites and web applications with modern technologies.",
     ctaButtons: [
       { text: "View Projects", link: "#projects", primary: true, icon: "eye" },
-      {
-        text: "Download Resume",
-        link: "#",
-        primary: false,
-        icon: "file-text",
-        downloadAction: true,
-      },
     ],
     stats: [
-      { value: "5+", label: "Years Experience", icon: "calendar" },
-      { value: "50+", label: "Projects Completed", icon: "check-circle" },
+      { value: "7+", label: "Years Experience", icon: "calendar" },
+      { value: "30+", label: "Projects Completed", icon: "check-circle" },
       { value: "30+", label: "Happy Clients", icon: "users" },
     ],
     badges: [
@@ -34,7 +27,7 @@ export const defaultContent: DefaultContentMap = {
         darkTextColor: "dark:text-green-300",
       },
     ],
-    profilePicture: "",
+    profilePicture: "/api/uploads/2",
   },
   about: {
     title: "Versatile Full-Stack Web Developer & Designer",
