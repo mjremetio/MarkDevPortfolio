@@ -24,7 +24,8 @@ import {
   Image as ImageIcon,
   Mail,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Sparkles
 } from "lucide-react";
 import { 
   Accordion,
@@ -1912,14 +1913,146 @@ const AdminDashboard = () => {
   };
 
   // Render the appropriate form based on section
+  const renderCredentialsForm = () => {
+    const data = contentData as any;
+    if (!data) return <p className="admin-muted">Loading credentials…</p>;
+    const flow: any[] = data.aiWorkflow || [];
+    const achievements: any[] = data.achievements || [];
+    const certs: any[] = data.certifications || [];
+    const sub = (path: string[], value: any) => updateContentField(path, value);
+
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold" style={{ color: "var(--ink)" }}>Section Info</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Eyebrow</Label>
+              <Input value={data.subtitle || ""} onChange={(e) => sub(["subtitle"], e.target.value)} placeholder="// ai-practice.md" />
+            </div>
+            <div>
+              <Label>Title</Label>
+              <Input value={data.title || ""} onChange={(e) => sub(["title"], e.target.value)} />
+            </div>
+          </div>
+          <div>
+            <Label>Description</Label>
+            <Textarea value={data.description || ""} onChange={(e) => sub(["description"], e.target.value)} />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold" style={{ color: "var(--ink)" }}>AI Workflow Steps</h3>
+            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["aiWorkflow"], { icon: "sparkles", title: "", description: "" })}>
+              <Plus className="w-4 h-4" /> Add step
+            </button>
+          </div>
+          {flow.map((s, i) => (
+            <div className="admin-item" key={i}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="admin-muted text-xs">Step {i + 1}</span>
+                <ItemToolbar path={["aiWorkflow"]} index={i} count={flow.length} label="step" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <Label>Icon</Label>
+                  <Input value={s.icon || ""} onChange={(e) => sub(["aiWorkflow", i.toString(), "icon"], e.target.value)} placeholder="rocket" />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Title</Label>
+                  <Input value={s.title || ""} onChange={(e) => sub(["aiWorkflow", i.toString(), "title"], e.target.value)} />
+                </div>
+              </div>
+              <div className="mt-3">
+                <Label>Description</Label>
+                <Textarea value={s.description || ""} onChange={(e) => sub(["aiWorkflow", i.toString(), "description"], e.target.value)} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold" style={{ color: "var(--ink)" }}>Achievements</h3>
+            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["achievements"], { icon: "trophy", title: "", description: "" })}>
+              <Plus className="w-4 h-4" /> Add achievement
+            </button>
+          </div>
+          {achievements.map((a, i) => (
+            <div className="admin-item" key={i}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="admin-muted text-xs">Achievement {i + 1}</span>
+                <ItemToolbar path={["achievements"]} index={i} count={achievements.length} label="achievement" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <Label>Icon</Label>
+                  <Input value={a.icon || ""} onChange={(e) => sub(["achievements", i.toString(), "icon"], e.target.value)} placeholder="trophy" />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Title</Label>
+                  <Input value={a.title || ""} onChange={(e) => sub(["achievements", i.toString(), "title"], e.target.value)} />
+                </div>
+              </div>
+              <div className="mt-3">
+                <Label>Description</Label>
+                <Textarea value={a.description || ""} onChange={(e) => sub(["achievements", i.toString(), "description"], e.target.value)} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold" style={{ color: "var(--ink)" }}>Certifications</h3>
+            <button className="admin-btn admin-btn-ghost" onClick={() => addArrayItem(["certifications"], { name: "", issuer: "", year: "", credentialId: "", skills: "" })}>
+              <Plus className="w-4 h-4" /> Add certification
+            </button>
+          </div>
+          {certs.map((c, i) => (
+            <div className="admin-item" key={i}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="admin-muted text-xs">Certification {i + 1}</span>
+                <ItemToolbar path={["certifications"]} index={i} count={certs.length} label="certification" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label>Name</Label>
+                  <Input value={c.name || ""} onChange={(e) => sub(["certifications", i.toString(), "name"], e.target.value)} />
+                </div>
+                <div>
+                  <Label>Issuer</Label>
+                  <Input value={c.issuer || ""} onChange={(e) => sub(["certifications", i.toString(), "issuer"], e.target.value)} />
+                </div>
+                <div>
+                  <Label>Year</Label>
+                  <Input value={c.year || ""} onChange={(e) => sub(["certifications", i.toString(), "year"], e.target.value)} placeholder="2026" />
+                </div>
+                <div>
+                  <Label>Credential ID</Label>
+                  <Input value={c.credentialId || ""} onChange={(e) => sub(["certifications", i.toString(), "credentialId"], e.target.value)} />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Skills</Label>
+                  <Input value={c.skills || ""} onChange={(e) => sub(["certifications", i.toString(), "skills"], e.target.value)} placeholder="Generative AI · Software Development" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const renderSectionForm = () => {
     switch (currentSection) {
       case 'hero':
         return renderHeroForm();
       case 'about':
         return renderAboutForm();
-      case 'experience':
-        return renderExperienceForm();
+      case 'credentials':
+        return renderCredentialsForm();
       case 'skills':
         return renderSkillsForm();
       case 'projects':
@@ -1959,8 +2092,8 @@ const AdminDashboard = () => {
         return <Star className="w-4 h-4 mr-2" />;
       case 'about':
         return <User className="w-4 h-4 mr-2" />;
-      case 'experience':
-        return <Briefcase className="w-4 h-4 mr-2" />;
+      case 'credentials':
+        return <Sparkles className="w-4 h-4 mr-2" />;
       case 'skills':
         return <Wrench className="w-4 h-4 mr-2" />;
       case 'projects':

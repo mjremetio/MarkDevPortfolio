@@ -167,25 +167,6 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  // Resume download endpoint
-  app.get('/api/download-resume', (req: Request, res: Response) => {
-    try {
-      const resumePath = path.join(__dirname, '../attached_assets/Mark Remetio - CV (1).pdf');
-
-      if (fs.existsSync(resumePath)) {
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=Mark_Remetio_CV.pdf');
-
-        const fileStream = fs.createReadStream(resumePath);
-        fileStream.pipe(res);
-      } else {
-        res.status(404).json({ message: 'Resume file not found' });
-      }
-    } catch (error) {
-      console.error('Error serving resume file:', error);
-      res.status(500).json({ message: 'Error downloading resume' });
-    }
-  });
 
   // Content management routes
   app.get('/api/content', listContentSections);

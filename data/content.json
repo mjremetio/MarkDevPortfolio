@@ -35,13 +35,6 @@
         "link": "#projects",
         "text": "View Projects",
         "primary": true
-      },
-      {
-        "icon": "file-text",
-        "link": "#",
-        "text": "Download Resume",
-        "primary": false,
-        "downloadAction": true
       }
     ],
     "profilePicture": "/api/uploads/2",
@@ -523,46 +516,6 @@
     "subtitle": "Showcasing some of my best work across various technologies and platforms",
     "description": "Here are some of the projects I've worked on recently."
   },
-  "experience": {
-    "title": "Professional Experience",
-    "subtitle": "My Journey",
-    "description": "A timeline of my professional experience and career journey.",
-    "experiences": [
-      {
-        "title": "Senior Frontend Developer",
-        "period": "Jan 2021 - Present",
-        "company": "Tech Innovations Inc.",
-        "responsibilities": [
-          "Lead developer for multiple client projects using React and TypeScript",
-          "Implemented state management solutions using Redux and Context API",
-          "Mentored junior developers and conducted code reviews",
-          "Introduced performance optimizations reducing load times by 40%"
-        ]
-      },
-      {
-        "title": "Full-Stack Developer",
-        "period": "Mar 2018 - Dec 2020",
-        "company": "WebSolutions Agency",
-        "responsibilities": [
-          "Developed full-stack applications using the MERN stack",
-          "Created RESTful APIs and implemented authentication systems",
-          "Collaborated with design teams to implement responsive UI components",
-          "Deployed and maintained applications on AWS"
-        ]
-      },
-      {
-        "title": "Web Developer",
-        "period": "Jun 2016 - Feb 2018",
-        "company": "Digital Creations",
-        "responsibilities": [
-          "Built and maintained client websites using JavaScript and PHP",
-          "Implemented responsive designs using HTML5, CSS3, and Bootstrap",
-          "Optimized website performance and SEO",
-          "Provided technical support and bug fixes for existing projects"
-        ]
-      }
-    ]
-  },
   "contact": {
     "email": "mj.remetio001@gmail.com",
     "title": "Get In Touch",
@@ -707,5 +660,97 @@
     ],
     "subtitle": "Visual Journey",
     "description": "A visual showcase of my projects, work environment, and professional journey"
+  },
+  "credentials": {
+    "title": "AI Practice & Credentials",
+    "subtitle": "// ai-practice.md",
+    "description": "The AI workflow I use to ship real products — plus the milestones and credentials behind the work.",
+    "aiWorkflow": [
+      {
+        "icon": "compass",
+        "title": "Context & Prompt Design",
+        "description": "I engineer the context first — clear specs, examples, and constraints — so the model works from the same mental model I do. Good prompting is half the build."
+      },
+      {
+        "icon": "code",
+        "title": "AI Pair Programming",
+        "description": "I build alongside Claude, Cursor, and Copilot in tight generate–refactor–review loops, while architecture and taste stay firmly human-owned."
+      },
+      {
+        "icon": "database",
+        "title": "RAG & Knowledge Grounding",
+        "description": "For domain-heavy work I ground models in real data — docs, databases, embeddings — so answers are specific and verifiable, not generic."
+      },
+      {
+        "icon": "diagram-project",
+        "title": "Automation Pipelines",
+        "description": "I wire multi-step agents and workflows in n8n and code, turning repetitive research, content, and ops work into reliable background jobs."
+      },
+      {
+        "icon": "shield-halved",
+        "title": "Evaluation & Guardrails",
+        "description": "Every AI feature ships with checks — output validation, fallbacks, and human review on the paths that matter — so reliability isn't left to luck."
+      },
+      {
+        "icon": "rocket",
+        "title": "Ship, Measure, Iterate",
+        "description": "I deploy, watch real usage, and tighten prompts, data, and UX until the feature is genuinely useful — not just a demo."
+      }
+    ],
+    "certifications": [
+      {
+        "name": "No-Code AI App Builder Certification",
+        "issuer": "Airtable",
+        "year": "2026",
+        "credentialId": "jyfqqb3hk2j8",
+        "skills": "Generative AI · Software Development"
+      },
+      {
+        "name": "Generative AI Certified",
+        "issuer": "Google",
+        "skills": "Generative AI"
+      },
+      {
+        "name": "AI Practitioner",
+        "issuer": ""
+      },
+      {
+        "name": "Moodle Educator Certified",
+        "issuer": "Nephila Web",
+        "skills": "Moodle"
+      }
+    ],
+    "achievements": [
+      {
+        "icon": "trophy",
+        "title": "Champion — AI Summit Hackathon 2025",
+        "description": "Took first place at the AI Summit Hackathon 2025 held at Reed Elsevier Shared Services Philippines (LexisNexis)."
+      },
+      {
+        "icon": "award",
+        "title": "Best in Web Development — Capstone",
+        "description": "Awarded Best in the Web Development category for my college capstone project."
+      },
+      {
+        "icon": "medal",
+        "title": "2nd Place — Java Programming Competition",
+        "description": "Runner-up in an inter-collegiate Java programming competition."
+      },
+      {
+        "icon": "terminal",
+        "title": "Competitive programming & hackathons",
+        "description": "Competed in Algolympics at UP Diliman (2018), Shopee Code League (2020), and UHACK (2017 & 2019)."
+      },
+      {
+        "icon": "mobile-screen-button",
+        "title": "Published on the Apple App Store",
+        "description": "Shipped PisoWise, a native SwiftUI app with on-device Apple Intelligence."
+      },
+      {
+        "icon": "briefcase",
+        "title": "7+ years shipping full-stack products",
+        "description": "Production web and mobile software across LMS, fintech, and automation."
+      }
+    ]
   }
 }

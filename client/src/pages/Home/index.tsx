@@ -3,7 +3,7 @@ import AboutSection from "./AboutSection";
 import ServicesSection from "./ServicesSection";
 import SkillsSection from "./SkillsSection";
 import ProjectsSection from "./ProjectsSection";
-import ExperienceSection from "./ExperienceSection";
+import CredentialsSection from "./CredentialsSection";
 import GallerySection from "./GallerySection";
 import ProcessSection from "./ProcessSection";
 import ContactSection from "./ContactSection";
@@ -18,7 +18,7 @@ const Home = () => {
       <ServicesSection />
       <SkillsSection />
       <ProjectsSection />
-      <ExperienceSection />
+      <CredentialsSection />
       <GallerySection />
       <ProcessSection />
       <ContactSection />

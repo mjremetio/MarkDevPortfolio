@@ -6,7 +6,7 @@ export type ContentSectionName =
   | "about"
   | "skills"
   | "projects"
-  | "experience"
+  | "credentials"
   | "contact"
   | "gallery";
 
@@ -15,7 +15,7 @@ export const CONTENT_SECTION_NAMES: readonly ContentSectionName[] = [
   "about",
   "skills",
   "projects",
-  "experience",
+  "credentials",
   "contact",
   "gallery",
 ] as const;
