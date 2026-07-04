@@ -240,6 +240,16 @@
             "percentage": 72
           },
           {
+            "name": "DigitalOcean",
+            "percentage": 84
+          }
+        ]
+      },
+      {
+        "icon": "fas fa-server",
+        "title": "Hosting & Domains",
+        "skills": [
+          {
             "name": "GoDaddy",
             "percentage": 88
           },
@@ -260,13 +270,15 @@
             "percentage": 82
           },
           {
-            "name": "DigitalOcean",
-            "percentage": 84
-          },
-          {
             "name": "BlueHost",
             "percentage": 80
-          },
+          }
+        ]
+      },
+      {
+        "icon": "fas fa-puzzle-piece",
+        "title": "No-Code & Site Builders",
+        "skills": [
           {
             "name": "Google Sites",
             "percentage": 85
