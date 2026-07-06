@@ -1,10 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { useAccessibility } from "@/contexts/AccessibilityContext";
-import { Moon, Sun, Menu, X, Accessibility } from "lucide-react";
+import { Moon, Sun, Menu, X, Accessibility, ChevronDown } from "lucide-react";
 import { smoothScrollTo } from "@/utils/smoothScroll";
 
-const navLinks = [
+// Primary links stay in the bar; the rest collapse into a "More" dropdown.
+const primaryLinks = [
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#projects", label: "Projects" },
+  { href: "#credentials", label: "AI Practice" },
+];
+const moreLinks = [
+  { href: "#services", label: "Services" },
+  { href: "#experience", label: "Experience" },
+  { href: "#gallery", label: "Gallery" },
+  { href: "#resources", label: "Resources" },
+];
+// Full, page-ordered list for scroll-spy and the mobile menu.
+const allLinks = [
   { href: "#home", label: "Home" },
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
@@ -21,11 +35,13 @@ const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { togglePanel } = useAccessibility();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [active, setActive] = useState("home");
+  const moreRef = useRef<HTMLDivElement>(null);
 
   // Scroll-spy: highlight the section currently in view.
   useEffect(() => {
-    const ids = navLinks.map((l) => l.href.slice(1));
+    const ids = allLinks.map((l) => l.href.slice(1));
     const onScroll = () => {
       const pos = window.scrollY + 120;
       let current = ids[0];
@@ -40,10 +56,31 @@ const Header = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close the "More" menu on outside click or Escape.
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMoreOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [moreOpen]);
+
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
+    setMoreOpen(false);
     smoothScrollTo(href);
   };
+
+  const isActive = (href: string) => active === href.slice(1);
+  const moreActive = moreLinks.some((l) => isActive(l.href));
 
   return (
     <header className="nav-shell">
@@ -60,11 +97,11 @@ const Header = () => {
         </a>
 
         <nav className="nav-links desktop">
-          {navLinks.map((link) => (
+          {primaryLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className={active === link.href.slice(1) ? "active" : ""}
+              className={isActive(link.href) ? "active" : ""}
               onClick={(e) => {
                 e.preventDefault();
                 handleNavClick(link.href);
@@ -73,6 +110,36 @@ const Header = () => {
               {link.label}
             </a>
           ))}
+
+          <div className="nav-more" ref={moreRef}>
+            <button
+              className={`nav-more-btn ${moreActive || moreOpen ? "active" : ""}`}
+              aria-haspopup="true"
+              aria-expanded={moreOpen}
+              onClick={() => setMoreOpen((v) => !v)}
+            >
+              More
+              <ChevronDown className={`nav-chev ${moreOpen ? "open" : ""}`} />
+            </button>
+            {moreOpen && (
+              <div className="nav-dropdown" role="menu">
+                {moreLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    role="menuitem"
+                    className={isActive(link.href) ? "active" : ""}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(link.href);
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -120,11 +187,11 @@ const Header = () => {
 
       {isMobileMenuOpen && (
         <nav className="nav-links mobile">
-          {navLinks.map((link) => (
+          {allLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className={active === link.href.slice(1) ? "active" : ""}
+              className={isActive(link.href) ? "active" : ""}
               onClick={(e) => {
                 e.preventDefault();
                 handleNavClick(link.href);
