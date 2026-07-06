@@ -298,6 +298,32 @@
         ]
       },
       {
+        "icon": "fas fa-pen-ruler",
+        "title": "Design & UX",
+        "skills": [
+          {
+            "name": "Figma",
+            "percentage": 88
+          },
+          {
+            "name": "UI/UX Design",
+            "percentage": 88
+          },
+          {
+            "name": "Wireframing & Prototyping",
+            "percentage": 85
+          },
+          {
+            "name": "Design Systems",
+            "percentage": 82
+          },
+          {
+            "name": "Brand & Visual Identity",
+            "percentage": 80
+          }
+        ]
+      },
+      {
         "icon": "fas fa-toolbox",
         "title": "Tools & Platforms",
         "skills": [
@@ -312,10 +338,6 @@
           {
             "name": "Salesforce & CRM",
             "percentage": 82
-          },
-          {
-            "name": "Figma",
-            "percentage": 80
           },
           {
             "name": "Google Analytics & Ads",
