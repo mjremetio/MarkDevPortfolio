@@ -410,6 +410,18 @@
     "title": "Featured Projects",
     "projects": [
       {
+        "title": "Karen & Daniel — Wedding Invitation",
+        "liveLink": "https://karendaniel.online/",
+        "description": "An elegant digital wedding invitation with an animated hero, live countdown to the big day, online RSVP, entourage and gallery pages, travel details, FAQs, and ambient background music.",
+        "technologies": [
+          "React",
+          "Vite",
+          "Vercel",
+          "Responsive UI"
+        ],
+        "imagePlaceholder": "/api/uploads/39"
+      },
+      {
         "title": "Dispute2Suit",
         "liveLink": "https://dispute2suite.com/",
         "description": "Consumer-protection platform that helps people push back on unlawful debt collection. It reviews each case for FDCPA & FCRA violations, surfaces collector misconduct, and guides users to action through a free case review — plus a dedicated portal for credit-repair organizations (CROs).",
