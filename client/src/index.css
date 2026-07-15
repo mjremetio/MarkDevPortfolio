@@ -1998,58 +1998,117 @@ body.no3d .site-bg .glow-layer {
   border: 1px solid var(--line);
   background: var(--input-bg, rgba(255, 255, 255, 0.04));
 }
-.learn-links {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+.learn-guides {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .doc-card {
-  display: block;
-  padding: 20px 20px 16px;
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--panel);
   border: 1px solid var(--line);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: transform 0.28s, border-color 0.28s, box-shadow 0.28s;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 .doc-card:hover {
-  transform: translateY(-4px);
   border-color: var(--line-strong);
-  box-shadow: 0 16px 40px rgba(3, 5, 14, 0.3), 0 0 26px rgba(69, 230, 214, 0.1);
 }
-.doc-card-head {
+.doc-card.open {
+  border-color: var(--line-strong);
+  box-shadow: 0 16px 40px rgba(3, 5, 14, 0.28);
+}
+.doc-toggle {
+  width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 7px;
+  gap: 16px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 18px 20px;
+  color: inherit;
 }
-.doc-card-head h3 {
+.doc-toggle-text h3 {
   font-family: var(--font-display);
   font-size: 16px;
   font-weight: 600;
   color: var(--ink);
+  margin-bottom: 3px;
 }
-.doc-arrow {
-  color: var(--muted);
-  flex: 0 0 auto;
-  transition: color 0.25s, transform 0.25s;
-}
-.doc-card:hover .doc-arrow {
-  color: var(--cyan);
-  transform: translate(2px, -2px);
-}
-.doc-card p {
+.doc-toggle-text p {
   font-size: 13px;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.5;
+}
+.doc-chev {
+  flex: 0 0 auto;
+  color: var(--muted);
+  transition: transform 0.25s, color 0.25s;
+}
+.doc-card.open .doc-chev {
+  transform: rotate(180deg);
+  color: var(--cyan);
+}
+.doc-toggle:hover .doc-chev {
+  color: var(--cyan);
+}
+.doc-body {
+  padding: 2px 20px 20px;
+  animation: doc-open 0.25s ease;
+}
+@keyframes doc-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.doc-body > p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
   margin-bottom: 12px;
 }
-.doc-host {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--cyan);
+.doc-body h4 {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 14px 0 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.doc-body ul {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.doc-body li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.doc-body li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, var(--indigo), var(--cyan));
 }
 .learn-foot {
   margin-top: 20px;
@@ -2075,10 +2134,6 @@ body.no3d .site-bg .glow-layer {
   }
 }
 @media (max-width: 560px) {
-  .learn-links {
-    grid-template-columns: 1fr;
-  }
-  .learn-back span,
   .learn-back {
     font-size: 0;
   }
