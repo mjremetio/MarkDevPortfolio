@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { useAccessibility } from "@/contexts/AccessibilityContext";
-import { Moon, Sun, Menu, X, Accessibility, ChevronDown } from "lucide-react";
+import { Moon, Sun, Menu, X, Accessibility, ChevronDown, ArrowUpRight } from "lucide-react";
 import { smoothScrollTo } from "@/utils/smoothScroll";
 
 // Primary links stay in the bar; the rest collapse into a "More" dropdown.
@@ -137,6 +137,10 @@ const Header = () => {
                     {link.label}
                   </a>
                 ))}
+                <a href="/learn" role="menuitem" className="nav-dropdown-cta">
+                  Claude Playbook
+                  <ArrowUpRight className="h-[15px] w-[15px]" />
+                </a>
               </div>
             )}
           </div>

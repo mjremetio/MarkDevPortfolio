@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import Home from "@/pages/Home";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
+import Learn from "@/pages/Learn";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -30,6 +31,9 @@ function App() {
             </Route>
             <Route path="/admin">
               <AdminDashboard />
+            </Route>
+            <Route path="/learn">
+              <Learn />
             </Route>
             <Route path="/">
               <ContentLoadingProvider>

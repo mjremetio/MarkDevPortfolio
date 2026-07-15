@@ -163,6 +163,12 @@ const ResourcesSection = () => {
             ))}
           </motion.div>
         </AnimatePresence>
+
+        <a href="/learn" className="res-cta-link">
+          <i className="fas fa-graduation-cap" />
+          New to Claude? Follow the full learning path in the Claude Playbook
+          <i className="fas fa-arrow-right res-cta-arrow" />
+        </a>
       </div>
     </section>
   );
