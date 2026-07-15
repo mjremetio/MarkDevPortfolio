@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
+import { isValidSection } from "./jsonStorage";
 import {
-  getSection,
-  listSections,
-  updateSection,
-  isValidSection,
-} from "./jsonStorage";
+  getSectionContent,
+  listSectionsContent,
+  updateSectionContent,
+} from "./contentStore";
 
-export const listContentSections = (_req: Request, res: Response) => {
+export const listContentSections = async (_req: Request, res: Response) => {
   try {
-    const sections = listSections();
+    const sections = await listSectionsContent();
     res.json({ sections });
   } catch (error) {
     console.error("Error listing content sections:", error);
@@ -18,7 +18,7 @@ export const listContentSections = (_req: Request, res: Response) => {
   }
 };
 
-export const getContent = (req: Request, res: Response) => {
+export const getContent = async (req: Request, res: Response) => {
   try {
     const { section } = req.params;
 
@@ -28,7 +28,7 @@ export const getContent = (req: Request, res: Response) => {
         .json({ success: false, message: "Section not found" });
     }
 
-    const payload = getSection(section);
+    const payload = await getSectionContent(section);
 
     if (!payload) {
       return res
@@ -45,7 +45,7 @@ export const getContent = (req: Request, res: Response) => {
   }
 };
 
-export const updateContent = (req: Request, res: Response) => {
+export const updateContent = async (req: Request, res: Response) => {
   try {
     const { section } = req.params;
 
@@ -63,7 +63,7 @@ export const updateContent = (req: Request, res: Response) => {
     }
 
     const payload = req.body as Record<string, unknown>;
-    updateSection(section, payload);
+    await updateSectionContent(section, payload);
 
     res.json({
       success: true,

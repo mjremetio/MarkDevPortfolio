@@ -1,27 +1,32 @@
 import HeroSection from "./HeroSection";
 import AboutSection from "./AboutSection";
+import ServicesSection from "./ServicesSection";
 import SkillsSection from "./SkillsSection";
-import ExperienceSection from "./ExperienceSection";
 import ProjectsSection from "./ProjectsSection";
+import ExperienceSection from "./ExperienceSection";
+import CredentialsSection from "./CredentialsSection";
+import GitHubContributions from "./GitHubContributions";
 import GallerySection from "./GallerySection";
+import ProcessSection from "./ProcessSection";
+import ResourcesSection from "./ResourcesSection";
 import ContactSection from "./ContactSection";
-import { useEffect } from "react";
-import { initScrollAnimations } from "@/utils/scrollAnimations";
+import TechMarquee from "@/components/TechMarquee";
 
 const Home = () => {
-  useEffect(() => {
-    // Initialize scroll animations when component mounts
-    initScrollAnimations();
-  }, []);
-
   return (
     <>
       <HeroSection />
+      <TechMarquee />
       <AboutSection />
+      <ServicesSection />
       <SkillsSection />
-      <ExperienceSection />
+      <GitHubContributions />
       <ProjectsSection />
+      <ExperienceSection />
+      <CredentialsSection />
       <GallerySection />
+      <ProcessSection />
+      <ResourcesSection />
       <ContactSection />
     </>
   );
